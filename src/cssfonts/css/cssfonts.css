@@ -1,149 +1,49 @@
-﻿body, div, dl, dt, dd, ul, ol, li,
-h1, h2, h3, h4, h5, h6,
-pre, code,
-form, fieldset, legend, input, textarea,
-p, blockquote,
-th, td { /* 统一外间距和内间距为0 */
-    margin: 0;
-    padding: 0;
+/*
+YUI 3.10.2 (build f282c77)
+Copyright 2013 Yahoo! Inc. All rights reserved.
+Licensed under the BSD License.
+http://yuilibrary.com/license/
+*/
+
+/**
+ * Percents could work for IE, but for backCompat purposes, we are using keywords.
+ * x-small is for IE6/7 quirks mode.
+ */
+body {
+	font:13px/1.231 arial,helvetica,clean,sans-serif;
+	*font-size:small; /* for IE */
+	*font:x-small; /* for IE in quirks mode */
 }
 
-table { /* 相邻边框合并且间距为0 */
-    border-collapse: collapse;
-    border-spacing: 0;
-}
-
-fieldset, img, abbr, acronym { /* 边距宽度为0 */
-    border: 0;
-}
-
-caption,
-th { /* 文字居左 */
-    text-align: left;
-}
-
-q:before,
-q:after { /* 默认加上双引号，不过存在语言环境问题，建议在后端根据上下文直接处理掉，不要通过CSS处理 */
-    content: '';
-}
-
-abbr, acronym { /* 统一缩略字标记的边框和取消小型大写特性 */
-    font-variant: normal;
-}
-
-sup { /* 上标垂直居顶 */
-    vertical-align: text-top;
-}
-
-sub { /* 下标垂直居底 */
-    vertical-align: text-bottom;
-}
-
-/* Font */
-
-body { /* 由于浏览器默认字体原因，故最佳方式是在jBroser中设置 */
-    font: 12px/1.5 tahoma,​arial,helvetica,sans-seri; /* windows,mac,linux */
-    *font-size: small; /* for IE */
-    *font: x-small; /* for IE  */
-}
-
-input, textarea, select { /* 相关表单标记的字体继承由父元素 */
-    font-family: inherit;
-    font-size: inherit;
-    font-weight: inherit;
-    *font-size: 100%;
-}
-
-/* 百分比对于中文字体没有意义
-select,input,button,textarea {
+/**
+ * Nudge down to get to 13px equivalent for these form elements
+ */ 
+select,
+input,
+button,
+textarea {
 	font:99% arial,helvetica,clean,sans-serif;
-}*/
-
-table { /* 难道table的字体在各浏览器的默认字体处理不同？？ */
-    font-size: inherit;
-    /*font:100%;*/
 }
 
-pre, code, kbd, samp, tt { /* 设置等宽字体？？ */
-    font-family: monospace;
-    /*
+/**
+ * To help tables remember to inherit
+ */
+table {
+	font-size:inherit;
+	font:100%;
+}
+
+/**
+ * Bump up IE to get to 13px equivalent for these fixed-width elements
+ */
+pre,
+code,
+kbd,
+samp,
+tt {
+	font-family:monospace;
 	*font-size:108%;
 	line-height:100%;
-	*/
 }
-
-h1 { /* 18px,同样问题，在中文环境有问题 */
-    /*18px via YUI Fonts CSS foundation*/
-    font-size: 1.5em;
-}
-
-h2 { /* 16px,同样问题，在中文环境有问题 */
-    /*16px via YUI Fonts CSS foundation*/
-    font-size: 1.33333em;
-}
-
-h3 { /* 14px,同样问题，在中文环境有问题 */
-    /*14px via YUI Fonts CSS foundation*/
-    font-size: 1.16666em;
-}
-
-h1, h2, h3 { /* 上面相距字宽 */
-    margin: 1em 0;
-}
-
-h1, h2, h3, h4, h5, h6, strong { /* 都粗体 */
-    font-weight: bold;
-}
-
-abbr, acronym {
-    border-bottom-width: 1px;
-    cursor: help;
-}
-
-blockquote, ul, ol, dl {
-    margin: 1em;
-}
-
-ol, ul, dl {
-    margin-left: 2em;
-}
-
-ol {
-    list-style: decimal outside;
-}
-
-ul {
-    list-style: disc outside;
-}
-
-dl dd {
-    margin-left: 1em;
-}
-
-th, td {
-    border-bottom-width: 1px;
-    padding: .5em;
-}
-
-th {
-    font-weight: bold;
-    text-align: center;
-}
-
-caption {
-    margin-bottom: .5em;
-    text-align: center;
-}
-
-p, fieldset, table, pre {
-    margin-bottom: 1em;
-}
-
-input[type=text], input[type=password], textarea {
-    box-sizing: border-box;
-    height: 2em;
-    padding: .25em 0;
-    border-width: 1px;
-    vertical-align: middle;
-    *width: auto;
-}
+/* YUI CSS Detection Stamp */
+#yui3-css-stamp.cssfonts { display: none; }

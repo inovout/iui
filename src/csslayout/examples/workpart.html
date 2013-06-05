@@ -4,11 +4,11 @@
     <title>Layout-Workpart</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <link rel="stylesheet" href="../../cssreset/css/cssreset.css" />
-    <link rel="stylesheet" href="../../cssreset/css/cssfonts.css" />
+    <link rel="stylesheet" href="../../cssfonts/css/cssfonts.css" />
     <link rel="stylesheet" href="../css/csslayout.css" />
-    <script src="../../../lib/modernizr/modernizr-2.6.2.js" />
+    <script src="../../../lib/modernizr/modernizr-2.6.2.js"></script>
     <style>
-        header, .content, footer {
+        section {
             background-color: #0ff;
             margin-top: 0.5em;
             margin-bottom: 0.5em;
@@ -24,20 +24,26 @@
 </head>
 <body>
     <header class="w100">
-        <section>
-            <div>
-                <label>Logo</label>
-                <label>SiteTitle</label>
-                <label>Nav</label>
-            </div>
-
-        </section>
+        <section class="w100">
+                <label class="w10">Logo</label>
+                <label class="w20">SiteTitle</label>
+                <label class="w70">Nav</label>
+         </section>
     </header>
     <div class="content w100">
-        <label>Content</label>
+         <section class="w100">
+                <label class="w10">content1</label>
+                <label class="w20">content2</label>
+                <label class="w70">content3</label>
+         </section>
     </div>
     <footer class="w100">
-        <label>Footer</label>
+         <section class="w100">
+                <label class="w10">footer1</label>
+                <label class="w20">footer2</label>
+                <label class="w70">footer3</label>
+         </section>
     </footer>
 </body>
 </html>
+

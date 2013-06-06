@@ -32,7 +32,7 @@ var Class = (function () {
 
     function addMethods(source) {
         var ancestor = this.superclass && this.superclass.prototype,
-        properties = Object.keys(source);
+        properties = Object.propertyNames(source);
 
         if (source.toString != Object.prototype.toString)
             properties.push("toString");

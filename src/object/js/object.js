@@ -5,7 +5,7 @@ jQuery.extend(Object, {
     isFunction: function (obj) {
         return jQuery.isFunction(obj);
     },
-    keys: function (object) {
+    propertyNames: function (object) {
         if (typeof (object) !== "object") { throw new TypeError(); }
         var results = [];
         for (var property in object) {
@@ -15,7 +15,7 @@ jQuery.extend(Object, {
         }
         return results;
     },
-    values: function (object) {
+    propertyValues: function (object) {
         var results = [];
         for (var property in object)
             results.push(object[property]);

@@ -8,60 +8,90 @@
     <link rel="stylesheet" href="../css/csslayout.css" />
     <script src="../../../lib/modernizr/modernizr-2.6.2.js"></script>
     <style>
-        section {
-            background-color: #0ff;
-            margin-top: 0.5em;
-            margin-bottom: 0.5em;
+        .zone {
+            position: relative;
+            text-align: center;
+            border: solid #999;
+            border-width: 1px;
+            color: #000;
+            margin: 15px auto; 
+            padding: 5px 2px;
+            background-color: red;
+            z-index: 1;
         }
 
-        lable {
+        div.zone label {
             margin: 0 auto;
-            background-color: #FFFCE7;
+            color: yellow;
             padding: 1px 6px;
             font-weight: bold;
+            font-family: courier;
+            -moz-box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            -webkit-box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            z-index: 2;
         }
     </style>
 </head>
 <body>
     <header class="w100">
-        <div class="wp_container">
+        <div class="wp">
             <section class="w20">
-                <label>Logo</label>
+                <div class="zone">
+                    <label>Logo</label>
+                </div>
             </section>
             <section class="w30">
-                <label>SiteTitle</label>
+                <div class="zone">
+                    <label>SiteTitle</label>
+                </div>
             </section>
             <section class="w50">
-                <label>Nav</label>
+                <div class="zone">
+                    <label>Nav</label>
+                </div>
             </section>
         </div>
     </header>
-    <div class="content w100">
-        <div class="wp_container">
+    <div id="content" class="w100">
+        <div class="wp">
             <section class="w50">
-                <label>Banner</label>
+                <div class="zone">
+                    <label>Banner</label>
+                </div>
             </section>
             <section class="w50">
-                <label>Banner</label>
+                <div class="zone">
+                    <label>Banner</label>
+                </div>
             </section>
             <section class="w30">
-                <label>Nav Links</label>
-            </section>
-            <section class="w40">
-                <label>Content</label>
+                <div class="zone">
+                    <label>Nav Links</label>
+                </div>
             </section>
             <section class="w50">
-                <label>Nav Links</label>
+                <div class="zone">
+                    <label>Content</label>
+                </div>
+            </section>
+            <section class="w20">
+                <div class="zone">
+                    <label>Nav Links</label>
+                </div>
             </section>
         </div>
     </div>
     <footer class="w100">
-        <div class="wp_container">
+        <div class="wp">
             <section class="w100">
-                <label>Quick Links</label>
+                <div class="zone">
+                    <label>Quick Links</label>
+                </div>
             </section>
             <section class="w100">
-                <label>Copyright</label>
+                <div class="zone">
+                    <label>Copyright</label>
+                </div>
             </section>
         </div>
     </footer>

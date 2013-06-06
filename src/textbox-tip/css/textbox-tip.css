@@ -1,24 +1,17 @@
 ﻿.Tip{
-  width:100%;
-  z-index:10;	
+  z-index:10;
+  position:relative;	
 }
 
-input[type="text"]{
-  width:10em;
+.Tip input[type="text"]{
   border:1px solid black;
   background: #F5F5F5;
 }
 
-input[type="submit"]{
-  margin-left:0.5em;
-  width:5em;
-  border:1px solid black;
-}
-
-label{
-  color:blue;
+.Tip label{
+  color:gray;
   position:absolute;
-  top:2px;
+  top:1px;
   left:40px;
   z-index:12;
   opacity:5;

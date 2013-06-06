@@ -1,28 +1,18 @@
-﻿div.tab{
-  width:100%;
+﻿
+.tabs {
+    line-height:26px;
+    height:26px;
 }
 
-div.tab  ul {   
-   margin:0px;
-   padding:0px;
-   font-size:0px;
+.tabs li {
+    background-color: purple;
+    border-right: 1px solid white;
+    float:left;
+    text-align:center;
 }
 
-div.tab  li{
-  width:7em;
-  padding:0.2em 0.6em;
-  background-color:purple;
-  border-right:1px solid white;
-  letter-spacing:normal;
-  word-spacing:normal;
-  vertical-align:top;   
-  display:inline-block;
-  *display:inline;
-  *zoom:1;
+.tabs label { 
+    cursor: pointer;
 }
 
-body,li{
-   font-size:12px;
-}
 
-a:hover {background-color:#ff3300}

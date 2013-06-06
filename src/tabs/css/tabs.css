@@ -1,21 +1,28 @@
-﻿.tab_w{
+﻿div.tab{
   width:100%;
-  float:left;
 }
 
-.tab_w ul {   
-   float:left;
+div.tab  ul {   
    margin:0px;
    padding:0px;
-   width:100%
+   font-size:0px;
 }
 
-.tab_w li{
+div.tab  li{
   width:7em;
   padding:0.2em 0.6em;
-  float:left;
   background-color:purple;
   border-right:1px solid white;
+  letter-spacing:normal;
+  word-spacing:normal;
+  vertical-align:top;   
+  display:inline-block;
+  *display:inline;
+  *zoom:1;
+}
+
+body,li{
+   font-size:12px;
 }
 
 a:hover {background-color:#ff3300}

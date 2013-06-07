@@ -1,18 +1,15 @@
-
-.tabs {
-    line-height:26px;
-    height:26px;
+.tabs li label
+{
+    float: left;
+    height: 2em;
+    line-height: 2em;
+    padding: 0 1em;
 }
 
-.tabs li {
-    background-color: purple;
-    border-right: 1px solid white;
-    float:left;
-    text-align:center;
+.tabs li.selected label
+{
+    background: none repeat scroll 0 0 #F27B04;
+    border-radius: 3px 3px 0 0;
+    color: #FFFFFF;
+    font-weight: bold;
 }
-
-.tabs label { 
-    cursor: pointer;
-}
-
-

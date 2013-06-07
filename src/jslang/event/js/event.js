@@ -89,8 +89,6 @@ var Event = Class.create({
             },
             handler = fn;
 
-        // The order is important. The 'single' wrapper must be wrapped by the 'buffer' and 'delayed' wrapper
-        // because the event removal that the single listener does destroys the listener's DelayedTask(s)
         if (o) {
             listener.o = o;
             if (o.single) {
@@ -98,12 +96,6 @@ var Event = Class.create({
             }
             if (o.target) {
                 handler = me.createTargeted(handler, listener, o, scope);
-            }
-            if (o.delay) {
-                handler = me.createDelayed(handler, listener, o, scope);
-            }
-            if (o.buffer) {
-                handler = me.createBuffered(handler, listener, o, scope);
             }
         }
 
@@ -243,23 +235,6 @@ var Event = Class.create({
         };
     },
 
-    createBuffered: function (handler, listener, o, scope) {
-        listener.task = new DelayedTask();
-        return function () {
-            listener.task.delay(o.buffer, handler, scope, toArray(arguments));
-        };
-    },
-
-    createDelayed: function (handler, listener, o, scope) {
-        return function () {
-            var task = new DelayedTask();
-            if (!listener.tasks) {
-                listener.tasks = [];
-            }
-            listener.tasks.push(task);
-            task.delay(o.delay || 10, handler, scope, toArray(arguments));
-        };
-    },
     createSingle: function (handler, listener, o, scope) {
         return function () {
             var event = listener.ev;

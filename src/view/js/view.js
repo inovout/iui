@@ -4,10 +4,10 @@ var View = Class.create({
     },
     getView: function (id) {
         /// <summary>
-        /// 根据Id获取View对象
+        /// 鏍规嵁Id鑾峰彇View瀵硅薄
         /// </summary>
         /// <param name="id" type="String">
-        /// View对象Id
+        /// View瀵硅薄Id
         /// </param>
         /// <returns type="View" />
         return id;

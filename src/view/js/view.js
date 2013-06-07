@@ -1,8 +1,6 @@
 var View = Class.create({
 
-    initialize: function (viewClass) {
-        /// <field type = 'String'>View Class Name</field>
-        this.viewClass = viewClass;
+    initialize: function () {
     },
     getView: function (id) {
         /// <summary>

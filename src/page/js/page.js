@@ -1,7 +1,6 @@
 var Page = Class.create(View, {
 
     initialize: function () {
-        $super("Page");//∂®“ÂViewClass
     },
     getView: function (id) {
         /// <summary>

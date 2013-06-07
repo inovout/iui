@@ -1,5 +1,4 @@
 var Class = (function () {
-
     function subclass() { };
     function create() {
         var parent = null, properties = Object.toArray(arguments);

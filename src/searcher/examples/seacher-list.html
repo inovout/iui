@@ -1,0 +1,34 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+    <title>Layout</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="../../cssreset/css/cssreset.css" />
+    <link rel="stylesheet" href="../../cssfonts/css/cssfonts.css" />
+    <link rel="stylesheet" href="../../tip/css/tip.css" />
+    <link rel="stylesheet" href="../../tip/css/tip.theme.css" />
+    <link rel="stylesheet" href="../css/searcher.css" />
+    <link rel="stylesheet" href="../css/searcher.theme.css" />
+    <script src="../../../lib/modernizr/modernizr-2.6.2.js"></script>
+</head>
+<body>
+    <ul id="searcherList" class="list">
+        <li class="selected">
+            <label class="selected" value-action="/solution/search" value-tip="请输入方案搜索条件">方案</label></li>
+        <li>
+            <label value-action="/node/search" value-tip="请输入测点搜索条件">测点</label></li>
+    </ul>
+    <form method="get" searcherlist-selectedchanged-event="action=args.action">
+        <div id="searcherTip" class="tip">
+            <input type="text" />
+            <label searcherlist-selectedchanged-event="update(args.tip)">></label>
+        </div>
+        <button type="submit" value="Go" />
+    </form>
+    <script src="../../../../lib/jquery.js"></script>
+    <script src="../../object/js/object.js"></script>
+    <script src="../../class/js/class.js"></script>
+    <script src="../../list/js/list.js"></script>
+    <script src="../js/searcher.js"></script>
+</body>
+</html>

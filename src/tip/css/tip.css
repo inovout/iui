@@ -1,0 +1,14 @@
+div.tip > label {
+    position: absolute;
+    height: 1em;
+    left: 1em;
+    top: .5em;
+}
+
+div.tip {
+    position: relative;
+}
+
+input {
+    height: 2em;
+}

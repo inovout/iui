@@ -1,6 +1,7 @@
-var Page = Class.create(View, {
+var Page = Class.create({
 
     initialize: function () {
+        return this;
     },
     getView: function (id) {
         /// <summary>
@@ -12,4 +13,7 @@ var Page = Class.create(View, {
         /// <returns type="View" />
         return id;
     }
+});
+$(function () {
+    window.page = new Page();
 });

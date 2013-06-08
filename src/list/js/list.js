@@ -15,5 +15,6 @@ var List = Class.create({
                 });
             }
         });
+        return this;
     }
 });

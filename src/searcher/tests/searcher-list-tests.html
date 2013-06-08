@@ -1,0 +1,43 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Tests-List</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="../../cssreset/css/cssreset.css" />
+    <link rel="stylesheet" href="../../cssfonts/css/cssfonts.css" />
+    <link rel="stylesheet" href="../../csslayout/css/csslayout.css" />
+    <link rel="stylesheet" href="../css/list.css" />
+    <link rel="stylesheet" href="../../../lib/qunit.css">
+    <script src="../../../lib/modernizr/modernizr-2.6.2.js"></script>
+</head>
+<body>
+    <div id="qunit"></div>
+    <div id="qunit-fixture"></div>
+    <script src="../../../lib/jquery.js"></script>
+    <script src="../../jslang/object/js/object.js"></script>
+    <script src="../../jslang/class/js/class.js"></script>
+    <script src="../../jslang/event/js/event.js"></script>
+    <script src="../../element/js/element.js"></script>
+    <script src="../../view/js/view.js"></script>
+    <script src="../../page/js/page.js"></script>
+    <script src="../../list/js/list.js"></script>
+    <script src="../../tip/js/tip.js"></script>
+    <script src="../../../lib/qunit.js"></script>
+    <script src="searcher-list-tests.js"></script>
+    <div style="position: absolute; top: -600px; left: -600px; visibility: hidden;">
+        <ul id="searcherList" class="list">
+            <li class="selected">
+                <label class="selected" value-action="/solution/search" value-tip="请输入方案搜索条件">方案</label></li>
+            <li>
+                <label value-action="/node/search" value-tip="请输入测点搜索条件">测点</label></li>
+        </ul>
+        <form method="get" searcherlist-selectedchanged-event="action=args.action">
+            <div id="searcherTip" class="tip">
+                <input type="text" />
+                <label searcherlist-selectedchanged-event="update(args.tip)">></label>
+            </div>
+            <button type="submit" value="Go" />
+        </form>
+    </div>
+</body>
+</html>

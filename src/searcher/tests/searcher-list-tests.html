@@ -17,6 +17,7 @@
     <script src="../../jslang/object/js/object.js"></script>
     <script src="../../jslang/class/js/class.js"></script>
     <script src="../../jslang/event/js/event.js"></script>
+    <script src="../../jslang/eventlisteneradapter/js/eventlisteneradapter.js"></script>
     <script src="../../element/js/element.js"></script>
     <script src="../../view/js/view.js"></script>
     <script src="../../page/js/page.js"></script>
@@ -26,15 +27,15 @@
     <script src="searcher-list-tests.js"></script>
     <div style="position: absolute; top: -600px; left: -600px; visibility: hidden;">
         <ul id="searcherList" class="list">
-            <li class="selected">
-                <label class="selected" value-action="/solution/search" value-tip="请输入方案搜索条件">方案</label></li>
-            <li>
-                <label value-action="/node/search" value-tip="请输入测点搜索条件">测点</label></li>
+            <li data-action="/solution/search" data-tip="请输入方案搜索条件" class="selected">
+                <label class="selected">方案</label></li>
+            <li data-action="/node/search" data-tip="请输入测点搜索条件">
+                <label>测点</label></li>
         </ul>
-        <form method="get" searcherlist-selectedchanged-event="action=args.action">
-            <div id="searcherTip" class="tip">
+        <form method="get" data-event-adapter="searcherList.selectedChanged=setAction(args.action)">
+            <div>
                 <input type="text" />
-                <label searcherlist-selectedchanged-event="update(args.tip)">></label>
+                <label data-event-adapter="searcherList.selectedChanged=setText(args.tip)" id="searcherTip" class="tip"></label>
             </div>
             <button type="submit" value="Go" />
         </form>

@@ -1,12 +1,9 @@
-var EventListenerAdapter = Class.create({
-    initialize: function (event,scope, listener, map) {
-        this.event = event;
-        this.listener = listener;
-        this.map = map;
-        this.event.addListener(function (sender, args) {
+jQuery.extend(Event, {
+    adapte: function (event, scope, listener, argMap) {
+        event.addListener(function (sender, args) {
             var listenerArgs = [];
-            var propertyNames = Object.propertyNames(map);
-            $(propertyNames).each(function (index,propertyName) {
+            var propertyNames = argMap.split(",")
+            $(propertyNames).each(function (index, propertyName) {
                 var propertyNameArray = propertyName.split(".");
                 var propertyValue;
                 if (propertyNameArray[0] == "sender") {

@@ -15,6 +15,8 @@ jQuery.extend(Element, {
         var jqDom;
         if (typeof dom == "string") {
             jqDom = $("#" + dom);
+        } else if (dom instanceof Element) {
+            return dom;
         } else {
             jqDom = $(dom);
         }

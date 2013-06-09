@@ -1,6 +1,6 @@
 Inovout.Widget.Tip = Tip = Class.create({
     initialize: function (dom) {
-        this.element = Element.create(dom);
+        this.element = Element.get(dom);
         return this;
     },
     getText: function () {

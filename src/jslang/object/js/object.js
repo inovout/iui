@@ -1,3 +1,5 @@
+Inovout = {};
+
 jQuery.extend(Object, {
     toArray: function (obj) {
         return jQuery.makeArray(obj);

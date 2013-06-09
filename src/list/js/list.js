@@ -1,6 +1,5 @@
-Inovout.Widget.List = List = Class.create({
-    initialize: function (dom) {
-        this.element = Element.create(dom);
+Inovout.Widget.List = Class.create(View,{
+    initialize: function (element) {
         this.selectedChanged = new Event("selectedChanged", this);
         var owner = this;//通过call来解决this指针问题
         this.element.click.addListener(function (sender, args) {

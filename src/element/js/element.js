@@ -1,26 +1,23 @@
 var Element = Class.create({
-
-    initialize: function (jqDom) {
-        this.jqDom = jqDom;
+    initialize: function (dom) {
+        this.init(dom);
         this.click = new Event("click", this);
-        var owner = this;
-        this.jqDom.bind("click", function (event) {
-            owner.click.fire(owner, event);
+        var me = this;
+        this.bind("click", function (event) {
+            me.click.fire(owner, event);
         });
+    },
+    getClassName: function () {
+        return this[0].className;
     }
 });
+jQuery.extend(Element.prototype, jQuery.fn);
 jQuery.extend(Element, {
-    create: function (dom) {
-        //需有缓存处理，应先从全局缓存去获取，若不存在再创建并放入全局缓存。
-        var jqDom;
+    cache: {},
+    get: function (dom) {
         if (typeof dom == "string") {
-            jqDom = $("#" + dom);
-        } else if (dom instanceof Element) {
-            return dom;
-        } else {
-            jqDom = $(dom);
+            dom = document.getElementById(dom);
         }
-        return new Element(jqDom);
-
+        return Element.cache[dom] || new Element(dom);
     }
 });

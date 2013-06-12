@@ -1,0 +1,2 @@
+将tip改为input类，完成placeholder功能，参见https://github.com/diy/jquery-placeholder/blob/master/jquery.placeholder.js
+需重写View创建方法。

@@ -1,23 +1,68 @@
-var Element = Class.create({
+Inovout.Element = Class.create({
     initialize: function (dom) {
-        this.init(dom);
-        this.click = new Event("click", this);
         var me = this;
-        this.bind("click", function (event) {
-            me.click.fire(owner, event);
-        });
+        this.dom = dom;
+        this.dom.uid = new Date().getTime() + "" + parseInt(Math.random() * 100000, 10);
+        this.dom.toString = function () {
+            return me.dom.uid;
+        }
+        Object.each(("blur focus focusin focusout load resize scroll unload click dblclick " +
+	    "mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave " +
+	    "change select submit keydown keypress keyup error contextmenu").split(" "), function (i, name) {
+	        var evt = me[name] = new Event(name, me);
+	        evt._addListener = evt.addListener;
+	        evt.addListener = function (fn, scope, options) {
+	            if (!evt._isBind) {
+	                me.bind(name, function (event) {
+	                    evt.fire(me, { target: Inovout.Element.get(event.target) });
+	                });
+	                evt._isBind = true;
+	            }
+	            evt._addListener(fn, scope, options);
+
+	        };
+	    });
     },
     getClassName: function () {
-        return this[0].className;
+        return this.dom.className;
+    },
+    equals: function (that) {
+        return this.dom && that.dom && this.dom == that.dom;
+    },
+    getAttributes: function () {
+        return this.dom.attributes;
+    },
+    toString: function () {
+        return this.dom.toString();
     }
 });
-jQuery.extend(Element.prototype, jQuery.fn);
-jQuery.extend(Element, {
+/**********jQeryAdapter，确保Elenet本身不依赖jQuery，彻底隔离相关Dom的类库**********/
+Object.extend(Inovout.Element.prototype, jQuery.fn, {
+    _pushStack: jQuery.fn.pushStack,
+    pushStack: function (elems) {
+        var ret = this._pushStack(elems);
+        return jQuery.map(ret, function (dom) {
+            return Inovout.Element.get(dom);
+        })
+    }
+});
+
+Object.extend(Inovout.Element, {
     cache: {},
     get: function (dom) {
         if (typeof dom == "string") {
             dom = document.getElementById(dom);
+        } else if (dom instanceof Inovout.Element) {
+            return dom;
         }
-        return Element.cache[dom] || new Element(dom);
+        var element = Inovout.Element.cache[dom];
+        if (!element) {
+            element = new Inovout.Element(dom);
+            element.init(dom);
+            Inovout.Element.cache[dom] = element;
+        }
+        return element;
     }
 });
+
+

@@ -1,24 +1,29 @@
-jQuery.extend(Event, {
-    adapte: function (event, scope, listener, argMap) {
-        event.addListener(function (sender, args) {
-            var listenerArgs = [];
-            var propertyNames = argMap.split(",")
-            $(propertyNames).each(function (index, propertyName) {
-                var propertyNameArray = propertyName.split(".");
-                var propertyValue;
-                if (propertyNameArray[0] == "sender") {
-                    propertyValue = sender;
+var EventListenerAdapter = Class.create({
+    initialize: function (lfn, lfnArgs, scope) {
+        this.lfn = lfn;
+        this.lfnArgs = lfnArgs;
+        this.scope = scope;
+        return this;
+    },
+    inovke: function (sender, args) {
+        var listenerArgs = [];
+        var propertyNames = this.lfnArgs.split(",")
+        Object.each(propertyNames, function (index, propertyName) {
+            var propertyNameArray = propertyName.split(".");
+            var propertyValue;
+            if (propertyNameArray[0] == "sender") {
+                propertyValue = sender;
+            }
+            else if (propertyNameArray[0] == "args") {
+                propertyValue = args;
+                for (var i = 1; i < propertyNameArray.length; i++) {
+                    propertyValue = propertyValue[propertyNameArray[i]]
                 }
-                else if (propertyNameArray[0] == "args") {
-                    propertyValue = args;
-                    for (var i = 1; i < propertyNameArray.length; i++) {
-                        propertyValue = propertyValue[propertyNameArray[i]]
-                    }
-                }
-                listenerArgs.push(propertyValue);
+            }
+            listenerArgs.push(propertyValue);
 
-            });
-            listener.apply(scope, listenerArgs);
         });
+        this.lfn.apply(this.scope, listenerArgs);
+
     }
 });

@@ -1,4 +1,3 @@
-Inovout = {};
 
 jQuery.extend(Object, {
     toArray: function (obj) {
@@ -6,6 +5,9 @@ jQuery.extend(Object, {
     },
     isFunction: function (obj) {
         return jQuery.isFunction(obj);
+    },
+    isUndefined: function (object) {
+        return typeof object === "undefined";
     },
     keys: function (object) {
         if (typeof (object) !== "object") { throw new TypeError(); }
@@ -23,10 +25,16 @@ jQuery.extend(Object, {
             results.push(object[property]);
         return results;
     },
-    extend: function (destination, source) {
-        jQuery.extend(destination, source);
+    each: function (obj, callback, args) {
+        jQuery.each(obj, callback, args);
     },
-    isUndefined: function (object) {
-        return typeof object === "undefined";
+    map: function (elems, callback, arg) {
+        return jQuery.map(elems, callback, arg);
+    },
+    merge: function (first, second) {
+        return jQuery.merge(first, second);
+    },
+    extend: function () {
+        return jQuery.extend.apply(this, Object.toArray(arguments));
     }
 })();

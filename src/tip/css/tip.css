@@ -1,11 +1,11 @@
-div.tip > label {
+div.tip-box > label.tip {
     position: absolute;
     height: 1em;
     left: 1em;
     top: .5em;
 }
 
-div.tip {
+div.tip-box {
     position: relative;
 }
 

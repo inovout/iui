@@ -36,4 +36,3 @@ Inovout.Widget.List = Class.create(Inovout.View, {
     },
     valueKeys:undefined
 });
-Inovout.View.factories[".list"] = Inovout.Widget.List;

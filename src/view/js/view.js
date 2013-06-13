@@ -8,21 +8,37 @@ Inovout.View = Class.create({
 });
 Object.extend(Inovout.View, {
     factories: {},
+    inits: {},
     cache: {},
     get: function (element) {
         if (element instanceof Inovout.View) {
             return element;
         }
+        debugger;
         element = Inovout.Element.get(element);
         var view = Inovout.View.cache[element];
         if (!view) {
-            var className = element.getClassName();
-            Object.each(Object.keys(Inovout.Widget), function (i, widgetClass) {
-                if (className.indexOf(widgetClass.toLowerCase()) > -1) {
-                    view = new Inovout.Widget[widgetClass](element);
-                    Inovout.View.cache[element] = view;
+            var vidgetClass;
+            for (var viewClass in Inovout.View.factories) {
+                if (Inovout.View.factories[viewClass](element)) {
+                    vidgetClass = viewClass;
+                    break
                 }
-            });
+            }
+            if (!vidgetClass) {
+                for (var widget in Inovout.Widget) {
+                    var wc = widget.substring(0, 1).toLowerCase() + widget.substring(1, widget.length);
+                    if (element.hasClass(wc)) {
+                        vidgetClass = widget;
+                        Inovout.View.factories[widget] = function (ele) { return ele.hasClass(wc); };
+                        break
+                    }
+                }
+            }
+            if (vidgetClass) {
+                view = new Inovout.Widget[vidgetClass](element);
+                Inovout.View.cache[element] = view;
+            }
         }
         return view;
     },

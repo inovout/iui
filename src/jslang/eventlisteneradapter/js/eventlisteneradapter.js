@@ -8,7 +8,7 @@ var EventListenerAdapter = Class.create({
     inovke: function (sender, args) {
         var listenerArgs = [];
         var propertyNames = this.lfnArgs.split(",")
-        Object.each(propertyNames, function (index, propertyName) {
+        propertyNames.each(function (propertyName) {
             var propertyNameArray = propertyName.split(".");
             var propertyValue;
             if (propertyNameArray[0] == "sender") {

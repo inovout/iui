@@ -9,14 +9,13 @@ Inovout.View = Class.create({
 Object.extend(Inovout.View, {
     factories: {},
     inits: {},
-    cache: {},
+    cache: new HashMap(),
     get: function (element) {
         if (element instanceof Inovout.View) {
             return element;
         }
-        debugger;
         element = Inovout.Element.get(element);
-        var view = Inovout.View.cache[element];
+        var view = Inovout.View.cache.get(element);
         if (!view) {
             var vidgetClass;
             for (var viewClass in Inovout.View.factories) {
@@ -37,14 +36,14 @@ Object.extend(Inovout.View, {
             }
             if (vidgetClass) {
                 view = new Inovout.Widget[vidgetClass](element);
-                Inovout.View.cache[element] = view;
+                Inovout.View.cache.add(element, view);
             }
         }
         return view;
     },
     init: function (viewClass) {
         var documentElement = Inovout.Element.get(document);
-        Object.each(documentElement.find("." + viewClass), function (i, dom) {
+        documentElement.find("." + viewClass).each(function (dom) {
             var view = new Inovout.Widget[(viewClass.substring(0, 1).toUpperCase() + viewClass.substring(1))](dom);
             Inovout.View.cache[view.element] = view;
         });

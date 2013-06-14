@@ -8,9 +8,10 @@ var Page = Class.create({
     },
     parseEventAdapter: function (selector) {
         var selectorElement = Inovout.Element.get(selector);
-        Object.each(selectorElement.find("[ data-event-adapter]"), function (i, dedElement) {
+        selectorElement.find("[ data-event-adapter]").each(function (dedElement) {
+            debugger;
             var eventAdapters = dedElement.attr("data-event-adapter").split(";");
-            Object.each(eventAdapters, function (j, eventAdapterStatement) {
+            eventAdapters.each( function (eventAdapterStatement) {
                 if (eventAdapterStatement != "") {
                     var eventAdapterExpression = eventAdapterStatement.split("=");
                     var listenerExpression = eventAdapterExpression[1];
@@ -21,10 +22,10 @@ var Page = Class.create({
                     if (view) {
                         var eventExpression = eventAdapterExpression[0].split(".");
                         var event = Inovout.View.get(eventExpression[0])[eventExpression[1]];
-                        var ela =new EventListenerAdapter(view[functionName], functionArgs,view);
+                        var ela = new EventListenerAdapter(view[functionName], functionArgs, view);
                         event.addListener(ela.inovke, ela);
                     }
-                        //searcherList.selectedChanged=update(args.tip)
+                    //searcherList.selectedChanged=update(args.tip)
                     //Event.adapte(event, view, view[functionName], functionArgs);
                 }
             });

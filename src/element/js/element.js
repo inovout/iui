@@ -6,17 +6,16 @@ Inovout.Element = Class.create({
         this.dom.toString = function () {
             return me.dom.uid;
         }
-        Object.each(("blur focus focusin focusout load resize scroll unload click dblclick " +
+        ("blur focus focusin focusout load resize scroll unload click dblclick " +
 	    "mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave " +
-	    "change select submit keydown keypress keyup error contextmenu").split(" "), function (i, name) {
+	    "change select submit keydown keypress keyup error contextmenu").split(" ").each(function (i, name) {
 	        var evt = me[name] = new Event(name, me);
 	        evt._addListener = evt.addListener;
 	        evt.addListener = function (fn, scope, options) {
-	            if (!evt._isBind) {
+	            if (!evt.hasListeners()) {
 	                me.bind(name, function (event) {
 	                    evt.fire(me, { target: Inovout.Element.get(event.target) });
 	                });
-	                evt._isBind = true;
 	            }
 	            evt._addListener(fn, scope, options);
 
@@ -37,7 +36,8 @@ Inovout.Element = Class.create({
     }
 });
 /**********jQeryAdapter，确保Elenet本身不依赖jQuery，彻底隔离相关Dom的类库**********/
-Object.extend(Inovout.Element.prototype, jQuery.fn, {
+Object.extend(Inovout.Element.prototype, jQuery.fn);
+Object.extend(Inovout.Element.prototype, {
     _pushStack: jQuery.fn.pushStack,
     pushStack: function (elems) {
         var ret = this._pushStack(elems);
@@ -48,18 +48,22 @@ Object.extend(Inovout.Element.prototype, jQuery.fn, {
 });
 
 Object.extend(Inovout.Element, {
-    cache: {},
+    cache: new HashMap(),
     get: function (dom) {
         if (typeof dom == "string") {
             dom = document.getElementById(dom);
         } else if (dom instanceof Inovout.Element) {
             return dom;
         }
-        var element = Inovout.Element.cache[dom];
+        var element = Inovout.Element.cache.get(dom);
         if (!element) {
-            element = new Inovout.Element(dom);
+            if (dom.tagName && dom.tagName.toLowerCase() == "form") {
+                element = new Inovout.Element.Form(dom);
+            } else {
+                element = new Inovout.Element(dom);
+            }
             element.init(dom);
-            Inovout.Element.cache[dom] = element;
+            Inovout.Element.cache.add(dom, element);
         }
         return element;
     }

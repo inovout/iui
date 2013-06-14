@@ -89,16 +89,6 @@ var Event = Class.create({
             },
             handler = fn;
 
-        if (o) {
-            listener.o = o;
-            if (o.single) {
-                handler = me.createSingle(handler, listener, o, scope);
-            }
-            if (o.target) {
-                handler = me.createTargeted(handler, listener, o, scope);
-            }
-        }
-
         listener.fireFn = handler;
         return listener;
     },
@@ -226,26 +216,7 @@ var Event = Class.create({
         me.firing = false;
         return true;
     },
-
-    createTargeted: function (handler, listener, o, scope) {
-        return function () {
-            if (o.target === arguments[0]) {
-                handler.apply(scope, arguments);
-            }
-        };
-    },
-
-    createSingle: function (handler, listener, o, scope) {
-        return function () {
-            var event = listener.ev;
-
-            if (event.removeListener(listener.fn, scope) && event.observable) {
-                // Removing from a regular Observable-owned, named event (not an anonymous
-                // event such as Ext's readyEvent): Decrement the listeners count
-                event.observable.hasListeners[event.name]--;
-            }
-
-            return handler.apply(scope, arguments);
-        };
+    hasListeners: function () {
+        return this.listeners.length == 0;
     }
 });

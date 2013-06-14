@@ -1,5 +1,3 @@
-
-
 test("Searcher-List Tests", function () {
     var list = new Inovout.Widget.List("searcherList");
     var tip = new Inovout.Widget.Tip("searcherTip");
@@ -8,6 +6,7 @@ test("Searcher-List Tests", function () {
     var cache = {};
     cache[list.element.dom] = 1;
     cache[tip.element.dom] = 2;
+
     ok(cache[list.element.dom] == 1, "list.cache ok");
     ok(cache[tip.element.dom] == 2, "tip.cache ok");
 

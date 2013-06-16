@@ -14,6 +14,8 @@ test("Searcher-List Tests", function () {
     var item1 = list.element.find("li")[1];
     item1.trigger("click")
     ok(tip.getText() == item1.attr("data-tip"), "Tip text已更新");
+    var searchForm = Inovout.View.get("searchForm");
+    ok(searchForm.attr("action") == item1.attr("data-action"), "Form action已更新");
 
 });
 

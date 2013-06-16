@@ -1,6 +1,13 @@
-ul.list > li > label {
-    float: left;
+ul.list > li > label
+{
     height: 2em;
     line-height: 2em;
     padding: 0 1em;
+    display: block;
+}
+
+ul.list > li
+{
+    float: left;
+    position: relative;
 }

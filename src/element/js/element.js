@@ -3,12 +3,10 @@ Inovout.Element = Class.create({
         var me = this;
         this.dom = dom;
         this.dom.uid = new Date().getTime() + "" + parseInt(Math.random() * 100000, 10);
-        this.dom.toString = function () {
-            return me.dom.uid;
-        }
+
         ("blur focus focusin focusout load resize scroll unload click dblclick " +
 	    "mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave " +
-	    "change select submit keydown keypress keyup error contextmenu").split(" ").each(function (i, name) {
+	    "change select submit keydown keypress keyup error contextmenu").split(" ").each(function (name) {
 	        var evt = me[name] = new Event(name, me);
 	        evt._addListener = evt.addListener;
 	        evt.addListener = function (fn, scope, options) {
@@ -32,7 +30,7 @@ Inovout.Element = Class.create({
         return this.dom.attributes;
     },
     toString: function () {
-        return this.dom.toString();
+        return this.dom.uid;
     }
 });
 /**********jQeryAdapter，确保Elenet本身不依赖jQuery，彻底隔离相关Dom的类库**********/
@@ -57,11 +55,7 @@ Object.extend(Inovout.Element, {
         }
         var element = Inovout.Element.cache.get(dom);
         if (!element) {
-            if (dom.tagName && dom.tagName.toLowerCase() == "form") {
-                element = new Inovout.Element.Form(dom);
-            } else {
-                element = new Inovout.Element(dom);
-            }
+            element = new Inovout.Element(dom);
             element.init(dom);
             Inovout.Element.cache.add(dom, element);
         }

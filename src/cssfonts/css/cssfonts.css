@@ -1,3 +1,4 @@
-body, section, div.widget > * {
+body, section
+{
     font: 12px/1.5 tahoma,​arial,helvetica,sans-seri;
 }

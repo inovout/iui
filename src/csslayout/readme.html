@@ -1,0 +1,29 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Layout-Readme</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+<body>
+    <!--html2md    http://higrid.net/c-html2md.htm-->
+    iui的布局采用栅格思想进行设计和实现，并且支持除IE6-之外所有浏览器。iui布局选定的槽宽和槽间距都为1个字符的宽度，主要特性有：<br />
+    <ol>
+        <li>可计算性，宽度=字符个数<br />
+            Example：<code><div class="w6">iui布局</div>
+            </code>
+            <br />
+            w6指定的宽度就为6个字符的宽度，若字体为12px，则宽度就为72px。这样UI设计器只需了解需放多少个字符即可，无需象以往问一些例如多少像素的专业性问题。
+        </li>
+        <li>em单位，这样便可通过改变默认字体大小自动改变可个DOM相应长度和宽度。</li>
+        <li>弹性布局，iui布局除提供固定宽度样式库之外，还提供丰富百分比宽度定义，使DOM可随着不同场景自适应宽度</li>
+    </ol>
+    在学习如何使用iui布局之前，首先了解一些基本术语：<br />
+    <ol>
+        <li>Workbench<br />
+            在iui中，一个网页被称之为Workbench，Workbench来决定整个页面的宽度（高度一般都采用自适应，必要时也可定高）。在大多情况下，为了节省一个Dom，宽度会由下一级别Dom来决定。分为3个层次：<br />
+            当然也可通过wbxxx指定，如：<code><div class="wb90"></div></code>
+        </li>
+        <li>Workspace</li>
+    </ol>
+</body>
+</html>

@@ -201,7 +201,7 @@ var Event = Class.create({
 
         if (!me.suspended && count > 0) {
             me.firing = true;
-            args = arguments.length ? Object.toArray(arguments) : []
+            args = arguments.length ? $A(arguments) : []
             len = args.length;
             for (i = 0; i < count; i++) {
                 listener = listeners[i];

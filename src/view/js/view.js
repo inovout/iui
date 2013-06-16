@@ -36,8 +36,11 @@ Object.extend(Inovout.View, {
             }
             if (vidgetClass) {
                 view = new Inovout.Widget[vidgetClass](element);
-                Inovout.View.cache.add(element, view);
+            } else {
+                view = new Inovout.View(element);
+                Object.extend(view, element);
             }
+            Inovout.View.cache.add(element, view);
         }
         return view;
     },

@@ -9,7 +9,6 @@ var Page = Class.create({
     parseEventAdapter: function (selector) {
         var selectorElement = Inovout.Element.get(selector);
         selectorElement.find("[ data-event-adapter]").each(function (dedElement) {
-            debugger;
             var eventAdapters = dedElement.attr("data-event-adapter").split(";");
             eventAdapters.each( function (eventAdapterStatement) {
                 if (eventAdapterStatement != "") {

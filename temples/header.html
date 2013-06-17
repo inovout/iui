@@ -32,13 +32,15 @@
                             <label for="kwyword">测点</label></li>
                     </ul>
                     <div class="searcher">
-                        <div class="wgt">
-                            <form id="searcherForm" method="get" action="/solution/search" data-event-adapter="searcherList.selectedChanged=attr(action,args.action)">
+                        <!--                  <div class="wgt">-->
+                        <form id="searcherForm" method="get" action="/solution/search" data-event-adapter="searcherList.selectedChanged=attr(action,args.action)">
+                            <div>
                                 <input id="kwyword" type="search" name="keyword" />
                                 <button type="submit">搜 索</button>
-                            </form>
-                        </div>
+                            </div>
+                        </form>
                     </div>
+                    <!--                    </div>-->
                 </div>
             </div>
         </div>
@@ -48,5 +50,18 @@
             <a href="/node/">测点</a>
         </nav>-->
     </header>
+    <div>
+
+        <div id="left" style="float: right; width: 100%; height: 200px;">
+
+            <div style="margin-right: 200px; height: 200px; background-color: red;"></div>
+
+        </div>
+
+        <div id="right" style="float: right; margin-right: -100%; width: 200px; height: 200px; background-color: green;"></div>
+
+
+
+    </div>
 </body>
 </html>

@@ -1,0 +1,52 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>YunYao</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="../src/cssreset/css/cssreset.css" />
+    <link rel="stylesheet" href="../src/cssfonts/css/cssfonts.css" />
+    <link rel="stylesheet" href="../src/cssbase/css/cssbase.css" />
+    <link rel="stylesheet" href="../src/csslayout/css/csslayout.css" />
+    <link rel="stylesheet" href="../src/sitelogo/css/sitelogo.site.css" />
+    <link rel="stylesheet" href="../src/list/css/list.css" />
+    <link rel="stylesheet" href="../src/list/css/list.theme.css" />
+    <link rel="stylesheet" href="../src/searcher/css/searcher.site.css" />
+    <link rel="stylesheet" href="../src/searcher/css/searcher.theme.css" />
+    <link rel="stylesheet" href="../src/nav/css/nav.site.css" />
+    <link rel="stylesheet" href="../src/nav/css/nav.theme.css" />
+    <script src="../lib/modernizr.min.js"></script>
+</head>
+<body>
+    <header class="w80">
+        <div class="wgt">
+            <div class="w18">
+                <a id="site-logo" href="/">
+                    <img src="http://img01.taobaocdn.com/tps/i1/T1Kz0pXzJdXXXIdnjb-146-58.png" title="云遥—物联网数据库平台" /></a>
+            </div>
+            <div class="w62">
+                <div class="w-1-l4-r10">
+                    <ul id="searcherList" class="tabList w-1">
+                        <li data-action="/solution/search" data-tip="请输入方案搜索条件" class="selected">
+                            <label for="kwyword">方案</label></li>
+                        <li data-action="/node/search" data-tip="请输入测点搜索条件">
+                            <label for="kwyword">测点</label></li>
+                    </ul>
+                    <div class="searcher">
+                        <div class="wgt">
+                            <form id="searcherForm" method="get" action="/solution/search" data-event-adapter="searcherList.selectedChanged=attr(action,args.action)">
+                                <input id="kwyword" type="search" name="keyword" />
+                                <button type="submit">搜 索</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--        <nav id="page-nav" class="w62">
+            <a href="/" class="selected">首页</a>
+            <a href="/solution/">方案</a>
+            <a href="/node/">测点</a>
+        </nav>-->
+    </header>
+</body>
+</html>

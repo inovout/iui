@@ -1,0 +1,8 @@
+header > nav > a {
+    font-size: 1.2em;
+    padding: .3em 1em;
+}
+
+header > nav {
+    padding-left: 6em;
+}

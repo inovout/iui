@@ -1,0 +1,8 @@
+.searcher button {
+    color: #FFFFFF;
+    cursor: pointer;
+}
+
+.searcher > div, .searcher button {
+    background-color: #F27B04;
+}

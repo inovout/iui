@@ -1,0 +1,8 @@
+header > nav > a.selected {
+    background: none repeat scroll 0 0 #F37C06;
+    color: #FFFFFF;
+}
+
+header > nav > a {
+    color: #DB4701;
+}

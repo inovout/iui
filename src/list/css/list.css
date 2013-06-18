@@ -2,11 +2,13 @@
     height: 2em;
     line-height: 2em;
     padding: 0 1em;
-    display: block;
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
     cursor: pointer;
 }
 
 .tabList > li {
-    display:inline-block;
-    position: relative;
+    display: inline-block;
+    *display: inline;
 }

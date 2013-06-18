@@ -1,8 +1,26 @@
-header > nav > a {
+/*--------- Site Nav ---------*/
+#site-nav + header { /*需将默认margin-top设置为0，不然会离site-nav也会突出2.2em高度*/
+    margin-top: 0;
+}
+
+/*--------- Page Nav ---------*/
+header > nav > a,header > nav > span {
     font-size: 1.2em;
-    padding: .3em 1em;
+    padding: 0.2em 1em;
+    display: inline-block;
 }
 
 header > nav {
-    padding-left: 6em;
+    padding: 0 .5em;
+    margin-top: 2em;
+    font-weight: bold;
+}
+
+/*--------- Side Nav ---------*/
+#side-nav a {
+    display: block;
+}
+
+#site-nav, #side-nav {
+    height: 2.2em;
 }

@@ -1,24 +1,11 @@
-.searcher button, .searcher input
-{
+.searcher button, .searcher input {
     border: 0 none;
-    display: block;
-    /*margin: .2em 0;*/
 }
 
-.searcher button
-{
-    /*margin-right: -7.8em;
-    width: 7.8em;*/
-    width: 8em;
-    float: right;
+.searcher button {
+    top: 0.2em;
 }
 
-.searcher input
-{
-    margin-right: 8em;
-}
-
-.searcher > div
-{
-    /*padding-right: 7.8em;*/
+.searcher {
+    padding: .2em 8em .2em .2em;
 }

@@ -3,29 +3,24 @@
     margin: 0 auto;
 }
 
-#site-nav {
-    height: 2.2em;
-}
-
-header > .wgt > div {
-    vertical-align: bottom;
-}
-
 header {
     margin-top: 2.3em;
 }
 
-#site-nav + header { /*需将默认margin-top设置为0，不然会离site-nav也会突出2.2em高度*/
-    margin-top: 0;
-}
+    header > .wgt > div {
+        vertical-align: bottom;
+    }
 
+#content, .content {
+    margin-top: .8em;
+}
 /*--------- Workpart ---------*/
 .wp, .wgt /*widget*/ {
     font-size: 0; /* 所有浏览器 */
     *word-spacing: -1px; /* IE6、7 */
 }
 
-@media screen and(-webkit-min-device-pixel-ratio:0) {
+@media screen and (-webkit-min-device-pixel-ratio:0) {
     .wp, .wgt {
         letter-spacing: -5px;
     }
@@ -45,11 +40,7 @@ section {
     padding: 0 0.5em;
 }
 
-
-
 /*--------- View Width ---------*/
-
-
 .w1 {
     width: 1em;
 }
@@ -565,13 +556,27 @@ section {
 
 
 
+.wgt-r8 w-1 {
+    width: 100%;
+    margin-right: 8em;
+}
 
-.w-1-l4, .w-1-l4-r10 {
-    margin-left: 4em;
+.wgt-r8 {
+    padding-right: 8em;
+    position: relative;
+}
+
+    .wgt-r8 .w8 {
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+
+.wgt-l4-r10 {
+    padding-left: 4em;
 }
 
 
-.w-1-l4-r10 {
-    margin-right: -10em;
+.wgt-l4-r10 {
     padding-right: 10em;
 }

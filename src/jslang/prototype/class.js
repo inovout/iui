@@ -8,6 +8,7 @@
  *  Refer to Prototype's web site for a [tutorial on classes and
  *  inheritance](http://prototypejs.org/learn/class-inheritance).
 **/
+alert("class loaded");
 var Class = (function() {
   
   // Some versions of JScript fail to enumerate over properties, names of which 

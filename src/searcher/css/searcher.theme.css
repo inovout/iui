@@ -3,6 +3,6 @@
     cursor: pointer;
 }
 
-.searcher > div, .searcher button {
+.searcher, .searcher button {
     background-color: #F27B04;
 }

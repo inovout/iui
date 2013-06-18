@@ -1,8 +1,22 @@
-header > nav > a.selected {
+/*--------- Site Nav ---------*/
+
+/*--------- Page Nav ---------*/
+
+header > nav > .selected {
     background: none repeat scroll 0 0 #F37C06;
     color: #FFFFFF;
 }
 
 header > nav > a {
     color: #DB4701;
+}
+
+/*--------- Side Nav ---------*/
+
+/*--------- Nav Template ---------*/
+nav.t-b-b {
+    border-bottom: .2em solid #DB4701;
+}
+nav.t-b-c {
+
 }

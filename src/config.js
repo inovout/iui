@@ -1,4 +1,3 @@
-debugger;
 iui.define({
     name: "class",
     path: "../src/jslang/prototype/class.js"

@@ -12,22 +12,33 @@ iui = (function (window, document, undefined) {
     yepnope(
         {
             test: !!dataConfig,
-            yep: dataConfig
+            yep: dataConfig,
+            complete: loadModule
         }
-    ]);
-    if(!dataMain){
-        yepnope();
+    );
+    function loadModule() {
+        yepnope({
+            load: [configData.name2path["class"]],
+            complete: loadMain
+        });
     }
+
+    function loadMain() {
+        if (!!dataMain) {
+            yepnope(dataMain);
+        }
+    }
+
     var configData = {
         modules: {},
-        name2path:{},
-        path2name:{}
+        name2path: {},
+        path2name: {}
     };
     function define(data) {
         if (Object.isObject(data)) {
-            configData.modules[data.name]=data;
-            configData.name2path[data.name.toLowerCase()]=data.path;
-            configData.path2name[data.path.toLowerCase()]=data.name;
+            configData.modules[data.name] = data;
+            configData.name2path[data.name.toLowerCase()] = data.path;
+            configData.path2name[data.path.toLowerCase()] = data.name;
         }
     }
     function require() { }

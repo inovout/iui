@@ -5,6 +5,18 @@ Object.extend(Object, {
     }
 });
 iui = (function (window, document, undefined) {
+    /*
+    1、获取dataConfig和dataMain信息，若data-config没设置，则默认为script的path（去除文件名），拼接"config.js"；data-main不设置时，则自身即为main。
+    2、加载config.js，加载完成后，通过调用iui.define定义modules和components，注意使用array.prototype扩展方法来简化代码。
+    3、若有dataMain，则在config加载完成事件中加载dataMain及其所有关联module（注意是通过component迭代遍历过滤）。若没有参照1
+    4、在dataMain加载完成（包括没有dataMain），预加载所有未加载的module。当然，这里需有一个优先级设置。
+
+    注意事项：
+    1、module通过是否加载属性和component通过是否加载方法（实际返回对应的module的是否加载属性）
+    2、对于loaded事件仍需进一步完善设计
+    3、Class提供get方法，通过FullName在所有组件查询，若没有加载，由立即加载，加载完成返回该构造函数。
+    4、所有预加载module必须在window.loaded之后（以避影响DOM的资源加载，如：IMG），每隔2S加载一个module，以避免与AJAX或HTTP METHOD抢连接资源。
+    */
     var scripts = document.getElementsByTagName("script")
     var loaderScript = scripts[scripts.length - 1];
     var dataConfig = loaderScript.getAttribute("data-config")
@@ -84,7 +96,6 @@ iui = (function (window, document, undefined) {
         });
         yepnope(needs);
     }
-
     function getDependentModule(component, ret) {
         if (!component) { return ret; }
         if (Object.isString(component)) {
@@ -100,6 +111,14 @@ iui = (function (window, document, undefined) {
         });
         return ret;
     }
+    if (document.addEventListener) {
+        document.addEventListener("DOMContentLoaded", completed, false);
+        window.addEventListener("load", completed, false);
+    } else {
+        document.attachEvent("onreadystatechange", completed);
+        window.attachEvent("onload", completed);
+    }
+    function completed() { }
     var configData = {
         modules: [],
         components: [],

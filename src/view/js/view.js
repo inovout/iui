@@ -44,12 +44,7 @@ Object.extend(Inovout.View, {
         }
         return view;
     },
-    init: function (viewClass) {
-        var documentElement = Inovout.Element.get(document);
-        documentElement.find("." + viewClass).each(function (dom) {
-            var view = new Inovout.Widget[(viewClass.substring(0, 1).toUpperCase() + viewClass.substring(1))](dom);
-            Inovout.View.cache[view.element] = view;
-        });
-        return Object.values(Inovout.View.cache);
+    loadWidget: function (components, loader) {
+        loader(components, Inovout.Element.get(document))
     }
 });

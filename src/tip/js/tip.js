@@ -13,7 +13,3 @@ Inovout.Widget.Tip = Class.create(Inovout.View, {
 Inovout.View.factories.Tip = function (element) {
     return element.hasClass("tip");
 };
-
-Inovout.View.inits["Tip"] = function (element) {
-    return element.find("tip");
-};

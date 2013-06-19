@@ -24,7 +24,7 @@
                     <img src="http://img01.taobaocdn.com/tps/i1/T1Kz0pXzJdXXXIdnjb-146-58.png" title="云遥—物联网数据库平台" /></a>
             </div>
             <div class="w48 wgt-l4-r10">
-                <ul id="searcherList" class="tabList w-1">
+                <ul id="searcherList" class="tabList w-1 list">
                     <li data-action="/solution/search" data-tip="请输入方案搜索条件" class="selected">
                         <label for="kwyword">方案</label></li>
                     <li data-action="/node/search" data-tip="请输入测点搜索条件">
@@ -32,7 +32,7 @@
                 </ul>
                 <div class="searcher wgt-r8">
                     <form id="searcherForm" method="get" action="/solution/search" data-event-adapter="searcherList.selectedChanged=attr(action,args.action)">
-                        <input id="kwyword" type="search" name="keyword" class="w-1" />
+                        <input id="kwyword" placeholder="请输入方案搜索条件" type="search" name="keyword" class="w-1"  data-event-adapter="searcherList.selectedChanged=attr(placeholder,args.tip)"/>
                         <button type="submit" class="w8">搜 索</button>
                     </form>
                 </div>
@@ -44,16 +44,15 @@
             <a href="/node/">测点</a>
         </nav>
     </header>
-    <div id="content" class="w80">
-        <nav id="side-nav" class="w16">
-            <a href="/" class="selected">首页</a>
-            <a href="/solution/">方案</a>
-            <a href="/node/">测点</a>
-        </nav>
-    </div>
     <script src="../lib/yepnope.js"></script>
     <script src="../src/jslang/prototype/object.js"></script>
     <script src="../src/jslang/prototype/function.js"></script>
+    <script src="../src/jslang/prototype/enumerable.js"></script>
+    <script src="../src/jslang/prototype/array.js"></script>
+    <script src="../src/jslang/prototype/class.js"></script>
+    <script src="../src/jslang/hashmap/js/hashmap.js"></script>
+    <script src="../src/jslang/event/js/event.js"></script>
+    <script src="../src/jslang/eventlisteneradapter/js/eventlisteneradapter.js"></script>
     <script src="../src/core/js/core.js" data-config="../src/config.js" data-main="../src/page/js/page.js"></script>
 </body>
 </html>

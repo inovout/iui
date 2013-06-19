@@ -217,6 +217,6 @@ var Event = Class.create({
         return true;
     },
     hasListeners: function () {
-        return this.listeners.length == 0;
+        return this.listeners.length > 0;
     }
 });

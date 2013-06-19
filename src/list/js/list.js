@@ -34,5 +34,5 @@ Inovout.Widget.List = Class.create(Inovout.View, {
         });
         return this;
     },
-    valueKeys:undefined
+    valueKeys: undefined
 });

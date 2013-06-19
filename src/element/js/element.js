@@ -33,7 +33,7 @@ Inovout.Element = Class.create({
         return this.dom.uid;
     }
 });
-/**********jQeryAdapter£¬È·±£Elenet±¾Éí²»ÒÀÀµjQuery£¬³¹µ×¸ôÀëÏà¹ØDomµÄÀà¿â**********/
+/**********jQeryAdapterï¼Œç¡®ä¿Elenetæœ¬èº«ä¸ä¾èµ–jQueryï¼Œå½»åº•éš”ç¦»ç›¸å…³Domçš„ç±»åº“**********/
 Object.extend(Inovout.Element.prototype, jQuery.fn);
 Object.extend(Inovout.Element.prototype, {
     _pushStack: jQuery.fn.pushStack,

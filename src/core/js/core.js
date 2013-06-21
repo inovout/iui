@@ -4,18 +4,25 @@ Object.extend(Object, {
         return Object(obj) === obj;
     }
 });
+Object.extend(Class, {
+    get: function (componentName) {
+        //å…ˆåœ¨Windowæ¨¡å‹å»æ‰¾
+        //å»iui.componentså»æ‰¾ï¼Œè‹¥æœ‰ä¸”æœªåŠ è½½ï¼Œåˆ™åŠ è½½å¯¹åº”çš„moduleï¼Œåœ¨åŠ è½½å®Œæˆä¹‹åï¼Œå°†æ„é€ å‡½æ•°è¿”å›ã€‚
+        return componentName;
+    }
+});
 iui = (function (window, document, undefined) {
     /*
-    1¡¢»ñÈ¡dataConfigºÍdataMainĞÅÏ¢£¬Èôdata-configÃ»ÉèÖÃ£¬ÔòÄ¬ÈÏÎªscriptµÄpath£¨È¥³ıÎÄ¼şÃû£©£¬Æ´½Ó"config.js"£»data-main²»ÉèÖÃÊ±£¬Ôò×ÔÉí¼´Îªmain¡£
-    2¡¢¼ÓÔØconfig.js£¬¼ÓÔØÍê³Éºó£¬Í¨¹ıµ÷ÓÃiui.define¶¨ÒåmodulesºÍcomponents£¬×¢ÒâÊ¹ÓÃarray.prototypeÀ©Õ¹·½·¨À´¼ò»¯´úÂë¡£
-    3¡¢ÈôÓĞdataMain£¬ÔòÔÚconfig¼ÓÔØÍê³ÉÊÂ¼şÖĞ¼ÓÔØdataMain¼°ÆäËùÓĞ¹ØÁªmodule£¨×¢ÒâÊÇÍ¨¹ıcomponentµü´ú±éÀú¹ıÂË£©¡£ÈôÃ»ÓĞ²ÎÕÕ1
-    4¡¢ÔÚdataMain¼ÓÔØÍê³É£¨°üÀ¨Ã»ÓĞdataMain£©£¬Ô¤¼ÓÔØËùÓĞÎ´¼ÓÔØµÄmodule¡£µ±È»£¬ÕâÀïĞèÓĞÒ»¸öÓÅÏÈ¼¶ÉèÖÃ¡£
-
-    ×¢ÒâÊÂÏî£º
-    1¡¢moduleÍ¨¹ıÊÇ·ñ¼ÓÔØÊôĞÔºÍcomponentÍ¨¹ıÊÇ·ñ¼ÓÔØ·½·¨£¨Êµ¼Ê·µ»Ø¶ÔÓ¦µÄmoduleµÄÊÇ·ñ¼ÓÔØÊôĞÔ£©
-    2¡¢¶ÔÓÚloadedÊÂ¼şÈÔĞè½øÒ»²½ÍêÉÆÉè¼Æ
-    3¡¢ClassÌá¹©get·½·¨£¬Í¨¹ıFullNameÔÚËùÓĞ×é¼ş²éÑ¯£¬ÈôÃ»ÓĞ¼ÓÔØ£¬ÓÉÁ¢¼´¼ÓÔØ£¬¼ÓÔØÍê³É·µ»Ø¸Ã¹¹Ôìº¯Êı¡£
-    4¡¢ËùÓĞÔ¤¼ÓÔØmodule±ØĞëÔÚwindow.loadedÖ®ºó£¨ÒÔ±ÜÓ°ÏìDOMµÄ×ÊÔ´¼ÓÔØ£¬Èç£ºIMG£©£¬Ã¿¸ô2S¼ÓÔØÒ»¸ömodule£¬ÒÔ±ÜÃâÓëAJAX»òHTTP METHODÇÀÁ¬½Ó×ÊÔ´¡£
+    1ã€è·å–dataConfigå’ŒdataMainä¿¡æ¯ï¼Œè‹¥data-configæ²¡è®¾ç½®ï¼Œåˆ™é»˜è®¤ä¸ºscriptçš„pathï¼ˆå»é™¤æ–‡ä»¶åï¼‰ï¼Œæ‹¼æ¥"config.js"ï¼›data-mainä¸è®¾ç½®æ—¶ï¼Œåˆ™è‡ªèº«å³ä¸ºmainã€‚
+    2ã€åŠ è½½config.jsï¼ŒåŠ è½½å®Œæˆåï¼Œé€šè¿‡è°ƒç”¨iui.defineå®šä¹‰moduleså’Œcomponentsï¼Œæ³¨æ„ä½¿ç”¨array.prototypeæ‰©å±•æ–¹æ³•æ¥ç®€åŒ–ä»£ç ã€‚
+    3ã€è‹¥æœ‰dataMainï¼Œåˆ™åœ¨configåŠ è½½å®Œæˆäº‹ä»¶ä¸­åŠ è½½dataMainåŠå…¶æ‰€æœ‰å…³è”moduleï¼ˆæ³¨æ„æ˜¯é€šè¿‡componentè¿­ä»£éå†è¿‡æ»¤ï¼‰ã€‚è‹¥æ²¡æœ‰å‚ç…§1
+    4ã€åœ¨dataMainåŠ è½½å®Œæˆï¼ˆåŒ…æ‹¬æ²¡æœ‰dataMainï¼‰ï¼Œé¢„åŠ è½½æ‰€æœ‰æœªåŠ è½½çš„moduleã€‚å½“ç„¶ï¼Œè¿™é‡Œéœ€æœ‰ä¸€ä¸ªä¼˜å…ˆçº§è®¾ç½®ã€‚
+    pathéƒ½æ˜¯ç›¸å¯¹core.jsçš„è·¯å¾„ã€‚
+    æ³¨æ„äº‹é¡¹ï¼š
+    1ã€moduleé€šè¿‡æ˜¯å¦åŠ è½½å±æ€§å’Œcomponenté€šè¿‡æ˜¯å¦åŠ è½½æ–¹æ³•ï¼ˆå®é™…è¿”å›å¯¹åº”çš„moduleçš„æ˜¯å¦åŠ è½½å±æ€§ï¼‰
+    2ã€å¯¹äºloadedäº‹ä»¶ä»éœ€è¿›ä¸€æ­¥å®Œå–„è®¾è®¡ï¼Œä¸»è¦æ˜¯æ¥å£å®šä¹‰ã€‚
+    3ã€Classæä¾›getæ–¹æ³•ï¼Œé€šè¿‡FullNameåœ¨æ‰€æœ‰ç»„ä»¶æŸ¥è¯¢ï¼Œè‹¥æ²¡æœ‰åŠ è½½ï¼Œç”±ç«‹å³åŠ è½½ï¼ŒåŠ è½½å®Œæˆè¿”å›è¯¥æ„é€ å‡½æ•°ã€‚
+    4ã€æ‰€æœ‰é¢„åŠ è½½moduleå¿…é¡»åœ¨window.loadedä¹‹åï¼ˆä»¥é¿å½±å“DOMçš„èµ„æºåŠ è½½ï¼Œå¦‚ï¼šIMGï¼‰ï¼Œæ¯éš”2SåŠ è½½ä¸€ä¸ªmodule,è€Œä¸”æ˜¯ä¾æ¬¡åŠ è½½ï¼Œä»¥é¿å…ä¸AJAXæˆ–HTTP METHODæŠ¢è¿æ¥èµ„æºã€‚
     */
     var scripts = document.getElementsByTagName("script")
     var loaderScript = scripts[scripts.length - 1];
@@ -111,14 +118,14 @@ iui = (function (window, document, undefined) {
         });
         return ret;
     }
-    if (document.addEventListener) {
-        document.addEventListener("DOMContentLoaded", completed, false);
-        window.addEventListener("load", completed, false);
-    } else {
-        document.attachEvent("onreadystatechange", completed);
-        window.attachEvent("onload", completed);
+    $(window).ready(function () {
+        //åŠ è½½æœªåŠ è½½çš„moduleï¼Œæ³¨æ„å…ˆåŠ è½½æœ‰testæ¡ä»¶çš„module.
+    });
+    //å…ˆæš‚æ—¶ä¾èµ–jQuery
+    function main(fn) {
+        $(document).ready(fn);
     }
-    function completed() { }
+
     var configData = {
         modules: [],
         components: [],
@@ -134,7 +141,7 @@ iui = (function (window, document, undefined) {
             configData.pathModules[data.path.toLowerCase()] = data;
             if (!data.components) {
                 data.components = [];
-                data.components.push({ name: data.name });
+                data.components.push({ name: data.name, module: data });
             }
             data.components.each(function (compnent) {
                 compnent.module = data;
@@ -145,6 +152,7 @@ iui = (function (window, document, undefined) {
     }
     function require() { }
     return {
-        define: define
+        define: define,
+        main: main
     };
 })(this, this.document);

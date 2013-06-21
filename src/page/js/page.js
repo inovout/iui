@@ -31,11 +31,12 @@ var Page = Class.create(Inovout.View,{
         });
     }
 });
-
-(function (window, document, undefined) {
+//应由专门的main来处理，以后再来重构
+//(function (window, document, undefined) {
+iui.main(function () {
     window.page = new Page(document);
     window.page.init();
-
-})(this, this.document);
+});
+//})(this, this.document);
 
 

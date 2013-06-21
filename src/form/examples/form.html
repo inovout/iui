@@ -1,0 +1,142 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Form</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="../../cssreset/css/cssreset.css" />
+    <link rel="stylesheet" href="../../cssfonts/css/cssfonts.css" />
+    <link rel="stylesheet" href="../../csslayout/css/csslayout.css" />
+    <link rel="stylesheet" href="../../cssbase/css/cssbase.css" />
+    <script src="../../../lib/moderniz.js"></script>
+</head>
+<body>
+    布局：label:input:message
+    验证：是否必填、数据类型、业务类型、范围、AJAX
+    <hr />
+    <style>
+    </style>
+    <br />
+    <br />
+    <br />
+    <br />
+    <div class="w10 wgt-l4-r6" style="">
+        <label class="w4" style="background-color: red; height: 100px; display: inline-block;"></label>
+        <input type="text" class="w-1" style="background-color: yellow; height: 100px; display: inline-block;" />
+        <span class="w6" style="background-color: blue; height: 100px; display: inline-block;"></span>
+    </div>
+
+    <br />
+    <br />
+    <br />
+    <br />
+
+
+    <div>
+        <form method="post">
+            <fieldset>
+                <legend>创建</legend>
+                <div class="w20 wgt-l4-r10">
+                    <label for="color" class="w4">
+                        颜色： 
+                    </label>
+                    <input id="color" type="color" placeholder="请输入颜色" class="w-1" />
+                    <span class="w10">必须接受</span>
+                </div>
+                <div class="w20 wgt-l4-r10">
+                    <label for="date" class="w4">
+                        日期：</label>
+                    <input id="date" type="date" class="w-1" /><span class="w10">必须接受</span>
+                </div>
+                <div>
+                    <label for="datetime">
+                        日期时间：
+                            <input id="datetime" type="datetime" /></label><span>必须接受</span>
+                </div>
+                <div>
+                    <label for="atetime-local">
+                        本地日期时间：
+                            <input id="atetime-local" type="datetime-local" /></label><span>必须接受</span>
+                </div>
+                <div>
+                    <label for="email">
+                        电子邮箱：
+                            <input id="email" type="email" /></label><span>必须接受</span>
+                </div>
+                <div>
+                    <label for="file">
+                        上传文件：
+                            <input id="file" type="file" /></label><span>必须接受</span>
+                </div>
+                <div>
+                    <label for="image">
+                        图片：
+                            <input id="image" type="image" /></label><span>必须接受</span>
+                </div>
+                <div>
+                    <label for="month">
+                        月份：
+                            <input id="month" type="month" /></label><span>必须接受</span>
+                </div>
+                <div>
+                    <label for="password">
+                        密码：
+                            <input id="password" type="password" /></label><span>必须接受</span>
+                </div>
+                <div>
+                    性别：
+                        <label for="male">
+                            <input id="male" type="radio" name="sex" />男</label>
+                    <label for="famle">
+                        <input id="famle" type="radio" name="sex" />女</label>
+                    <span>必须接受</span>
+                </div>
+                <div>
+                    <label for="search">
+                        搜索：
+                            <input id="search" type="search" /></label><span>必须接受</span>
+                </div>
+                <div>
+                    <label for="tel">
+                        电话：
+                            <input id="tel" type="tel" /></label><span>必须接受</span>
+                </div>
+                <div>
+                    <label for="time">
+                        时间：
+                            <input id="time" type="time" /></label><span>必须接受</span>
+                </div>
+                <div>
+                    <label for="url">
+                        网址：
+                            <input id="url" type="url" /></label><span>必须接受</span>
+                </div>
+                <div>
+                    <label for="week">
+                        周：
+                            <input id="week" type="week" /></label><span>必须接受</span>
+                </div>
+                <div>
+                    <label for="isAccept">
+                        <input id="isAccept" type="checkbox" />是否接受</label><span>必须接受</span>
+                </div>
+                <div>
+                    爱好：
+                        <label for="sport">
+                            <input id="sport" type="checkbox" name="like" />体育</label>
+                    <label for="muisc">
+                        <input id="muisc" type="checkbox" name="like" />音乐</label>
+                    <span>必须接受</span>
+                </div>
+
+            </fieldset>
+            <button type="submit">提交</button>
+            <button type="reset">重置</button>
+        </form>
+    </div>
+    <input type="hidden" />
+
+    <input type="range" />
+    <script src="../../../lib/jquery.js"></script>
+    <script src="../../jslang/prototype-lang.js"></script>
+</body>
+</html>

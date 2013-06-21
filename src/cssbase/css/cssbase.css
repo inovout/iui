@@ -1,20 +1,5 @@
-input[type=text], input[type=password], input[type=search], button
-{
+input, button {
+    padding: 0;
+    border-width: 0;
     height: 2em;
-}
-
-.clearfix:after
-{
-    content: ".";
-    display: block;
-    height: 0;
-    clear: both;
-    visibility: hidden;
-}
-
-.clearfix
-{
-    zoom: 1;
-    display: inline-block;
-    *display: block;
 }

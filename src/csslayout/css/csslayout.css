@@ -26,8 +26,7 @@ header {
     }
 }
 
-section, input, button,
-.wgt > div {
+section, input, button, label, span .wgt > div {
     letter-spacing: normal;
     word-spacing: normal;
     vertical-align: top;
@@ -555,28 +554,82 @@ section {
 
 
 
-
-.wgt-r8 w-1 {
-    width: 100%;
-    margin-right: 8em;
+.wgt-l4, .wgt-l4-r4, .wgt-l4-r6, .wgt-l4-r8, .wgt-l4-r10 {
+    padding-left: 4em;
 }
 
-.wgt-r8 {
+.wgt-l6, .wgt-l6-r4, .wgt-l6-r6, .wgt-l6-r8, .wgt-l6-r10 {
+    padding-left: 6em;
+}
+
+.wgt-l8, .wgt-l8-r4, .wgt-l8-r6, .wgt-l8-r8, .wgt-l8-r10 {
+    padding-left: 8em;
+}
+
+.wgt-l10, .wgt-l10-r4, .wgt-l10-r6, .wgt-l10-r8, .wgt-l10-r10 {
+    padding-left: 10em;
+}
+
+.wgt-r4, .wgt-l4-r4, .wgt-l6-r4, .wgt-l6-r4, .wgt-l6-r4 {
+    padding-right: 4em;
+    position: relative;
+}
+
+.wgt-r6, .wgt-l4-r6, .wgt-l6-r6, .wgt-l6-r6, .wgt-l6-r6 {
+    padding-right: 6em;
+    position: relative;
+}
+
+.wgt-r8, .wgt-l4-r8, .wgt-l6-r8, .wgt-l6-r8, .wgt-l6-r8 {
     padding-right: 8em;
     position: relative;
 }
 
-    .wgt-r8 .w8 {
+.wgt-r10, .wgt-l4-r10, .wgt-l6-r10, .wgt-l6-r10, .wgt-l6-r10 {
+    padding-right: 10em;
+    position: relative;
+}
+
+    .wgt-l4 .w4:first-child, .wgt-l4-r4 .w4:first-child, .wgt-l4-r6 .w4:first-child, .wgt-l4-r8 .w4:first-child, .wgt-l4-r10 .w4:first-child, .wgt-l6 .w6:first-child, .wgt-l6-r4 .w6:first-child, .wgt-l6-r6 .w6:first-child, .wgt-l6-r8 .w6:first-child, .wgt-l6-r10 .w6:first-child, .wgt-l8 .w8:first-child, .wgt-l8-r4 .w8:first-child, .wgt-l8-r6 .w8:first-child, .wgt-l8-r8 .w8:first-child, .wgt-l8-r10 .w8:first-child, .wgt-l10 .w10:first-child, .wgt-l10-r4 .w10:first-child, .wgt-l10-r6 .w10:first-child, .wgt-l10-r8 .w10:first-child, .wgt-l10-r10 .w10:first-child {
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+
+    .wgt-r4 .w4,
+    .wgt-l4-r4 .w4,
+    .wgt-l6-r4 .w4,
+    .wgt-l8-r4 .w4,
+    .wgt-l10-r4 .w4,
+    .wgt-r6 .w6,
+    .wgt-l4-r6 .w6,
+    .wgt-l6-r6 .w6,
+    .wgt-l8-r6 .w6,
+    .wgt-l10-r6 .w6,
+    .wgt-r8 .w8,
+    .wgt-l4-r8 .w8,
+    .wgt-l6-r8 .w8,
+    .wgt-l8-r8 .w8,
+    .wgt-l10-r8 .w8,
+    .wgt-r10 .w10,
+    .wgt-l4-r10 .w10,
+    .wgt-l6-r10 .w10,
+    .wgt-l8-r10 .w10,
+    .wgt-l10-r10 .w10 {
         position: absolute;
         top: 0;
         right: 0;
     }
 
-.wgt-l4-r10 {
-    padding-left: 4em;
+.ws-m80 {
+    min-width: 80em;
 }
 
+.ws-m90 {
+    min-width: 90em;
+}
 
-.wgt-l4-r10 {
-    padding-right: 10em;
+.ws-m100 {
+    min-width: 90em;
 }

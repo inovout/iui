@@ -1,0 +1,41 @@
+fieldset label, fieldset span, select
+{
+    height: 2em;
+    line-height: 2em;
+}
+
+fieldset label, fieldset span, fieldset div > div
+{
+    border-top: 1px solid transparent;
+}
+
+label > input
+{
+    margin-right: .6em;
+    vertical-align: middle;
+}
+
+fieldset span
+{
+    text-indent: 1em;
+}
+
+input.w-1, fieldset spsn.w-1, fieldset label.w-1
+{
+    width: 98%;
+}
+
+fieldset label.w-1, fieldset spsn.w-1, fieldset spsn.w-1-2
+{
+    border-left: 1px solid transparent;
+}
+
+input.w-1-2, fieldset spsn.w-1-2
+{
+    width: 49%;
+}
+
+fieldset > div, .property
+{
+    margin-top: 0.5em;
+}

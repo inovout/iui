@@ -7,61 +7,96 @@
     <link rel="stylesheet" href="../../cssfonts/css/cssfonts.css" />
     <link rel="stylesheet" href="../../csslayout/css/csslayout.css" />
     <link rel="stylesheet" href="../../cssbase/css/cssbase.css" />
+    <link rel="stylesheet" href="../../form/css/form.css" />
     <script src="../../../lib/moderniz.js"></script>
 </head>
 <body>
     布局：label:input:message
     验证：是否必填、数据类型、业务类型、范围、AJAX
     <hr />
-    <style>
-    </style>
     <br />
     <br />
-    <br />
-    <br />
-    <div class="w10 wgt-l4-r6" style="">
-        <label class="w4" style="background-color: red; height: 100px; display: inline-block;"></label>
-        <input type="text" class="w-1" style="background-color: yellow; height: 100px; display: inline-block;" />
-        <span class="w6" style="background-color: blue; height: 100px; display: inline-block;"></span>
-    </div>
-
-    <br />
-    <br />
-    <br />
-    <br />
-
-
-    <div>
+    <div class="w30">
         <form method="post">
             <fieldset>
                 <legend>创建</legend>
-                <div class="w20 wgt-l4-r10">
+                <div class="w16 wgt-l4-r10">
                     <label for="color" class="w4">
                         颜色： 
                     </label>
-                    <input id="color" type="color" placeholder="请输入颜色" class="w-1" />
-                    <span class="w10">必须接受</span>
+                    <input id="color" name="color" type="color" placeholder="请输入颜色" class="w-1" data-val="true" data-val-required="颜色必填！" />
+                    <span class="w10 field-validation-valid" data-valmsg-for="color.Price" data-valmsg-replace="true">必须接受</span>
                 </div>
-                <div class="w20 wgt-l4-r10">
+                <div class="w16 wgt-l4-r10">
                     <label for="date" class="w4">
                         日期：</label>
-                    <input id="date" type="date" class="w-1" /><span class="w10">必须接受</span>
+                    <input id="date" type="date" placeholder="请输入日期" class="w-1" />
+                    <span class="w10">必须接受</span>
                 </div>
-                <div>
-                    <label for="datetime">
-                        日期时间：
-                            <input id="datetime" type="datetime" /></label><span>必须接受</span>
+                <div class="w16 wgt-l4-r10">
+                    <label for="city" class="w4">
+                        城市：</label>
+                    <select class="w-1" id="city">
+                        <option selected="selected">请选择</option>
+                        <optgroup label="江苏省">
+                            <option value="nanjing">南京市</option>
+                            <option value="nanjing">苏州市</option>
+                        </optgroup>
+                        <optgroup label="浙江省">
+                            <option value="nanjing">杭州市</option>
+                            <option value="nanjing">宁波市</option>
+                        </optgroup>
+                    </select>
+                    <span class="w10">必须接受</span>
+                </div>
+                <div class="w16 wgt-l4-r10">
+                    <label class="w4">
+                        爱好：</label>
+                    <div class="wgt">
+                        <label for="Checkbox1" class="w6">
+                            <input type="checkbox" id="Checkbox1" name="likeCheck" />体育</label>
+                        <label for="Checkbox2" class="w6">
+                            <input type="checkbox" id="Checkbox2" name="likeCheck" />体育</label>
+                        <label for="Checkbox3" class="w6">
+                            <input type="checkbox" id="Checkbox3" name="likeCheck" />体育</label>
+                        <label for="Checkbox4" class="w6">
+                            <input type="checkbox" id="Checkbox4" name="likeCheck" />体育</label>
+                    </div>
+                    <span class="w10">必须接受</span>
+                </div>
+                <div class="w16 wgt-l4-r10">
+                    <label class="w4">
+                        爱好：</label>
+                    <div class="wgt">
+                        <label for="Checkbox1" class="w6">
+                            <input type="radio" id="Checkbox5" name="likeCheck" />体育</label>
+                        <label for="radio" class="w6">
+                            <input type="radio" id="Checkbox6" name="likeCheck" />体育</label>
+                        <label for="radio" class="w6">
+                            <input type="radio" id="Checkbox7" name="likeCheck" />体育</label>
+                        <label for="radio" class="w6">
+                            <input type="radio" id="Checkbox8" name="likeCheck" />体育</label>
+                    </div>
+                    <span class="w10">必须接受</span>
+                </div>
+                <div class="w26 wgt-l4">
+                    <label for="datetime" class="w4">
+                        时间：</label>
+                    <input id="datetime" type="datetime" class="w-1" />
+                    <span class="w-1">必须接受</span>
+                </div>
+                <div class="w30">
+                    <label for="email" class="w-1">
+                        电子邮箱：</label>
+                    <input id="email" type="email" class="w-1" />
+                    <span class="w-1">必须接受</span>
                 </div>
                 <div>
                     <label for="atetime-local">
                         本地日期时间：
                             <input id="atetime-local" type="datetime-local" /></label><span>必须接受</span>
                 </div>
-                <div>
-                    <label for="email">
-                        电子邮箱：
-                            <input id="email" type="email" /></label><span>必须接受</span>
-                </div>
+
                 <div>
                     <label for="file">
                         上传文件：
@@ -138,5 +173,8 @@
     <input type="range" />
     <script src="../../../lib/jquery.js"></script>
     <script src="../../jslang/prototype-lang.js"></script>
+    <script src="../../../lib/jquery.validate.js"></script>
+    <script src="../../../lib/jquery.validate.unobtrusive.js"></script>
+
 </body>
 </html>

@@ -1,5 +1,6 @@
-input, button {
-    padding: 0;
-    border-width: 0;
+input, button
+{
     height: 2em;
 }
+
+

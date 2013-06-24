@@ -39,3 +39,16 @@ fieldset > div, .property
 {
     margin-top: 0.5em;
 }
+
+.box-sizing-ie7
+{
+    /* emulates width: 33% */
+    width: expression((this.parentNode.clientWidth/3 - parseInt(this.currentStyle['paddingLeft']) - parseInt(this.currentStyle['paddingRight'])) + 'px');
+}
+
+.box-sizing-ie7
+{
+    height: expression((this.parentNode.clientHeight - parseInt(this.currentStyle['paddingTop']) - parseInt(this.currentStyle['paddingBottom'])) + 'px');
+}
+/*http://www.snackoclock.net/demos/jquiroz/box-sizing/*/
+

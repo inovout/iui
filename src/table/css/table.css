@@ -1,0 +1,28 @@
+tr {
+    height: 2em;
+    line-height: 2em;
+}
+
+th, td.date, td.code, td.datetime {
+    text-align: center;
+}
+
+td.number {
+    text-align: right;
+}
+
+.pager {
+    text-align: center;
+    margin-top: .5em;
+    vertical-align: bottom;
+}
+
+    .pager a, .pager span {
+        height: 1.5em;
+        line-height: 1.5em;
+    }
+
+    .pager a, span.current {
+        padding: 0 .5em;
+        margin: 0 .2em;
+    }

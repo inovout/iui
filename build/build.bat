@@ -2,9 +2,9 @@
 
 echo css文件开始复制
 copy ..\src\cssreset\css\cssreset.css+..\src\cssfonts\css\cssfonts.css+..\src\csslayout\css\csslayout.css cSun.css /b
-copy ..\src\cssbase\css\cssbase.css+..\src\list\css\list.css+..\src\searcher\css\searcher.css+..\src\nav\css\nav.css cWidget.css /b
-copy ..\src\list\css\list.theme.css+..\src\searcher\css\searcher.theme.css+..\src\nav\css\nav.theme.css tWidget.css /b
-copy ..\src\sitelogo\css\sitelogo.css cSite.css /b
+copy ..\src\cssbase\css\cssbase.css+..\src\list\css\list.css+..\src\searcher\css\searcher.css+..\src\nav\css\nav.css+..\src\table\css\table.css cWidget.css /b
+copy ..\src\list\css\list.theme.css+..\src\searcher\css\searcher.theme.css+..\src\nav\css\nav.theme.css++..\src\table\css\table.theme.css tWidget.css /b
+copy ..\src\cssfonts\css\cssfonts.site.css+..\src\sitelogo\css\sitelogo.css cSite.css /b
 echo css文件复制完成
 
 echo 压缩css文件

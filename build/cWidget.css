@@ -1,23 +1,20 @@
-input[type=text], input[type=password], input[type=search], button
-{
+input, button {
     height: 2em;
 }
 
-.clearfix:after
+a {
+    text-decoration: none;
+}
+h1, h2, h3
 {
-    content: ".";
-    display: block;
-    height: 0;
-    clear: both;
-    visibility: hidden;
+    margin: 1em 0;
 }
 
-.clearfix
+h1, h2, h3, h4, h5, h6, strong
 {
-    zoom: 1;
-    display: inline-block;
-    *display: block;
+    font-weight: bold;
 }
+
 .tabList > li > label {
     height: 2em;
     line-height: 2em;
@@ -69,3 +66,31 @@ header > nav {
 #site-nav, #side-nav {
     height: 2.2em;
 }
+tr {
+    height: 2em;
+    line-height: 2em;
+}
+
+th, td.date, td.code, td.datetime {
+    text-align: center;
+}
+
+td.number {
+    text-align: right;
+}
+
+.pager {
+    text-align: center;
+    margin-top: .5em;
+    vertical-align: bottom;
+}
+
+    .pager a, .pager span {
+        height: 1.5em;
+        line-height: 1.5em;
+    }
+
+    .pager a, span.current {
+        padding: 0 .5em;
+        margin: 0 .2em;
+    }

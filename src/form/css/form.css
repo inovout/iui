@@ -1,54 +1,28 @@
-fieldset label, fieldset span, select
-{
+fieldset label, fieldset span, select {
     height: 2em;
     line-height: 2em;
 }
 
-fieldset label, fieldset span, fieldset div > div
-{
-    border-top: 1px solid transparent;
-}
-
-label > input
-{
+label > input {
     margin-right: .6em;
     vertical-align: middle;
 }
 
-fieldset span
-{
+fieldset input {
+    box-sizing: border-box;
+    -moz-box-sizing: border-box; /* Firefox */
+    -webkit-box-sizing: border-box; /* Safari */
+}
+
+    fieldset input.w-1, fieldset input.w-1-2, fieldset input.w-1-3 {
+        *width: expression(function(el){el.style.width = (parseInt(el.parentNode.currentStyle["width"])*parseInt(el.parentNode.currentStyle["fontSize"])- parseInt(el.currentStyle["borderWidth"])*2)+"px"; }(this));
+        *height: expression(function(el){el.style.height = (parseInt(el.currentStyle["height"])*parseInt(el.parentNode.currentStyle["fontSize"])- parseInt(el.currentStyle["borderWidth"])*2)+"px";}(this));
+    }
+
+fieldset span {
     text-indent: 1em;
 }
 
-input.w-1, fieldset spsn.w-1, fieldset label.w-1
-{
-    width: 98%;
-}
-
-fieldset label.w-1, fieldset spsn.w-1, fieldset spsn.w-1-2
-{
-    border-left: 1px solid transparent;
-}
-
-input.w-1-2, fieldset spsn.w-1-2
-{
-    width: 49%;
-}
-
-fieldset > div, .property
-{
+fieldset > div, .property {
     margin-top: 0.5em;
 }
-
-.box-sizing-ie7
-{
-    /* emulates width: 33% */
-    width: expression((this.parentNode.clientWidth/3 - parseInt(this.currentStyle['paddingLeft']) - parseInt(this.currentStyle['paddingRight'])) + 'px');
-}
-
-.box-sizing-ie7
-{
-    height: expression((this.parentNode.clientHeight - parseInt(this.currentStyle['paddingTop']) - parseInt(this.currentStyle['paddingBottom'])) + 'px');
-}
-/*http://www.snackoclock.net/demos/jquiroz/box-sizing/*/
-

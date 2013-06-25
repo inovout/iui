@@ -33,4 +33,20 @@ nav.t-b-b {
 }
 nav.t-b-c {
 
+}thead {
+    background-color: #0ff;
+}
+
+tr {
+    border-bottom: 1px solid #E6E6E6;
+}
+
+
+.pager a, span.current {
+    border: 1px solid #1d66e9;
+}
+
+.pager span.current {
+    background-color: #1d66e9;
+    color: #FFF;
 }

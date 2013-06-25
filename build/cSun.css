@@ -126,28 +126,23 @@ legend {
 
 /* YUI CSS Detection Stamp */
 #yui3-css-stamp.cssreset { display: none; }
-body, section, input, select, button, label, span, table, .wgt > div
-{
+body, section, input, select, button, label, span, table, img, .wgt > div {
     font: 14px/1.5 tahoma,​arial,helvetica,sans-seri;
 }
 
-h1
-{
+h1 {
     font-size: 20px;
 }
 
-h2
-{
+h2 {
     font-size: 18px;
 }
 
-h3
-{
+h3 {
     font-size: 16px;
 }
-
 /*--------- Workbench & Workspace ---------*/
-.wb100, .wb90, .wb80, header, #content, .content, footer {
+header, #content, .content, footer {
     margin: 0 auto;
 }
 
@@ -175,7 +170,7 @@ header {
     }
 }
 
-section, input, select, button, label, span, table, .wgt > div {
+section, input, select, button, label, span, table, img, .wgt > div {
     letter-spacing: normal;
     word-spacing: normal;
     vertical-align: top;
@@ -185,7 +180,8 @@ section, input, select, button, label, span, table, .wgt > div {
 }
 
 section {
-    padding: 0 0.5em;
+    margin: 0 .5em;
+    *padding: 0 .5em;
 }
 
 /*--------- View Width ---------*/
@@ -341,7 +337,7 @@ section {
     width: 38em;
 }
 
-.w39 {
+.w39, section.w40 {
     width: 39em;
 }
 
@@ -501,11 +497,11 @@ section {
     width: 40em;
 }
 
-.w79 {
+.w79, header.w80 {
     width: 79em;
 }
 
-.w80, .wb80 {
+.w80, .ws80 {
     width: 80em;
 }
 
@@ -541,11 +537,11 @@ section {
     width: 88em;
 }
 
-.w89 {
+.w89, header.w90 {
     width: 89em;
 }
 
-.w90, .wb90 {
+.w90, .ws90 {
     width: 90em;
 }
 
@@ -581,11 +577,11 @@ section {
     width: 98em;
 }
 
-.w99, section.w100 {
+.w99, header.w90 {
     width: 99em;
 }
 
-.w100, .wb100, .ws100 {
+.w100, .ws100 {
     width: 100em;
 }
 

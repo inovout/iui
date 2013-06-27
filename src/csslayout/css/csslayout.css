@@ -27,7 +27,7 @@ header {
     }
 }
 
-section, input, select, button, label, span, table, img, .wgt > div {
+section, input, select, button, label, span, table,article, img, .wgt > div {
     letter-spacing: normal;
     word-spacing: normal;
     vertical-align: top;

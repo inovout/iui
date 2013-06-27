@@ -52,30 +52,35 @@
         </div>
     </div>
     <script src="../../../lib/jquery.js"></script>
-    <script src="../../jslang/prototype-lang.js"></script>
     <script src="../../../lib/knockout.js"></script>
-    <form data-bind="submit: addItem">
-        New item:
-    <input data-bind='value: itemToAdd, valueUpdate: "afterkeydown"' />
-        <button type="submit" data-bind="enable: itemToAdd().length > 0">Add</button>
-        <p>Your items:</p>
-        <select multiple="multiple" width="50" data-bind="options: items"></select>
-    </form>
+    <script src="../../jslang/prototype-lang.js"></script>
+    <script src="../../jslang/hashmap/js/hashmap.js"></script>
+    <script src="../../jslang/event/js/event.js"></script>
+    <script src="../../element/js/element.js"></script>
+    <script src="../../view/js/view.js"></script>
+    <script src="../../table/js/table.js"></script>
+
+    <table id="vmTable">
+        <thead>
+            <tr>
+                <th>Option</th>
+            </tr>
+        </thead>
+        <tbody data-bind="foreach: items">
+            <tr>
+                <td data-bind="text: name"></td>
+                <td data-bind="text: type"></td>
+            </tr>
+        </tbody>
+    </table>
+
     <script>
-        var vm;
-        var SimpleListModel = function (items) {
-            this.items = ko.observableArray(items);
-            this.itemToAdd = ko.observable("");
-            this.addItem = function () {
-                if (this.itemToAdd() != "") {
-                    this.items.push(this.itemToAdd()); // Adds the item. Writing to the "items" observableArray causes any associated UI to update.
-                    this.itemToAdd(""); // Clears the text box, because it's bound to the "itemToAdd" observable
-                }
-            }.bind(this);  // Ensure that "this" is always this view model
-        };
-        vm = new SimpleListModel(["Alpha", "Beta", "Gamma"]);
-        debugger;
-        ko.applyBindings(vm);
+        var table = new DataTable("vmTable");
+        var items = table.bindData();
+        items.push({ name: "A", type: "1" });
+        items.push({ name: "B", type: "1" });
+        items.unshift({ name: "C", type: "1" });
+        items.pop();
     </script>
 </body>
 </html>

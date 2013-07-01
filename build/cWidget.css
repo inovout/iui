@@ -101,3 +101,31 @@ article > div > h2, article > div > p {
 {
     visibility: hidden;
 }
+fieldset label, fieldset span, select {
+    height: 2em;
+    line-height: 2em;
+}
+
+label > input {
+    margin-right: .6em;
+    vertical-align: middle;
+}
+
+fieldset input {
+    box-sizing: border-box;
+    -moz-box-sizing: border-box; /* Firefox */
+    -webkit-box-sizing: border-box; /* Safari */
+}
+
+    fieldset input.w-1, fieldset input.w-1-2, fieldset input.w-1-3 {
+        *width: expression(function(el){el.style.width = (parseInt(el.parentNode.currentStyle["width"])*parseInt(el.parentNode.currentStyle["fontSize"])- parseInt(el.currentStyle["borderWidth"])*2)+"px"; }(this));
+        *height: expression(function(el){el.style.height = (parseInt(el.currentStyle["height"])*parseInt(el.parentNode.currentStyle["fontSize"])- parseInt(el.currentStyle["borderWidth"])*2)+"px";}(this));
+    }
+
+fieldset span {
+    text-indent: 1em;
+}
+
+fieldset > div, .property {
+    margin-top: 0.5em;
+}

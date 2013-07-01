@@ -41,7 +41,13 @@ Inovout.Widget.TabList = Class.create(Inovout.View, {
 Inovout.Widget.DataChart = Class.create(Inovout.View, {
     initialize: function ($super, element) {
         $super(element);
-        element.highcharts(element.html().toJSON());
+        debugger;
+        $(element.dom).highcharts(element.html().evalJSON());
         element.css("visibility", "visible");
     }
+});
+$(function () {
+    $(".dataChart").each(function (i, dom) {
+        Inovout.View.get(dom);
+    });
 });

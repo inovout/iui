@@ -1,4 +1,4 @@
-/*--------- Workbench & Workspace ---------*/
+﻿/*--------- Workbench & Workspace ---------*/
 header, #content, .content, footer {
     margin: 0 auto;
 }
@@ -351,7 +351,7 @@ section {
 }
 
 .w78 {
-    width: 40em;
+    width: 78em;
 }
 
 .w79, header.w80 {

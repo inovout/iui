@@ -12,7 +12,7 @@ header {
         position: static;
     }
 
-#content, .content {
+#content, .content,footer {
     margin-top: .8em;
 }
 /*--------- Workpart ---------*/

@@ -32,7 +32,7 @@ Inovout.Widget.DropDownList = Class.create(Inovout.Widget.List, {
     initialize: function ($super, element) {
         $super(element);
         var me = this;
-        element.change.addListener(function ($super, sender, args) {
+        element.change.addListener(function (sender, args) {
             var selectedOption = me.element.children("option:selected")[0];
             me.selectedChanged.fire(me, me.wrapEventArgs(selectedOption));
         });

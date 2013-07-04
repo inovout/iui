@@ -117,9 +117,9 @@ form input {
     -webkit-box-sizing: border-box; /* Safari */
 }
 
-    form input.w-1, fieldset input.w-1-2, fieldset input.w-1-3 {
-        *width: expression(function(el){el.style.width = (parseInt(el.parentNode.currentStyle["width"])*parseInt(el.parentNode.currentStyle["fontSize"])- parseInt(el.currentStyle["borderWidth"])*2)+"px"; }(this));
-        *height: expression(function(el){el.style.height = (parseInt(el.currentStyle["height"])*parseInt(el.parentNode.currentStyle["fontSize"])- parseInt(el.currentStyle["borderWidth"])*2)+"px";}(this));
+    form input.w-1, form input.w-1-2, form input.w-1-3 {
+        *width: expression(function(el){el.style.width = (el.clientWidth- parseFloat(el.currentStyle["borderWidth"])*2)+"px"; }(this));
+        *height: expression(function(el){el.style.height = (el.clientHeight- parseFloat(el.currentStyle["borderWidth"])*2)+"px";}(this));
     }
 
 form span {
@@ -129,3 +129,42 @@ form span {
 form  div, .property {
     margin-top: 0.5em;
 }
+.binaryPad > article, .binaryPad-nav > span:first-child
+{
+    display: none;
+}
+
+    .binaryPad > article:first-child
+    {
+        display: block;
+    }
+
+.binaryPad-nav > span
+{
+    cursor: pointer;
+}
+.wizard > div > article
+{
+    display: none;
+}
+
+.wizard > nav > span:first-child
+{
+    visibility:hidden;
+}
+
+.wizard > div > article:first-child
+{
+    display: block;
+}
+
+.wizard > nav
+{
+    text-align: center;
+}
+
+    .wizard > nav > span
+    {
+        margin: .5em .5em 0;
+        cursor: pointer;
+    }

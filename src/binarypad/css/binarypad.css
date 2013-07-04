@@ -1,0 +1,14 @@
+.binaryPad > article, .binaryPad-nav > span:first-child
+{
+    display: none;
+}
+
+    .binaryPad > article:first-child
+    {
+        display: block;
+    }
+
+.binaryPad-nav > span
+{
+    cursor: pointer;
+}

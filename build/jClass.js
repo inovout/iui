@@ -5800,26 +5800,10 @@ Object.extend(Inovout.View, {
     }
 });
 //应由专门的main来处理，以后再来重构
-(function (window, document, undefined) {
+//(function (window, document, undefined) {
 //iui.main(function () {
+$(function () {
     window.page = new Page(document);
     window.page.init();
-//});
-})(this, this.document);
-
-
-Inovout.Widget.DataChart = Class.create(Inovout.View, {
-    initialize: function ($super, element) {
-        $super(element);
-        var option = new Function("return " + element.html().replace(/\n/g, ""))();
-        element.empty();
-        $(element.dom).highcharts(option);
-        //$(element.dom).highcharts(eval("(" + element.html() + ")"));
-        element.css("visibility", "visible");
-    }
 });
-$(function () {
-    $(".dataChart").each(function (i, dom) {
-        Inovout.View.get(dom);
-    });
-});
+//})(this, this.document);

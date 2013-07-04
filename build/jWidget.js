@@ -32,12 +32,12 @@ Inovout.Widget.DropDownList = Class.create(Inovout.Widget.List, {
     initialize: function ($super, element) {
         $super(element);
         var me = this;
-        element.change.addListener(function ($super, sender, args) {
+        element.change.addListener(function (sender, args) {
             var selectedOption = me.element.children("option:selected")[0];
             me.selectedChanged.fire(me, me.wrapEventArgs(selectedOption));
         });
         return this;
-    },
+    }
 });
 
 
@@ -92,6 +92,72 @@ Inovout.Widget.DataChart = Class.create(Inovout.View, {
 });
 $(function () {
     $(".dataChart").each(function (i, dom) {
+        Inovout.View.get(dom);
+    });
+});Inovout.Widget.BinaryPad = Class.create(Inovout.View, {
+    initialize: function ($super, element) {
+        $super(element);
+        this.navs = Inovout.Element.get(document).find(".binaryPad-nav>span");
+        this.articles = element.children("article");
+        var me = this;
+        this.navs.each(function (nav) {
+            nav.click.addListener(function (sender, args) {
+                me.navs.each(function (n) {
+                    n.toggle();
+                });
+                me.articles.each(function (a) {
+                    a.toggle();
+                });
+
+            });
+        });
+    }
+});
+$(function () {
+    $(".binaryPad").each(function (i, dom) {
+        Inovout.View.get(dom);
+    });
+});Inovout.Widget.Wizard = Class.create(Inovout.View, {
+    initialize: function ($super, element) {
+        $super(element);
+        this.navs = element.find("nav>span");
+        this.articles = element.find("div>article");
+        this.currentArticle = 0;
+        var me = this;
+        this.navs[0].click.addListener(function (sender, args) {
+            me.currentArticle--;
+            me.show(me.currentArticle);
+            if (me.currentArticle < me.articles.length - 1) {
+                me.navs[1].css("visibility", "visible");
+            }
+            if (me.currentArticle == 0) {
+                me.navs[0].css("visibility", "hidden");
+            }
+        });
+        this.navs[1].click.addListener(function (sender, args) {
+            me.currentArticle++;
+            me.show(me.currentArticle);
+            if (me.currentArticle > 0) {
+                me.navs[0].css("visibility", "visible");
+            }
+            if (me.currentArticle == me.articles.length - 1) {
+                me.navs[1].css("visibility", "hidden");
+            }
+        });
+        if (this.navs.length > 2) {
+            this.navs[2].click.addListener(function (sender, args) {
+                me.currentArticle = me.articles.length - 1;
+                me.show(me.currentArticle);
+            });
+        }
+    },
+    show: function (i) {
+        this.articles.each(function (item) { item.hide(); });
+        this.articles[i].show();
+    }
+});
+$(function () {
+    $(".wizard").each(function (i, dom) {
         Inovout.View.get(dom);
     });
 });

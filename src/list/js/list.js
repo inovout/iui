@@ -1,5 +1,47 @@
+Inovout.Widget.List = Class.create(Inovout.View, {
+    initialize: function ($super, element) {
+        $super(element);
+        this.selectedChanged = new Event("selectedChanged", this);
+        return this;
+    },
+    wrapEventArgs: function (selectedItem) {
+        var eventArgs = {
+            text: selectedItem.text()
+        }
+        if (!this.valueKeys) {
+            this.valueKeys = [];
+            var attributes = selectedItem.getAttributes();
+            for (var i = 0; i < attributes.length; i++) {
+                var attrName = attributes[i].name;
+                var dataAttrIndex = attrName.indexOf("data-");
+                if (dataAttrIndex > -1) {
+                    this.valueKeys.push(attrName.substring(5, attrName.length));
+                }
+            }
+        }
+        for (var i = 0; i < this.valueKeys.length; i++) {
+            eventArgs[this.valueKeys[i]] = selectedItem.data(this.valueKeys[i]);
+        }
+        eventArgs.value = eventArgs.value || selectedItem.val() || selectedItem.text();
+        return eventArgs;
+    },
+    valueKeys: undefined
+});
 
-Inovout.Widget.TabList = Class.create(Inovout.View, {
+Inovout.Widget.DropDownList = Class.create(Inovout.Widget.List, {
+    initialize: function ($super, element) {
+        $super(element);
+        var me = this;
+        element.change.addListener(function ($super, sender, args) {
+            var selectedOption = me.element.children("option:selected")[0];
+            me.selectedChanged.fire(me, me.wrapEventArgs(selectedOption));
+        });
+        return this;
+    },
+});
+
+
+Inovout.Widget.TabList = Class.create(Inovout.Widget.List, {
     initialize: function ($super, element) {
         $super(element);
         this.selectedChanged = new Event("selectedChanged", this);

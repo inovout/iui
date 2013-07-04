@@ -29,13 +29,14 @@ iui = (function (window, document, undefined) {
     var dataConfig = loaderScript.getAttribute("data-config");
     //2013-06-21 Add by hujing:若data-config没设置，则默认为script的path（去除文件名），拼接"config.js"
     var srcStr = loaderScript.getAttribute("src");
-    if (dataConfig == null) {
-        dataConfig = srcStr.substring(0, srcStr.lastIndexOf("/") + 1) + "config.js";
+    if (dataConfig) {
+        return;
+        //dataConfig = srcStr.substring(0, srcStr.lastIndexOf("/") + 1) + "config.js";
     }
 
     var dataMain = loaderScript.getAttribute("data-main");
     //取默认的page.js路径,page.js的路径与core.js的路径相同
-    if (dataMain == null) {
+    if (dataMain) {
         dataMain = srcStr.substring(0, srcStr.lastIndexOf("/") + 1) + "page.js";
     }
 

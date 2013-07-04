@@ -31,7 +31,7 @@ var Page = Class.create(Inovout.View,{
         });
     }
 });
-//应由专门的main来处理，以后再来重构
+//搴旂敱涓撻棬鐨刴ain鏉ュ鐞嗭紝浠ュ悗鍐嶆潵閲嶆瀯
 (function (window, document, undefined) {
 //iui.main(function () {
     window.page = new Page(document);

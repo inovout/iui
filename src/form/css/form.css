@@ -14,9 +14,9 @@ form input {
     -webkit-box-sizing: border-box; /* Safari */
 }
 
-    form input.w-1, fieldset input.w-1-2, fieldset input.w-1-3 {
-        *width: expression(function(el){el.style.width = (parseInt(el.parentNode.currentStyle["width"])*parseInt(el.parentNode.currentStyle["fontSize"])- parseInt(el.currentStyle["borderWidth"])*2)+"px"; }(this));
-        *height: expression(function(el){el.style.height = (parseInt(el.currentStyle["height"])*parseInt(el.parentNode.currentStyle["fontSize"])- parseInt(el.currentStyle["borderWidth"])*2)+"px";}(this));
+    form input.w-1, form input.w-1-2, form input.w-1-3 {
+        *width: expression(function(el){el.style.width = (el.clientWidth- parseFloat(el.currentStyle["borderWidth"])*2)+"px"; }(this));
+        *height: expression(function(el){el.style.height = (el.clientHeight- parseFloat(el.currentStyle["borderWidth"])*2)+"px";}(this));
     }
 
 form span {

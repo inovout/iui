@@ -17,7 +17,7 @@ echo prototype-lang文件开始复制
 copy ..\src\jslang\prototype\object.js+..\src\jslang\prototype\function.js+..\src\jslang\prototype\enumerable.js+ ..\src\jslang\prototype\array.js+..\src\jslang\prototype\class.js+..\src\jslang\prototype\date.js+..\src\jslang\prototype\regexp.js+..\src\jslang\prototype\periodical_executer.js+..\src\jslang\prototype\string.js+..\src\jslang\prototype\template.js+..\src\jslang\prototype\hash.js+..\src\jslang\prototype\number.js+..\src\jslang\prototype\range.js ..\src\jslang\prototype-lang.js /b
 echo prototype-lang文件复制完成
 
-copy ..\lib\yepnope.min.js+..\src\jslang\prototype-lang.js+..\src\jslang\hashmap\js\hashmap.js+..\src\jslang\event\js\event.js+..\src\jslang\eventlisteneradapter\js\eventlisteneradapter.js+..\src\core\js\core.js+..\src\element\js\element.js+..\src\view\js\view.js+..\src\page\js\page.js+..\src\chart\js\chart.js jClass.js /b
+copy ..\lib\yepnope.min.js+..\src\jslang\prototype-lang.js+..\src\jslang\hashmap\js\hashmap.js+..\src\jslang\event\js\event.js+..\src\jslang\eventlisteneradapter\js\eventlisteneradapter.js+..\src\core\js\core.js+..\src\element\js\element.js+..\src\view\js\view.js+..\src\page\js\page.js jClass.js /b
 java -jar yuicompressor-2.4.7.jar jClass.js -o jClass.min.js
 
 copy ..\src\list\js\list.js+..\src\chart\js\chart.js jWidget.js /b

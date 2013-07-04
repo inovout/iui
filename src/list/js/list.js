@@ -37,7 +37,7 @@ Inovout.Widget.DropDownList = Class.create(Inovout.Widget.List, {
             me.selectedChanged.fire(me, me.wrapEventArgs(selectedOption));
         });
         return this;
-    },
+    }
 });
 
 

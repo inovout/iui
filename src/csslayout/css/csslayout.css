@@ -1,4 +1,4 @@
-/*--------- Workbench & Workspace ---------*/
+﻿/*--------- Workbench & Workspace ---------*/
 header, #content, .content, footer {
     margin: 0 auto;
 }
@@ -9,7 +9,6 @@ header {
 
     header > .wgt > div {
         vertical-align: bottom;
-        position: static;
     }
 
 #content, .content,footer {

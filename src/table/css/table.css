@@ -26,3 +26,13 @@ td.number {
         padding: 0 .5em;
         margin: 0 .2em;
     }
+/*Empty Data Table*/
+.emptyDT {
+    height: 6em;
+    line-height: 6em;
+    text-align: center;
+}
+
+    .emptyDT > a {
+        margin-left: 1em;
+    }

@@ -4,6 +4,19 @@ Inovout.Widget.List = Class.create(Inovout.View, {
         this.selectedChanged = new Event("selectedChanged", this);
         return this;
     },
+    bindData: function (data) {
+        if (Object.isJSON(data)) {
+            element.empty();
+            $.each(data, function (i, item) {
+                this.add(item);
+            });
+
+        } else {
+            $.getJSON(data).done(function (result) {
+                this.bindData(result);
+            });
+        }
+    },
     wrapEventArgs: function (selectedItem) {
         var eventArgs = {
             text: selectedItem.text()
@@ -37,6 +50,9 @@ Inovout.Widget.DropDownList = Class.create(Inovout.Widget.List, {
             me.selectedChanged.fire(me, me.wrapEventArgs(selectedOption));
         });
         return this;
+    },
+    add: function (item) {
+        this.element.append("<option value=\""+item.value+"\">"+item.value+"</option>");
     }
 });
 

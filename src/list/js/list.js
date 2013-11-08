@@ -1,4 +1,4 @@
-Inovout.Widget.List = Class.create(Inovout.View, {
+Inovout.Widgets.List = Class.create(Inovout.View, {
     initialize: function ($super, element) {
         $super(element);
         this.selectedChanged = new Event("selectedChanged", this);
@@ -40,8 +40,7 @@ Inovout.Widget.List = Class.create(Inovout.View, {
     },
     valueKeys: undefined
 });
-
-Inovout.Widget.DropDownList = Class.create(Inovout.Widget.List, {
+Inovout.Widgets.DropDownList = Class.create(Inovout.Widgets.List, {
     initialize: function ($super, element) {
         $super(element);
         var me = this;
@@ -56,8 +55,7 @@ Inovout.Widget.DropDownList = Class.create(Inovout.Widget.List, {
     }
 });
 
-
-Inovout.Widget.TabList = Class.create(Inovout.Widget.List, {
+Inovout.Widgets.TabList = Class.create(Inovout.Widgets.List, {
     initialize: function ($super, element) {
         $super(element);
         this.selectedChanged = new Event("selectedChanged", this);

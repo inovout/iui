@@ -1,12 +1,12 @@
-if (!Inovout) {
-    var Inovout = {};
-}
+var Inovout = {};
+
 Inovout.Element = Class.create({
     initialize: function (dom) {
         var me = this;
         this.dom = dom;
         this.dom.uid = new Date().getTime() + "" + parseInt(Math.random() * 100000, 10);
-
+        this.eventHnadles = {};
+        this.eventCallbacks = {};
         ("blur focus focusin focusout load resize scroll unload click dblclick " +
 	    "mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave " +
 	    "change select submit keydown keypress keyup error contextmenu").split(" ").each(function (name) {
@@ -22,6 +22,48 @@ Inovout.Element = Class.create({
 
 	        };
 	    });
+    },
+    complete: function (event, callback) {
+        var name = Object.isString(event) ? event : event.name,
+            eventCallbacks,
+            me = this;
+
+        if (!(eventCallbacks = this.eventCallbacks[name])) {
+            eventCallbacks = this.eventCallbacks[name] = $.Callbacks();
+            var elemData = jQuery._data(me.dom);
+            me.eventHnadles[name] = elemData.handle || $.event.dispatch;
+            var eventHandle = function (e) {
+                var ret = me.eventHnadles[name].apply(me.dom, arguments);
+                eventCallbacks.fire(e);
+                return ret;
+            };
+            me.removeEventtLister(name, me.eventHnadles[name]);
+            me.addEventLister(name, eventHandle);
+        }
+        eventCallbacks.add(callback);
+    },
+    addEventLister: function (type, eventHandle) {
+        var dom = this.dom;
+        if (dom.addEventListener) {
+            dom.addEventListener(type, eventHandle, false);
+
+        } else if (dom.attachEvent) {
+            dom.attachEvent("on" + type, eventHandle);
+        }
+    },
+    removeEventtLister: function (type, handle) {
+        var elem = this.dom;
+        if (elem.removeEventListener) {
+            elem.removeEventListener(type, handle, false);
+        }
+        else if (elem.detachEvent) {
+            var name = "on" + type;
+            if (typeof elem[name] === core_strundefined) {
+                elem[name] = null;
+            }
+
+            elem.detachEvent(name, handle);
+        }
     },
     getClassName: function () {
         return this.dom.className;

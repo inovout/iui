@@ -2,11 +2,11 @@
 //一个module当中至少有一个component，即类。
 //依赖关系只局限于component没有module的依赖。
 //若没有配置componet，则componet的名称与模块名相同，不过这种情况应该相对较少。
-define({
+iui.define({
     name: "jQuery",
     path: "../../../lib/jQuery.js"
 });
-define({
+iui.define({
     name: "prototype-lang",
     path: "../../jslang/prototype-lang.js",
     components: [
@@ -14,7 +14,7 @@ define({
         { name: "Class" }
     ]
 });
-define({
+iui.define({
     name: "iui-lang",
     path: "../../jslang/iui-lang.js",
     components: [
@@ -23,7 +23,7 @@ define({
         { name: "HashMap", depens: ["Class"] }
     ]
 });
-define({
+iui.define({
     name: "element",
     path: "../../element/js/element.js",
     components: [
@@ -33,7 +33,7 @@ define({
         }
     ]
 });
-define({
+iui.define({
     name: "view",
     path: "../../view/js/view.js",
     //loaded: "Inovout.View.loadWidget",
@@ -44,7 +44,7 @@ define({
         }
     ]
 });
-define({
+iui.define({
     name: "page",
     path: "../../page/js/page.js",
     components: [
@@ -54,7 +54,7 @@ define({
         }
     ]
 });
-define({
+iui.define({
     name: "list",
     path: "../../list/js/list.js",
     components: [
@@ -64,33 +64,8 @@ define({
                 },
                 {
                     name: "Inovout.View.TabList",
-                    test: iui.hasClass("tabList"),
+                    test: function (ele) { return ele.find(".tabList").length > 0; },
                     depens: ["Inovout.View.List"]
                 }
-    ]
-});
-define({
-    name: "serializeJSON",
-    path: "../../../lib/jquery.serializeJSON.js"
-});
-define({
-    name: "form",
-    path: "../../form/js/form.js",
-    components: [
-                {
-                    name: "Inovout.Controls.Form",
-                    test: iui.hasAttr("form","data-async"),
-                    depens: ["Inovout.View", "serializeJSON"]
-                }
-    ]
-});
-define({
-    name: "http",
-    path: "../../http/js/http.js",
-    components: [
-        {
-            name: "Http",test:true,
-            depens: ["Class"]
-        }
     ]
 });

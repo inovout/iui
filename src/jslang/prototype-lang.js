@@ -1,3 +1,186 @@
+//= compat
+/*  Prototype JavaScript framework, version <%= PROTOTYPE_VERSION %>
+ *  (c) 2005-2010 Sam Stephenson
+ *
+ *  Prototype is freely distributable under the terms of an MIT-style license.
+ *  For details, see the Prototype web site: http://www.prototypejs.org/
+ *
+ *--------------------------------------------------------------------------*/
+
+/**
+ * Prototype
+ *
+ *  The [[Prototype]] namespace provides fundamental information about the
+ *  Prototype library you're using, as well as a central repository for default
+ *  iterators or functions.
+ *
+ *  We say "namespace," because the [[Prototype]] object is not intended for
+ *  instantiation, nor for mixing in other objects. It's really just... a
+ *  namespace.
+ *
+ *  ##### Your version of Prototype
+ *
+ *  Your scripts can check against a particular version of Prototype by
+ *  examining [[Prototype.Version]], which is a version [[String]] (e.g.
+ *  "<%= PROTOTYPE_VERSION %>"). The famous
+ *  [script.aculo.us](http://script.aculo.us) library does this at load time to
+ *  ensure it's being used with a reasonably recent version of Prototype, for
+ *  instance.
+ *
+ *  ##### Browser features
+ *
+ *  Prototype also provides a (nascent) repository of
+ *  [[Prototype.BrowserFeatures browser feature information]], which it then
+ *  uses here and there in its source code. The idea is, first, to make
+ *  Prototype's source code more readable; and second, to centralize whatever
+ *  scripting trickery might be necessary to detect the browser feature, in
+ *  order to ease maintenance.
+ *
+ *  ##### Default iterators and functions
+ *
+ *  Numerous methods in Prototype objects (most notably the [[Enumerable]]
+ *  module) let the user pass in a custom iterator, but make it optional by
+ *  defaulting to an "identity function" (an iterator that just returns its
+ *  argument, untouched). This is the [[Prototype.K]] function, which you'll
+ *  see referred to in many places.
+ *
+ *  Many methods also take it easy by protecting themselves against missing
+ *  methods here and there, reverting to empty functions when a supposedly
+ *  available method is missing. Such a function simply ignores its potential
+ *  arguments, and does nothing whatsoever (which is, oddly enough,
+ *  blazing fast). The quintessential empty function sits, unsurprisingly,
+ *  at [[Prototype.emptyFunction]] (note the lowercase first letter).
+**/
+var Prototype = {
+
+  /**
+   *  Prototype.Version -> String
+   *
+   *  The version of the Prototype library you are using (e.g.
+   *  "<%= PROTOTYPE_VERSION %>").
+  **/
+  Version: '<%= PROTOTYPE_VERSION %>',
+
+  /**
+   *  Prototype.Browser
+   *
+   *  A collection of [[Boolean]] values indicating the browser which is
+   *  currently in use. Available properties are `IE`, `Opera`, `WebKit`,
+   *  `MobileSafari` and `Gecko`.
+   *
+   *  Example
+   *
+   *      Prototype.Browser.WebKit;
+   *      //-> true, when executed in any WebKit-based browser.
+  **/
+  Browser: (function(){
+    var ua = navigator.userAgent;
+    // Opera (at least) 8.x+ has "Opera" as a [[Class]] of `window.opera`
+    // This is a safer inference than plain boolean type conversion of `window.opera`
+    var isOpera = Object.prototype.toString.call(window.opera) == '[object Opera]';
+    return {
+      IE:             !!window.attachEvent && !isOpera,
+      Opera:          isOpera,
+      WebKit:         ua.indexOf('AppleWebKit/') > -1,
+      Gecko:          ua.indexOf('Gecko') > -1 && ua.indexOf('KHTML') === -1,
+      MobileSafari:   /Apple.*Mobile/.test(ua)
+    }
+  })(),
+
+  /**
+   *  Prototype.BrowserFeatures
+   *
+   *  A collection of [[Boolean]] values indicating the presence of specific
+   *  browser features.
+  **/
+  BrowserFeatures: {
+    /**
+     *  Prototype.BrowserFeatures.XPath -> Boolean
+     *
+     *  Used internally to detect if the browser supports
+     *  [DOM Level 3 XPath](http://www.w3.org/TR/DOM-Level-3-XPath/xpath.html).
+    **/
+    XPath: !!document.evaluate,
+
+    /**
+     *  Prototype.BrowserFeatures.SelectorsAPI -> Boolean
+     *
+     *  Used internally to detect if the browser supports the
+     *  [NodeSelector API](http://www.w3.org/TR/selectors-api/#nodeselector).
+    **/
+    SelectorsAPI: !!document.querySelector,
+
+    /**
+     *  Prototype.BrowserFeatures.ElementExtensions -> Boolean
+     *
+     *  Used internally to detect if the browser supports extending html element
+     *  prototypes.
+    **/
+    ElementExtensions: (function() {
+      var constructor = window.Element || window.HTMLElement;
+      return !!(constructor && constructor.prototype);
+    })(),
+    SpecificElementExtensions: (function() {
+      // First, try the named class
+      if (typeof window.HTMLDivElement !== 'undefined')
+        return true;
+
+      var div = document.createElement('div'),
+          form = document.createElement('form'),
+          isSupported = false;
+
+      if (div['__proto__'] && (div['__proto__'] !== form['__proto__'])) {
+        isSupported = true;
+      }
+
+      div = form = null;
+
+      return isSupported;
+    })()
+  },
+
+  ScriptFragment: '<script[^>]*>([\\S\\s]*?)<\/script\\s*>',
+  JSONFilter: /^\/\*-secure-([\s\S]*)\*\/\s*$/,
+
+  /**
+   *  Prototype.emptyFunction([argument...]) -> undefined
+   *  - argument (Object): Optional arguments
+   *
+   *  The [[Prototype.emptyFunction]] does nothing... and returns nothing!
+   *
+   *  It is used thoughout the framework to provide a fallback function in order
+   *  to cut down on conditionals. Typically you'll find it as a default value
+   *  for optional callback functions.
+  **/
+  emptyFunction: function() { },
+
+  /**
+   *  Prototype.K(argument) -> argument
+   *  - argument (Object): Optional argument...
+   *
+   *  [[Prototype.K]] is Prototype's very own
+   *  [identity function](http://en.wikipedia.org/wiki/Identity_function), i.e.
+   *  it returns its `argument` untouched.
+   *
+   *  This is used throughout the framework, most notably in the [[Enumerable]]
+   *  module as a default value for iterators.
+   *
+   *  ##### Examples
+   *
+   *      Prototype.K('hello world!');
+   *      // -> 'hello world!'
+   *
+   *      Prototype.K(200);
+   *      // -> 200
+   *
+   *      Prototype.K(Prototype.K);
+   *      // -> Prototype.K
+  **/
+  K: function(x) { return x }
+};
+
+if (Prototype.Browser.MobileSafari)
+  Prototype.BrowserFeatures.SpecificElementExtensions = false;
 /** section: Language
  * class Object
  *
@@ -19,599 +202,599 @@
  *  explore objects as if they were hashes, will turn to [[Object.extend]], 
  *  [[Object.keys]], and [[Object.values]].
 **/
-(function () {
+(function() {
 
-    var _toString = Object.prototype.toString,
-        _hasOwnProperty = Object.prototype.hasOwnProperty,
-        NULL_TYPE = 'Null',
-        UNDEFINED_TYPE = 'Undefined',
-        BOOLEAN_TYPE = 'Boolean',
-        NUMBER_TYPE = 'Number',
-        STRING_TYPE = 'String',
-        OBJECT_TYPE = 'Object',
-        FUNCTION_CLASS = '[object Function]',
-        BOOLEAN_CLASS = '[object Boolean]',
-        NUMBER_CLASS = '[object Number]',
-        STRING_CLASS = '[object String]',
-        ARRAY_CLASS = '[object Array]',
-        DATE_CLASS = '[object Date]',
-        NATIVE_JSON_STRINGIFY_SUPPORT = window.JSON &&
-          typeof JSON.stringify === 'function' &&
-          JSON.stringify(0) === '0' &&
-          typeof JSON.stringify(function (x) { return x }) === 'undefined';
+  var _toString = Object.prototype.toString,
+      _hasOwnProperty = Object.prototype.hasOwnProperty,
+      NULL_TYPE = 'Null',
+      UNDEFINED_TYPE = 'Undefined',
+      BOOLEAN_TYPE = 'Boolean',
+      NUMBER_TYPE = 'Number',
+      STRING_TYPE = 'String',
+      OBJECT_TYPE = 'Object',
+      FUNCTION_CLASS = '[object Function]',
+      BOOLEAN_CLASS = '[object Boolean]',
+      NUMBER_CLASS = '[object Number]',
+      STRING_CLASS = '[object String]',
+      ARRAY_CLASS = '[object Array]',
+      DATE_CLASS = '[object Date]',
+      NATIVE_JSON_STRINGIFY_SUPPORT = window.JSON &&
+        typeof JSON.stringify === 'function' &&
+        JSON.stringify(0) === '0' &&
+        typeof JSON.stringify(Prototype.K) === 'undefined';
+        
+  
+  
+  var DONT_ENUMS = ['toString', 'toLocaleString', 'valueOf',
+   'hasOwnProperty', 'isPrototypeOf', 'propertyIsEnumerable', 'constructor'];
+  
+  // Some versions of JScript fail to enumerate over properties, names of which 
+  // correspond to non-enumerable properties in the prototype chain
+  var IS_DONTENUM_BUGGY = (function(){
+    for (var p in { toString: 1 }) {
+      // check actual property name, so that it works with augmented Object.prototype
+      if (p === 'toString') return false;
+    }
+    return true;
+  })();
+        
+  function Type(o) {
+    switch(o) {
+      case null: return NULL_TYPE;
+      case (void 0): return UNDEFINED_TYPE;
+    }
+    var type = typeof o;
+    switch(type) {
+      case 'boolean': return BOOLEAN_TYPE;
+      case 'number':  return NUMBER_TYPE;
+      case 'string':  return STRING_TYPE;
+    }
+    return OBJECT_TYPE;
+  }
+  
+  /**
+   *  Object.extend(destination, source) -> Object
+   *  - destination (Object): The object to receive the new properties.
+   *  - source (Object): The object whose properties will be duplicated.
+   *
+   *  Copies all properties from the source to the destination object. Used by Prototype
+   *  to simulate inheritance (rather statically) by copying to prototypes.
+   *  
+   *  Documentation should soon become available that describes how Prototype implements
+   *  OOP, where you will find further details on how Prototype uses [[Object.extend]] and
+   *  [[Class.create]] (something that may well change in version 2.0). It will be linked
+   *  from here.
+   *  
+   *  Do not mistake this method with its quasi-namesake [[Element.extend]],
+   *  which implements Prototype's (much more complex) DOM extension mechanism.
+  **/
+  function extend(destination, source) {
+    for (var property in source)
+      destination[property] = source[property];
+    return destination;
+  }
 
+  /**
+   *  Object.inspect(obj) -> String
+   *  - object (Object): The item to be inspected.
+   *  
+   *  Returns the debug-oriented string representation of the object.
+   *  
+   *  * `undefined` and `null` are represented as such.
+   *  * Other types are looked up for a `inspect` method: if there is one, it is used, otherwise,
+   *  it reverts to the `toString` method.
+   *  
+   *  Prototype provides `inspect` methods for many types, both built-in and library-defined,
+   *  such as in [[String#inspect]], [[Array#inspect]], [[Enumerable#inspect]] and [[Hash#inspect]],
+   *  which attempt to provide most-useful string representations (from a developer's standpoint)
+   *  for their respective types.
+   *  
+   *  ##### Examples
+   *  
+   *      Object.inspect();
+   *      // -> 'undefined'
+   *      
+   *      Object.inspect(null);
+   *      // -> 'null'
+   *      
+   *      Object.inspect(false);
+   *      // -> 'false'
+   *      
+   *      Object.inspect([1, 2, 3]);
+   *      // -> '[1, 2, 3]'
+   *      
+   *      Object.inspect('hello');
+   *      // -> "'hello'"
+  **/
+  function inspect(object) {
+    try {
+      if (isUndefined(object)) return 'undefined';
+      if (object === null) return 'null';
+      return object.inspect ? object.inspect() : String(object);
+    } catch (e) {
+      if (e instanceof RangeError) return '...';
+      throw e;
+    }
+  }
 
+  /**
+   *  Object.toJSON(object) -> String
+   *  - object (Object): The object to be serialized.
+   *
+   *  Returns a JSON string.
+   *
+   *  `undefined` and `function` types have no JSON representation. `boolean`
+   *  and `null` are coerced to strings.
+   *
+   *  For other types, [[Object.toJSON]] looks for a `toJSON` method on `object`.
+   *  If there is one, it is used; otherwise the object is treated like a
+   *  generic [[Object]].
+   *  
+   *  For more information on Prototype's JSON encoder, hop to our
+   *  [tutorial](http://prototypejs.org/learn/json).
+   *  
+   *  ##### Example
+   *  
+   *      var data = {name: 'Violet', occupation: 'character', age: 25, pets: ['frog', 'rabbit']};
+   *      Object.toJSON(data);
+   *      //-> '{"name": "Violet", "occupation": "character", "age": 25, "pets": ["frog","rabbit"]}'
+  **/
+  function toJSON(value) {
+    return Str('', { '': value }, []);
+  }
 
-    var DONT_ENUMS = ['toString', 'toLocaleString', 'valueOf',
-     'hasOwnProperty', 'isPrototypeOf', 'propertyIsEnumerable', 'constructor'];
+  function Str(key, holder, stack) {
+    var value = holder[key];
+    if (Type(value) === OBJECT_TYPE && typeof value.toJSON === 'function') {
+      value = value.toJSON(key);
+    }
 
-    // Some versions of JScript fail to enumerate over properties, names of which 
-    // correspond to non-enumerable properties in the prototype chain
-    var IS_DONTENUM_BUGGY = (function () {
-        for (var p in { toString: 1 }) {
-            // check actual property name, so that it works with augmented Object.prototype
-            if (p === 'toString') return false;
+    var _class = _toString.call(value);
+
+    switch (_class) {
+      case NUMBER_CLASS:
+      case BOOLEAN_CLASS:
+      case STRING_CLASS:
+        value = value.valueOf();
+    }
+
+    switch (value) {
+      case null: return 'null';
+      case true: return 'true';
+      case false: return 'false';
+    }
+
+    var type = typeof value;
+    switch (type) {
+      case 'string':
+        return value.inspect(true);
+      case 'number':
+        return isFinite(value) ? String(value) : 'null';
+      case 'object':
+
+        for (var i = 0, length = stack.length; i < length; i++) {
+          if (stack[i] === value) {
+            throw new TypeError("Cyclic reference to '" + value + "' in object");
+          }
         }
-        return true;
-    })();
+        stack.push(value);
 
-    function Type(o) {
-        switch (o) {
-            case null: return NULL_TYPE;
-            case (void 0): return UNDEFINED_TYPE;
+        var partial = [];
+        if (_class === ARRAY_CLASS) {
+          for (var i = 0, length = value.length; i < length; i++) {
+            var str = Str(i, value, stack);
+            partial.push(typeof str === 'undefined' ? 'null' : str);
+          }
+          partial = '[' + partial.join(',') + ']';
+        } else {
+          var keys = Object.keys(value);
+          for (var i = 0, length = keys.length; i < length; i++) {
+            var key = keys[i], str = Str(key, value, stack);
+            if (typeof str !== "undefined") {
+               partial.push(key.inspect(true)+ ':' + str);
+             }
+          }
+          partial = '{' + partial.join(',') + '}';
         }
-        var type = typeof o;
-        switch (type) {
-            case 'boolean': return BOOLEAN_TYPE;
-            case 'number': return NUMBER_TYPE;
-            case 'string': return STRING_TYPE;
-        }
-        return OBJECT_TYPE;
+        stack.pop();
+        return partial;
     }
+  }
 
-    /**
-     *  Object.extend(destination, source) -> Object
-     *  - destination (Object): The object to receive the new properties.
-     *  - source (Object): The object whose properties will be duplicated.
-     *
-     *  Copies all properties from the source to the destination object. Used by Prototype
-     *  to simulate inheritance (rather statically) by copying to prototypes.
-     *  
-     *  Documentation should soon become available that describes how Prototype implements
-     *  OOP, where you will find further details on how Prototype uses [[Object.extend]] and
-     *  [[Class.create]] (something that may well change in version 2.0). It will be linked
-     *  from here.
-     *  
-     *  Do not mistake this method with its quasi-namesake [[Element.extend]],
-     *  which implements Prototype's (much more complex) DOM extension mechanism.
-    **/
-    function extend(destination, source) {
-        for (var property in source)
-            destination[property] = source[property];
-        return destination;
+  function stringify(object) {
+    return JSON.stringify(object);
+  }
+
+  /**
+   *  Object.toQueryString(object) -> String
+   *  - object (Object): The object whose property/value pairs will be converted.
+   *
+   *  Turns an object into its URL-encoded query string representation.
+   *
+   *  This is a form of serialization, and is mostly useful to provide complex
+   *  parameter sets for stuff such as objects in the [[Ajax]] namespace (e.g.
+   *  [[Ajax.Request]]).
+   *
+   *  Undefined-value pairs will be serialized as if empty-valued. Array-valued
+   *  pairs will get serialized with one name/value pair per array element. All
+   *  values get URI-encoded using JavaScript's native `encodeURIComponent`
+   *  function.
+   *
+   *  The order of pairs in the serialized form is not guaranteed (and mostly
+   *  irrelevant anyway) &mdash; except for array-based parts, which are serialized
+   *  in array order.
+   *  
+   *  ##### Examples
+   *  
+   *      Object.toQueryString({ action: 'ship', order_id: 123, fees: ['f1', 'f2'], 'label': 'a demo' })
+   *      // -> 'action=ship&order_id=123&fees=f1&fees=f2&label=a+demo'
+  **/
+  function toQueryString(object) {
+    return $H(object).toQueryString();
+  }
+
+  /**
+   *  Object.toHTML(object) -> String
+   *  - object (Object): The object to convert to HTML.
+   *
+   *  Converts the object to its HTML representation.
+   *
+   *  Returns the return value of `object`'s `toHTML` method if it exists; else
+   *  runs `object` through [[String.interpret]].
+   *  
+   *  ##### Examples
+   *  
+   *      var Bookmark = Class.create({
+   *        initialize: function(name, url) {
+   *          this.name = name;
+   *          this.url = url;
+   *        },
+   *        
+   *        toHTML: function() {
+   *          return '<a href="#{url}">#{name}</a>'.interpolate(this);
+   *        }
+   *      });
+   *      
+   *      var api = new Bookmark('Prototype API', 'http://prototypejs.org/api');
+   *      
+   *      Object.toHTML(api);
+   *      //-> '<a href="http://prototypejs.org/api">Prototype API</a>'
+   *      
+   *      Object.toHTML("Hello world!");
+   *      //-> "Hello world!"
+   *      
+   *      Object.toHTML();
+   *      //-> ""
+   *      
+   *      Object.toHTML(null);
+   *      //-> ""
+   *      
+   *      Object.toHTML(undefined);
+   *      //-> ""
+   *      
+   *      Object.toHTML(true);
+   *      //-> "true"
+   *      
+   *      Object.toHTML(false);
+   *      //-> "false"
+   *      
+   *      Object.toHTML(123);
+   *      //-> "123"
+  **/
+  function toHTML(object) {
+    return object && object.toHTML ? object.toHTML() : String.interpret(object);
+  }
+
+  /**
+   *  Object.keys(object) -> Array
+   *  - object (Object): The object to pull keys from.
+   *
+   *  Returns an array of the object's property names.
+   *
+   *  Note that the order of the resulting array is browser-dependent &mdash; it
+   *  relies on the `for...in` loop, for which the ECMAScript spec does not
+   *  prescribe an enumeration order. Sort the resulting array if you wish to
+   *  normalize the order of the object keys.
+   *
+   *  `Object.keys` acts as an ECMAScript 5 [polyfill](http://remysharp.com/2010/10/08/what-is-a-polyfill/).
+   *  It is only defined if not already present in the user's browser, and it
+   *  is meant to behave like the native version as much as possible. Consult
+   *  the [ES5 specification](http://es5.github.com/#x15.2.3.14) for more
+   *  information.
+   *
+   *  ##### Examples
+   *  
+   *      Object.keys();
+   *      // -> []
+   *      
+   *      Object.keys({ name: 'Prototype', version: '1.6.1' }).sort();
+   *      // -> ['name', 'version']
+  **/
+  function keys(object) {
+    if (Type(object) !== OBJECT_TYPE) { throw new TypeError(); }
+    var results = [];
+    for (var property in object) {
+      if (_hasOwnProperty.call(object, property))
+        results.push(property);
     }
-
-    /**
-     *  Object.inspect(obj) -> String
-     *  - object (Object): The item to be inspected.
-     *  
-     *  Returns the debug-oriented string representation of the object.
-     *  
-     *  * `undefined` and `null` are represented as such.
-     *  * Other types are looked up for a `inspect` method: if there is one, it is used, otherwise,
-     *  it reverts to the `toString` method.
-     *  
-     *  Prototype provides `inspect` methods for many types, both built-in and library-defined,
-     *  such as in [[String#inspect]], [[Array#inspect]], [[Enumerable#inspect]] and [[Hash#inspect]],
-     *  which attempt to provide most-useful string representations (from a developer's standpoint)
-     *  for their respective types.
-     *  
-     *  ##### Examples
-     *  
-     *      Object.inspect();
-     *      // -> 'undefined'
-     *      
-     *      Object.inspect(null);
-     *      // -> 'null'
-     *      
-     *      Object.inspect(false);
-     *      // -> 'false'
-     *      
-     *      Object.inspect([1, 2, 3]);
-     *      // -> '[1, 2, 3]'
-     *      
-     *      Object.inspect('hello');
-     *      // -> "'hello'"
-    **/
-    function inspect(object) {
-        try {
-            if (isUndefined(object)) return 'undefined';
-            if (object === null) return 'null';
-            return object.inspect ? object.inspect() : String(object);
-        } catch (e) {
-            if (e instanceof RangeError) return '...';
-            throw e;
-        }
+    
+    // Account for the DontEnum properties in affected browsers.
+    if (IS_DONTENUM_BUGGY) {
+      for (var i = 0; property = DONT_ENUMS[i]; i++) {
+        if (_hasOwnProperty.call(object, property))
+          results.push(property);
+      }
     }
+    
+    return results;
+  }
 
-    /**
-     *  Object.toJSON(object) -> String
-     *  - object (Object): The object to be serialized.
-     *
-     *  Returns a JSON string.
-     *
-     *  `undefined` and `function` types have no JSON representation. `boolean`
-     *  and `null` are coerced to strings.
-     *
-     *  For other types, [[Object.toJSON]] looks for a `toJSON` method on `object`.
-     *  If there is one, it is used; otherwise the object is treated like a
-     *  generic [[Object]].
-     *  
-     *  For more information on Prototype's JSON encoder, hop to our
-     *  [tutorial](http://prototypejs.org/learn/json).
-     *  
-     *  ##### Example
-     *  
-     *      var data = {name: 'Violet', occupation: 'character', age: 25, pets: ['frog', 'rabbit']};
-     *      Object.toJSON(data);
-     *      //-> '{"name": "Violet", "occupation": "character", "age": 25, "pets": ["frog","rabbit"]}'
-    **/
-    function toJSON(value) {
-        return Str('', { '': value }, []);
-    }
+  /**
+   *  Object.values(object) -> Array
+   *  - object (Object): The object to pull values from.
+   *
+   *  Returns an array of the object's property values.
+   *
+   *  Note that the order of the resulting array is browser-dependent &mdash; it
+   *  relies on the `for...in` loop, for which the ECMAScript spec does not
+   *  prescribe an enumeration order.
+   *
+   *  Also, remember that while property _names_ are unique, property _values_
+   *  have no such constraint.
+   *
+   *  ##### Examples
+   *  
+   *      Object.values();
+   *      // -> []
+   *      
+   *      Object.values({ name: 'Prototype', version: '1.6.1' }).sort();
+   *      // -> ['1.6.1', 'Prototype']
+  **/
+  function values(object) {
+    var results = [];
+    for (var property in object)
+      results.push(object[property]);
+    return results;
+  }
 
-    function Str(key, holder, stack) {
-        var value = holder[key];
-        if (Type(value) === OBJECT_TYPE && typeof value.toJSON === 'function') {
-            value = value.toJSON(key);
-        }
+  /**
+   *  Object.clone(object) -> Object
+   *  - object (Object): The object to clone.
+   *
+   *  Creates and returns a shallow duplicate of the passed object by copying
+   *  all of the original's key/value pairs onto an empty object.
+   *
+   *  Do note that this is a _shallow_ copy, not a _deep_ copy. Nested objects
+   *  will retain their references.
+   *
+   *  ##### Examples
+   *
+   *      var original = {name: 'primaryColors', values: ['red', 'green', 'blue']};
+   *      var copy = Object.clone(original);
+   *
+   *      original.name;
+   *      // -> "primaryColors"
+   *      original.values[0];
+   *      // -> "red"
+   *      copy.name;
+   *      // -> "primaryColors"
+   *      
+   *      copy.name = "secondaryColors";
+   *      original.name;
+   *      // -> "primaryColors"
+   *      copy.name;
+   *      // -> "secondaryColors"
+   *      
+   *      copy.values[0] = 'magenta';
+   *      copy.values[1] = 'cyan';
+   *      copy.values[2] = 'yellow';
+   *      original.values[0];
+   *      // -> "magenta" (it's a shallow copy, so they share the array)
+  **/
+  function clone(object) {
+    return extend({ }, object);
+  }
 
-        var _class = _toString.call(value);
+  /**
+   *  Object.isElement(object) -> Boolean
+   *  - object (Object): The object to test.
+   *
+   *  Returns `true` if `object` is a DOM node of type 1; `false` otherwise.
+   *  
+   *  ##### Examples
+   *  
+   *      Object.isElement(new Element('div'));
+   *      //-> true
+   *      
+   *      Object.isElement(document.createElement('div'));
+   *      //-> true
+   *      
+   *      Object.isElement($('id_of_an_exiting_element'));
+   *      //-> true
+   *      
+   *      Object.isElement(document.createTextNode('foo'));
+   *      //-> false
+  **/
+  function isElement(object) {
+    return !!(object && object.nodeType == 1);
+  }
 
-        switch (_class) {
-            case NUMBER_CLASS:
-            case BOOLEAN_CLASS:
-            case STRING_CLASS:
-                value = value.valueOf();
-        }
+  /**
+   *  Object.isArray(object) -> Boolean
+   *  - object (Object): The object to test.
+   *
+   *  Returns `true` if `object` is an [[Array]]; `false` otherwise.
+   *  
+   *  ##### Examples
+   *  
+   *      Object.isArray([]);
+   *      //-> true
+   *      
+   *      Object.isArray($w());
+   *      //-> true
+   *      
+   *      Object.isArray({ });
+   *      //-> false
+  **/
+  function isArray(object) {
+    return _toString.call(object) === ARRAY_CLASS;
+  }
+  
+  var hasNativeIsArray = (typeof Array.isArray == 'function') 
+    && Array.isArray([]) && !Array.isArray({});
+  
+  if (hasNativeIsArray) {
+    isArray = Array.isArray;
+  }
 
-        switch (value) {
-            case null: return 'null';
-            case true: return 'true';
-            case false: return 'false';
-        }
+  /**
+   *  Object.isHash(object) -> Boolean
+   *  - object (Object): The object to test.
+   *
+   *  Returns `true` if `object` is an instance of the [[Hash]] class; `false`
+   *  otherwise.
+   *  
+   *  ##### Examples
+   *  
+   *      Object.isHash(new Hash({ }));
+   *      //-> true
+   *      
+   *      Object.isHash($H({ }));
+   *      //-> true
+   *      
+   *      Object.isHash({ });
+   *      //-> false
+  **/
+  function isHash(object) {
+    return object instanceof Hash;
+  }
 
-        var type = typeof value;
-        switch (type) {
-            case 'string':
-                return value.inspect(true);
-            case 'number':
-                return isFinite(value) ? String(value) : 'null';
-            case 'object':
+  /**
+   *  Object.isFunction(object) -> Boolean
+   *  - object (Object): The object to test.
+   *
+   *  Returns `true` if `object` is of type [[Function]]; `false` otherwise.
+   *  
+   *  ##### Examples
+   *  
+   *      Object.isFunction($);
+   *      //-> true
+   *      
+   *      Object.isFunction(123);
+   *      //-> false
+  **/
+  function isFunction(object) {
+    return _toString.call(object) === FUNCTION_CLASS;
+  }
 
-                for (var i = 0, length = stack.length; i < length; i++) {
-                    if (stack[i] === value) {
-                        throw new TypeError("Cyclic reference to '" + value + "' in object");
-                    }
-                }
-                stack.push(value);
+  /**
+   *  Object.isString(object) -> Boolean
+   *  - object (Object): The object to test.
+   *
+   *  Returns `true` if `object` is of type [[String]]; `false` otherwise.
+   *  
+   *  ##### Examples
+   *  
+   *      Object.isString("foo");
+   *      //-> true
+   *      
+   *      Object.isString("");
+   *      //-> true
+   *      
+   *      Object.isString(123);
+   *      //-> false
+  **/
+  function isString(object) {
+    return _toString.call(object) === STRING_CLASS;
+  }
 
-                var partial = [];
-                if (_class === ARRAY_CLASS) {
-                    for (var i = 0, length = value.length; i < length; i++) {
-                        var str = Str(i, value, stack);
-                        partial.push(typeof str === 'undefined' ? 'null' : str);
-                    }
-                    partial = '[' + partial.join(',') + ']';
-                } else {
-                    var keys = Object.keys(value);
-                    for (var i = 0, length = keys.length; i < length; i++) {
-                        var key = keys[i], str = Str(key, value, stack);
-                        if (typeof str !== "undefined") {
-                            partial.push(key.inspect(true) + ':' + str);
-                        }
-                    }
-                    partial = '{' + partial.join(',') + '}';
-                }
-                stack.pop();
-                return partial;
-        }
-    }
+  /**
+   *  Object.isNumber(object) -> Boolean
+   *  - object (Object): The object to test.
+   *
+   *  Returns `true` if `object` is of type [[Number]]; `false` otherwise.
+   *  
+   *  ##### Examples
+   *  
+   *      Object.isNumber(0);
+   *      //-> true
+   *      
+   *      Object.isNumber(1.2);
+   *      //-> true
+   *      
+   *      Object.isNumber("foo");
+   *      //-> false
+  **/
+  function isNumber(object) {
+    return _toString.call(object) === NUMBER_CLASS;
+  }
+  
+  /**
+   *  Object.isDate(object) -> Boolean
+   *  - object (Object): The object to test.
+   *  
+   *  Returns `true` if `object` is of type [[Date]]; `false` otherwise.
+   *  
+   *  ##### Examples
+   *  
+   *      Object.isDate(new Date);
+   *      //-> true
+   *  
+   *      Object.isDate("Dec 25, 1995");
+   *      //-> false
+   *  
+   *      Object.isDate(new Date("Dec 25, 1995"));
+   *      //-> true
+  **/
+  function isDate(object) {
+    return _toString.call(object) === DATE_CLASS;
+  }
 
-    function stringify(object) {
-        return JSON.stringify(object);
-    }
+  /**
+   *  Object.isUndefined(object) -> Boolean
+   *  - object (Object): The object to test.
+   *
+   *  Returns `true` if `object` is of type `undefined`; `false` otherwise.
+   *  
+   *  ##### Examples
+   *  
+   *      Object.isUndefined();
+   *      //-> true
+   *      
+   *      Object.isUndefined(undefined);
+   *      //-> true
+   *      
+   *      Object.isUndefined(null);
+   *      //-> false
+   *      
+   *      Object.isUndefined(0);
+   *      //-> false
+   *      
+   *      Object.isUndefined("");
+   *      //-> false
+  **/
+  function isUndefined(object) {
+    return typeof object === "undefined";
+  }
 
-    /**
-     *  Object.toQueryString(object) -> String
-     *  - object (Object): The object whose property/value pairs will be converted.
-     *
-     *  Turns an object into its URL-encoded query string representation.
-     *
-     *  This is a form of serialization, and is mostly useful to provide complex
-     *  parameter sets for stuff such as objects in the [[Ajax]] namespace (e.g.
-     *  [[Ajax.Request]]).
-     *
-     *  Undefined-value pairs will be serialized as if empty-valued. Array-valued
-     *  pairs will get serialized with one name/value pair per array element. All
-     *  values get URI-encoded using JavaScript's native `encodeURIComponent`
-     *  function.
-     *
-     *  The order of pairs in the serialized form is not guaranteed (and mostly
-     *  irrelevant anyway) &mdash; except for array-based parts, which are serialized
-     *  in array order.
-     *  
-     *  ##### Examples
-     *  
-     *      Object.toQueryString({ action: 'ship', order_id: 123, fees: ['f1', 'f2'], 'label': 'a demo' })
-     *      // -> 'action=ship&order_id=123&fees=f1&fees=f2&label=a+demo'
-    **/
-    function toQueryString(object) {
-        return $H(object).toQueryString();
-    }
-
-    /**
-     *  Object.toHTML(object) -> String
-     *  - object (Object): The object to convert to HTML.
-     *
-     *  Converts the object to its HTML representation.
-     *
-     *  Returns the return value of `object`'s `toHTML` method if it exists; else
-     *  runs `object` through [[String.interpret]].
-     *  
-     *  ##### Examples
-     *  
-     *      var Bookmark = Class.create({
-     *        initialize: function(name, url) {
-     *          this.name = name;
-     *          this.url = url;
-     *        },
-     *        
-     *        toHTML: function() {
-     *          return '<a href="#{url}">#{name}</a>'.interpolate(this);
-     *        }
-     *      });
-     *      
-     *      var api = new Bookmark('Prototype API', 'http://prototypejs.org/api');
-     *      
-     *      Object.toHTML(api);
-     *      //-> '<a href="http://prototypejs.org/api">Prototype API</a>'
-     *      
-     *      Object.toHTML("Hello world!");
-     *      //-> "Hello world!"
-     *      
-     *      Object.toHTML();
-     *      //-> ""
-     *      
-     *      Object.toHTML(null);
-     *      //-> ""
-     *      
-     *      Object.toHTML(undefined);
-     *      //-> ""
-     *      
-     *      Object.toHTML(true);
-     *      //-> "true"
-     *      
-     *      Object.toHTML(false);
-     *      //-> "false"
-     *      
-     *      Object.toHTML(123);
-     *      //-> "123"
-    **/
-    function toHTML(object) {
-        return object && object.toHTML ? object.toHTML() : String.interpret(object);
-    }
-
-    /**
-     *  Object.keys(object) -> Array
-     *  - object (Object): The object to pull keys from.
-     *
-     *  Returns an array of the object's property names.
-     *
-     *  Note that the order of the resulting array is browser-dependent &mdash; it
-     *  relies on the `for...in` loop, for which the ECMAScript spec does not
-     *  prescribe an enumeration order. Sort the resulting array if you wish to
-     *  normalize the order of the object keys.
-     *
-     *  `Object.keys` acts as an ECMAScript 5 [polyfill](http://remysharp.com/2010/10/08/what-is-a-polyfill/).
-     *  It is only defined if not already present in the user's browser, and it
-     *  is meant to behave like the native version as much as possible. Consult
-     *  the [ES5 specification](http://es5.github.com/#x15.2.3.14) for more
-     *  information.
-     *
-     *  ##### Examples
-     *  
-     *      Object.keys();
-     *      // -> []
-     *      
-     *      Object.keys({ name: 'Prototype', version: '1.6.1' }).sort();
-     *      // -> ['name', 'version']
-    **/
-    function keys(object) {
-        if (Type(object) !== OBJECT_TYPE) { throw new TypeError(); }
-        var results = [];
-        for (var property in object) {
-            if (_hasOwnProperty.call(object, property))
-                results.push(property);
-        }
-
-        // Account for the DontEnum properties in affected browsers.
-        if (IS_DONTENUM_BUGGY) {
-            for (var i = 0; property = DONT_ENUMS[i]; i++) {
-                if (_hasOwnProperty.call(object, property))
-                    results.push(property);
-            }
-        }
-
-        return results;
-    }
-
-    /**
-     *  Object.values(object) -> Array
-     *  - object (Object): The object to pull values from.
-     *
-     *  Returns an array of the object's property values.
-     *
-     *  Note that the order of the resulting array is browser-dependent &mdash; it
-     *  relies on the `for...in` loop, for which the ECMAScript spec does not
-     *  prescribe an enumeration order.
-     *
-     *  Also, remember that while property _names_ are unique, property _values_
-     *  have no such constraint.
-     *
-     *  ##### Examples
-     *  
-     *      Object.values();
-     *      // -> []
-     *      
-     *      Object.values({ name: 'Prototype', version: '1.6.1' }).sort();
-     *      // -> ['1.6.1', 'Prototype']
-    **/
-    function values(object) {
-        var results = [];
-        for (var property in object)
-            results.push(object[property]);
-        return results;
-    }
-
-    /**
-     *  Object.clone(object) -> Object
-     *  - object (Object): The object to clone.
-     *
-     *  Creates and returns a shallow duplicate of the passed object by copying
-     *  all of the original's key/value pairs onto an empty object.
-     *
-     *  Do note that this is a _shallow_ copy, not a _deep_ copy. Nested objects
-     *  will retain their references.
-     *
-     *  ##### Examples
-     *
-     *      var original = {name: 'primaryColors', values: ['red', 'green', 'blue']};
-     *      var copy = Object.clone(original);
-     *
-     *      original.name;
-     *      // -> "primaryColors"
-     *      original.values[0];
-     *      // -> "red"
-     *      copy.name;
-     *      // -> "primaryColors"
-     *      
-     *      copy.name = "secondaryColors";
-     *      original.name;
-     *      // -> "primaryColors"
-     *      copy.name;
-     *      // -> "secondaryColors"
-     *      
-     *      copy.values[0] = 'magenta';
-     *      copy.values[1] = 'cyan';
-     *      copy.values[2] = 'yellow';
-     *      original.values[0];
-     *      // -> "magenta" (it's a shallow copy, so they share the array)
-    **/
-    function clone(object) {
-        return extend({}, object);
-    }
-
-    /**
-     *  Object.isElement(object) -> Boolean
-     *  - object (Object): The object to test.
-     *
-     *  Returns `true` if `object` is a DOM node of type 1; `false` otherwise.
-     *  
-     *  ##### Examples
-     *  
-     *      Object.isElement(new Element('div'));
-     *      //-> true
-     *      
-     *      Object.isElement(document.createElement('div'));
-     *      //-> true
-     *      
-     *      Object.isElement($('id_of_an_exiting_element'));
-     *      //-> true
-     *      
-     *      Object.isElement(document.createTextNode('foo'));
-     *      //-> false
-    **/
-    function isElement(object) {
-        return !!(object && object.nodeType == 1);
-    }
-
-    /**
-     *  Object.isArray(object) -> Boolean
-     *  - object (Object): The object to test.
-     *
-     *  Returns `true` if `object` is an [[Array]]; `false` otherwise.
-     *  
-     *  ##### Examples
-     *  
-     *      Object.isArray([]);
-     *      //-> true
-     *      
-     *      Object.isArray($w());
-     *      //-> true
-     *      
-     *      Object.isArray({ });
-     *      //-> false
-    **/
-    function isArray(object) {
-        return _toString.call(object) === ARRAY_CLASS;
-    }
-
-    var hasNativeIsArray = (typeof Array.isArray == 'function')
-      && Array.isArray([]) && !Array.isArray({});
-
-    if (hasNativeIsArray) {
-        isArray = Array.isArray;
-    }
-
-    /**
-     *  Object.isHash(object) -> Boolean
-     *  - object (Object): The object to test.
-     *
-     *  Returns `true` if `object` is an instance of the [[Hash]] class; `false`
-     *  otherwise.
-     *  
-     *  ##### Examples
-     *  
-     *      Object.isHash(new Hash({ }));
-     *      //-> true
-     *      
-     *      Object.isHash($H({ }));
-     *      //-> true
-     *      
-     *      Object.isHash({ });
-     *      //-> false
-    **/
-    function isHash(object) {
-        return object instanceof Hash;
-    }
-
-    /**
-     *  Object.isFunction(object) -> Boolean
-     *  - object (Object): The object to test.
-     *
-     *  Returns `true` if `object` is of type [[Function]]; `false` otherwise.
-     *  
-     *  ##### Examples
-     *  
-     *      Object.isFunction($);
-     *      //-> true
-     *      
-     *      Object.isFunction(123);
-     *      //-> false
-    **/
-    function isFunction(object) {
-        return _toString.call(object) === FUNCTION_CLASS;
-    }
-
-    /**
-     *  Object.isString(object) -> Boolean
-     *  - object (Object): The object to test.
-     *
-     *  Returns `true` if `object` is of type [[String]]; `false` otherwise.
-     *  
-     *  ##### Examples
-     *  
-     *      Object.isString("foo");
-     *      //-> true
-     *      
-     *      Object.isString("");
-     *      //-> true
-     *      
-     *      Object.isString(123);
-     *      //-> false
-    **/
-    function isString(object) {
-        return _toString.call(object) === STRING_CLASS;
-    }
-
-    /**
-     *  Object.isNumber(object) -> Boolean
-     *  - object (Object): The object to test.
-     *
-     *  Returns `true` if `object` is of type [[Number]]; `false` otherwise.
-     *  
-     *  ##### Examples
-     *  
-     *      Object.isNumber(0);
-     *      //-> true
-     *      
-     *      Object.isNumber(1.2);
-     *      //-> true
-     *      
-     *      Object.isNumber("foo");
-     *      //-> false
-    **/
-    function isNumber(object) {
-        return _toString.call(object) === NUMBER_CLASS;
-    }
-
-    /**
-     *  Object.isDate(object) -> Boolean
-     *  - object (Object): The object to test.
-     *  
-     *  Returns `true` if `object` is of type [[Date]]; `false` otherwise.
-     *  
-     *  ##### Examples
-     *  
-     *      Object.isDate(new Date);
-     *      //-> true
-     *  
-     *      Object.isDate("Dec 25, 1995");
-     *      //-> false
-     *  
-     *      Object.isDate(new Date("Dec 25, 1995"));
-     *      //-> true
-    **/
-    function isDate(object) {
-        return _toString.call(object) === DATE_CLASS;
-    }
-
-    /**
-     *  Object.isUndefined(object) -> Boolean
-     *  - object (Object): The object to test.
-     *
-     *  Returns `true` if `object` is of type `undefined`; `false` otherwise.
-     *  
-     *  ##### Examples
-     *  
-     *      Object.isUndefined();
-     *      //-> true
-     *      
-     *      Object.isUndefined(undefined);
-     *      //-> true
-     *      
-     *      Object.isUndefined(null);
-     *      //-> false
-     *      
-     *      Object.isUndefined(0);
-     *      //-> false
-     *      
-     *      Object.isUndefined("");
-     *      //-> false
-    **/
-    function isUndefined(object) {
-        return typeof object === "undefined";
-    }
-
-    extend(Object, {
-        extend: extend,
-        inspect: inspect,
-        toJSON: NATIVE_JSON_STRINGIFY_SUPPORT ? stringify : toJSON,
-        toQueryString: toQueryString,
-        toHTML: toHTML,
-        keys: Object.keys || keys,
-        values: values,
-        clone: clone,
-        isElement: isElement,
-        isArray: isArray,
-        isHash: isHash,
-        isFunction: isFunction,
-        isString: isString,
-        isNumber: isNumber,
-        isDate: isDate,
-        isUndefined: isUndefined
-    });
+  extend(Object, {
+    extend:        extend,
+    inspect:       inspect,
+    toJSON:        NATIVE_JSON_STRINGIFY_SUPPORT ? stringify : toJSON,
+    toQueryString: toQueryString,
+    toHTML:        toHTML,
+    keys:          Object.keys || keys,
+    values:        values,
+    clone:         clone,
+    isElement:     isElement,
+    isArray:       isArray,
+    isHash:        isHash,
+    isFunction:    isFunction,
+    isString:      isString,
+    isNumber:      isNumber,
+    isDate:        isDate,
+    isUndefined:   isUndefined
+  });
 })();
 /** section: Language
  * class Function
@@ -2676,194 +2859,194 @@ Array.from = $A;
  *  Refer to Prototype's web site for a [tutorial on classes and
  *  inheritance](http://prototypejs.org/learn/class-inheritance).
 **/
-var Class = (function () {
+var Class = (function() {
+  
+  // Some versions of JScript fail to enumerate over properties, names of which 
+  // correspond to non-enumerable properties in the prototype chain
+  var IS_DONTENUM_BUGGY = (function(){
+    for (var p in { toString: 1 }) {
+      // check actual property name, so that it works with augmented Object.prototype
+      if (p === 'toString') return false;
+    }
+    return true;
+  })();
+  
+  /**
+   *  Class.create([superclass][, methods...]) -> Class
+   *    - superclass (Class): The optional superclass to inherit methods from.
+   *    - methods (Object): An object whose properties will be "mixed-in" to the
+   *        new class. Any number of mixins can be added; later mixins take
+   *        precedence.
+   *
+   *  [[Class.create]] creates a class and returns a constructor function for
+   *  instances of the class. Calling the constructor function (typically as
+   *  part of a `new` statement) will invoke the class's `initialize` method.
+   *
+   *  [[Class.create]] accepts two kinds of arguments. If the first argument is
+   *  a [[Class]], it's used as the new class's superclass, and all its methods
+   *  are inherited. Otherwise, any arguments passed are treated as objects,
+   *  and their methods are copied over ("mixed in") as instance methods of the
+   *  new class. In cases of method name overlap, later arguments take
+   *  precedence over earlier arguments.
+   *
+   *  If a subclass overrides an instance method declared in a superclass, the
+   *  subclass's method can still access the original method. To do so, declare
+   *  the subclass's method as normal, but insert `$super` as the first
+   *  argument. This makes `$super` available as a method for use within the
+   *  function.
+   *
+   *  To extend a class after it has been defined, use [[Class#addMethods]].
+   *
+   *  For details, see the
+   *  [inheritance tutorial](http://prototypejs.org/learn/class-inheritance)
+   *  on the Prototype website.
+  **/
+  function subclass() {};
+  function create() {
+    var parent = null, properties = $A(arguments);
+    if (Object.isFunction(properties[0]))
+      parent = properties.shift();
 
-    // Some versions of JScript fail to enumerate over properties, names of which 
-    // correspond to non-enumerable properties in the prototype chain
-    var IS_DONTENUM_BUGGY = (function () {
-        for (var p in { toString: 1 }) {
-            // check actual property name, so that it works with augmented Object.prototype
-            if (p === 'toString') return false;
-        }
-        return true;
-    })();
-
-    /**
-     *  Class.create([superclass][, methods...]) -> Class
-     *    - superclass (Class): The optional superclass to inherit methods from.
-     *    - methods (Object): An object whose properties will be "mixed-in" to the
-     *        new class. Any number of mixins can be added; later mixins take
-     *        precedence.
-     *
-     *  [[Class.create]] creates a class and returns a constructor function for
-     *  instances of the class. Calling the constructor function (typically as
-     *  part of a `new` statement) will invoke the class's `initialize` method.
-     *
-     *  [[Class.create]] accepts two kinds of arguments. If the first argument is
-     *  a [[Class]], it's used as the new class's superclass, and all its methods
-     *  are inherited. Otherwise, any arguments passed are treated as objects,
-     *  and their methods are copied over ("mixed in") as instance methods of the
-     *  new class. In cases of method name overlap, later arguments take
-     *  precedence over earlier arguments.
-     *
-     *  If a subclass overrides an instance method declared in a superclass, the
-     *  subclass's method can still access the original method. To do so, declare
-     *  the subclass's method as normal, but insert `$super` as the first
-     *  argument. This makes `$super` available as a method for use within the
-     *  function.
-     *
-     *  To extend a class after it has been defined, use [[Class#addMethods]].
-     *
-     *  For details, see the
-     *  [inheritance tutorial](http://prototypejs.org/learn/class-inheritance)
-     *  on the Prototype website.
-    **/
-    function subclass() { };
-    function create() {
-        var parent = null, properties = $A(arguments);
-        if (Object.isFunction(properties[0]))
-            parent = properties.shift();
-
-        function klass() {
-            this.initialize.apply(this, arguments);
-        }
-
-        Object.extend(klass, Class.Methods);
-        klass.superclass = parent;
-        klass.subclasses = [];
-
-        if (parent) {
-            subclass.prototype = parent.prototype;
-            klass.prototype = new subclass;
-            parent.subclasses.push(klass);
-        }
-
-        for (var i = 0, length = properties.length; i < length; i++)
-            klass.addMethods(properties[i]);
-
-        if (!klass.prototype.initialize)
-            klass.prototype.initialize = Prototype.emptyFunction;
-
-        klass.prototype.constructor = klass;
-        return klass;
+    function klass() {
+      this.initialize.apply(this, arguments);
     }
 
-    /**
-     *  Class#addMethods(methods) -> Class
-     *    - methods (Object): The methods to add to the class.
-     *
-     *  Adds methods to an existing class.
-     *
-     *  [[Class#addMethods]] is a method available on classes that have been
-     *  defined with [[Class.create]]. It can be used to add new instance methods
-     *  to that class, or overwrite existing methods, after the class has been
-     *  defined.
-     *
-     *  New methods propagate down the inheritance chain. If the class has
-     *  subclasses, those subclasses will receive the new methods &mdash; even in
-     *  the context of `$super` calls. The new methods also propagate to instances
-     *  of the class and of all its subclasses, even those that have already been
-     *  instantiated.
-     *
-     *  ##### Examples
-     *
-     *      var Animal = Class.create({
-     *        initialize: function(name, sound) {
-     *          this.name  = name;
-     *          this.sound = sound;
-     *        },
-     *
-     *        speak: function() {
-     *          alert(this.name + " says: " + this.sound + "!");
-     *        }
-     *      });
-     *
-     *      // subclassing Animal
-     *      var Snake = Class.create(Animal, {
-     *        initialize: function($super, name) {
-     *          $super(name, 'hissssssssss');
-     *        }
-     *      });
-     *
-     *      var ringneck = new Snake("Ringneck");
-     *      ringneck.speak();
-     *
-     *      //-> alerts "Ringneck says: hissssssss!"
-     *
-     *      // adding Snake#speak (with a supercall)
-     *      Snake.addMethods({
-     *        speak: function($super) {
-     *          $super();
-     *          alert("You should probably run. He looks really mad.");
-     *        }
-     *      });
-     *
-     *      ringneck.speak();
-     *      //-> alerts "Ringneck says: hissssssss!"
-     *      //-> alerts "You should probably run. He looks really mad."
-     *
-     *      // redefining Animal#speak
-     *      Animal.addMethods({
-     *        speak: function() {
-     *          alert(this.name + 'snarls: ' + this.sound + '!');
-     *        }
-     *      });
-     *
-     *      ringneck.speak();
-     *      //-> alerts "Ringneck snarls: hissssssss!"
-     *      //-> alerts "You should probably run. He looks really mad."
-    **/
-    function addMethods(source) {
-        var ancestor = this.superclass && this.superclass.prototype,
-            properties = Object.keys(source);
+    Object.extend(klass, Class.Methods);
+    klass.superclass = parent;
+    klass.subclasses = [];
 
-        // IE6 doesn't enumerate `toString` and `valueOf` (among other built-in `Object.prototype`) properties,
-        // Force copy if they're not Object.prototype ones.
-        // Do not copy other Object.prototype.* for performance reasons
-        if (IS_DONTENUM_BUGGY) {
-            if (source.toString != Object.prototype.toString)
-                properties.push("toString");
-            if (source.valueOf != Object.prototype.valueOf)
-                properties.push("valueOf");
-        }
-
-        for (var i = 0, length = properties.length; i < length; i++) {
-            var property = properties[i], value = source[property];
-            if (ancestor && Object.isFunction(value) &&
-                value.argumentNames()[0] == "$super") {
-                var method = value;
-                value = (function (m) {
-                    return function () { return ancestor[m].apply(this, arguments); };
-                })(property).wrap(method);
-
-                // We used to use `bind` to ensure that `toString` and `valueOf`
-                // methods were called in the proper context, but now that we're 
-                // relying on native bind and/or an existing polyfill, we can't rely
-                // on the nuanced behavior of whatever `bind` implementation is on
-                // the page.
-                //
-                // MDC's polyfill, for instance, doesn't like binding functions that
-                // haven't got a `prototype` property defined.
-                value.valueOf = (function (method) {
-                    return function () { return method.valueOf.call(method); };
-                })(method);
-
-                value.toString = (function (method) {
-                    return function () { return method.toString.call(method); };
-                })(method);
-            }
-            this.prototype[property] = value;
-        }
-
-        return this;
+    if (parent) {
+      subclass.prototype = parent.prototype;
+      klass.prototype = new subclass;
+      parent.subclasses.push(klass);
     }
 
-    return {
-        create: create,
-        Methods: {
-            addMethods: addMethods
-        }
-    };
+    for (var i = 0, length = properties.length; i < length; i++)
+      klass.addMethods(properties[i]);
+
+    if (!klass.prototype.initialize)
+      klass.prototype.initialize = Prototype.emptyFunction;
+
+    klass.prototype.constructor = klass;
+    return klass;
+  }
+
+  /**
+   *  Class#addMethods(methods) -> Class
+   *    - methods (Object): The methods to add to the class.
+   *
+   *  Adds methods to an existing class.
+   *
+   *  [[Class#addMethods]] is a method available on classes that have been
+   *  defined with [[Class.create]]. It can be used to add new instance methods
+   *  to that class, or overwrite existing methods, after the class has been
+   *  defined.
+   *
+   *  New methods propagate down the inheritance chain. If the class has
+   *  subclasses, those subclasses will receive the new methods &mdash; even in
+   *  the context of `$super` calls. The new methods also propagate to instances
+   *  of the class and of all its subclasses, even those that have already been
+   *  instantiated.
+   *
+   *  ##### Examples
+   *
+   *      var Animal = Class.create({
+   *        initialize: function(name, sound) {
+   *          this.name  = name;
+   *          this.sound = sound;
+   *        },
+   *
+   *        speak: function() {
+   *          alert(this.name + " says: " + this.sound + "!");
+   *        }
+   *      });
+   *
+   *      // subclassing Animal
+   *      var Snake = Class.create(Animal, {
+   *        initialize: function($super, name) {
+   *          $super(name, 'hissssssssss');
+   *        }
+   *      });
+   *
+   *      var ringneck = new Snake("Ringneck");
+   *      ringneck.speak();
+   *
+   *      //-> alerts "Ringneck says: hissssssss!"
+   *
+   *      // adding Snake#speak (with a supercall)
+   *      Snake.addMethods({
+   *        speak: function($super) {
+   *          $super();
+   *          alert("You should probably run. He looks really mad.");
+   *        }
+   *      });
+   *
+   *      ringneck.speak();
+   *      //-> alerts "Ringneck says: hissssssss!"
+   *      //-> alerts "You should probably run. He looks really mad."
+   *
+   *      // redefining Animal#speak
+   *      Animal.addMethods({
+   *        speak: function() {
+   *          alert(this.name + 'snarls: ' + this.sound + '!');
+   *        }
+   *      });
+   *
+   *      ringneck.speak();
+   *      //-> alerts "Ringneck snarls: hissssssss!"
+   *      //-> alerts "You should probably run. He looks really mad."
+  **/
+  function addMethods(source) {
+    var ancestor   = this.superclass && this.superclass.prototype,
+        properties = Object.keys(source);
+
+    // IE6 doesn't enumerate `toString` and `valueOf` (among other built-in `Object.prototype`) properties,
+    // Force copy if they're not Object.prototype ones.
+    // Do not copy other Object.prototype.* for performance reasons
+    if (IS_DONTENUM_BUGGY) {
+      if (source.toString != Object.prototype.toString)
+        properties.push("toString");
+      if (source.valueOf != Object.prototype.valueOf)
+        properties.push("valueOf");
+    }
+
+    for (var i = 0, length = properties.length; i < length; i++) {
+      var property = properties[i], value = source[property];
+      if (ancestor && Object.isFunction(value) &&
+          value.argumentNames()[0] == "$super") {
+        var method = value;
+        value = (function(m) {
+          return function() { return ancestor[m].apply(this, arguments); };
+        })(property).wrap(method);
+        
+        // We used to use `bind` to ensure that `toString` and `valueOf`
+        // methods were called in the proper context, but now that we're 
+        // relying on native bind and/or an existing polyfill, we can't rely
+        // on the nuanced behavior of whatever `bind` implementation is on
+        // the page.
+        //
+        // MDC's polyfill, for instance, doesn't like binding functions that
+        // haven't got a `prototype` property defined.
+        value.valueOf = (function(method) {
+          return function() { return method.valueOf.call(method); };
+        })(method);
+        
+        value.toString = (function(method) {
+          return function() { return method.toString.call(method); };
+        })(method);
+      }
+      this.prototype[property] = value;
+    }
+
+    return this;
+  }
+
+  return {
+    create: create,
+    Methods: {
+      addMethods: addMethods
+    }
+  };
 })();
 /** section: Language
  * class Date
@@ -3052,914 +3235,914 @@ var PeriodicalExecuter = Class.create({
  *  [[String#toQueryParams what you need]].
 **/
 Object.extend(String, {
-    /**
-     *  String.interpret(value) -> String
-     *
-     *  Coerces `value` into a string. Returns an empty string for `null`.
-    **/
-    interpret: function (value) {
-        return value == null ? '' : String(value);
-    },
-    specialChar: {
-        '\b': '\\b',
-        '\t': '\\t',
-        '\n': '\\n',
-        '\f': '\\f',
-        '\r': '\\r',
-        '\\': '\\\\'
-    }
+  /**
+   *  String.interpret(value) -> String
+   *
+   *  Coerces `value` into a string. Returns an empty string for `null`.
+  **/
+  interpret: function(value) {
+    return value == null ? '' : String(value);
+  },
+  specialChar: {
+    '\b': '\\b',
+    '\t': '\\t',
+    '\n': '\\n',
+    '\f': '\\f',
+    '\r': '\\r',
+    '\\': '\\\\'
+  }
 });
 
-Object.extend(String.prototype, (function () {
-    var NATIVE_JSON_PARSE_SUPPORT = window.JSON &&
-      typeof JSON.parse === 'function' &&
-      JSON.parse('{"test": true}').test;
+Object.extend(String.prototype, (function() {
+  var NATIVE_JSON_PARSE_SUPPORT = window.JSON &&
+    typeof JSON.parse === 'function' &&
+    JSON.parse('{"test": true}').test;
 
-    function prepareReplacement(replacement) {
-        if (Object.isFunction(replacement)) return replacement;
-        var template = new Template(replacement);
-        return function (match) { return template.evaluate(match) };
+  function prepareReplacement(replacement) {
+    if (Object.isFunction(replacement)) return replacement;
+    var template = new Template(replacement);
+    return function(match) { return template.evaluate(match) };
+  }
+
+  /**
+   *  String#gsub(pattern, replacement) -> String
+   *
+   *  Returns the string with _every_ occurence of a given pattern replaced by either a
+   *  regular string, the returned value of a function or a [[Template]] string.
+   *  The pattern can be a string or a regular expression.
+   *  
+   *  If its second argument is a string [[String#gsub]] works just like the native JavaScript
+   *  method `replace()` set to global match.
+   *  
+   *      var mouseEvents = 'click dblclick mousedown mouseup mouseover mousemove mouseout';
+   *      
+   *      mouseEvents.gsub(' ', ', ');
+   *      // -> 'click, dblclick, mousedown, mouseup, mouseover, mousemove, mouseout'
+   *      
+   *      mouseEvents.gsub(/\s+/, ', ');
+   *      // -> 'click, dblclick, mousedown, mouseup, mouseover, mousemove, mouseout'
+   *  
+   *  If you pass it a function, it will be invoked for every occurrence of the pattern
+   *  with the match of the current pattern as its unique argument. Note that this argument
+   *  is the returned value of the `match()` method called on the current pattern. It is
+   *  in the form of an array where the first element is the entire match and every subsequent
+   *  one corresponds to a parenthesis group in the regex.
+   *  
+   *      mouseEvents.gsub(/\w+/, function(match){ return 'on' + match[0].capitalize() });
+   *      // -> 'onClick onDblclick onMousedown onMouseup onMouseover onMousemove onMouseout'
+   *      
+   *      var markdown = '![a pear](/img/pear.jpg) ![an orange](/img/orange.jpg)';
+   *      
+   *      markdown.gsub(/!\[(.*?)\]\((.*?)\)/, function(match) {
+   *        return '<img alt="' + match[1] + '" src="' + match[2] + '" />';
+   *      });
+   *      // -> '<img alt="a pear" src="/img/pear.jpg" /> <img alt="an orange" src="/img/orange.jpg" />'
+   *  
+   *  Lastly, you can pass [[String#gsub]] a [[Template]] string in which you can also access
+   *  the returned value of the `match()` method using the ruby inspired notation: `#{0}` 
+   *  for the first element of the array, `#{1}` for the second one, and so on.
+   *  So our last example could be easily re-written as:
+   *  
+   *      markdown.gsub(/!\[(.*?)\]\((.*?)\)/, '<img alt="#{1}" src="#{2}" />');
+   *      // -> '<img alt="a pear" src="/img/pear.jpg" /> <img alt="an orange" src="/img/orange.jpg" />'
+   *  
+   *  If you need an equivalent to [[String#gsub]] but without global match set on, try [[String#sub]].
+   *  
+   *  ##### Note
+   *  
+   *  Do _not_ use the `"g"` flag on the regex as this will create an infinite loop.
+  **/
+  function gsub(pattern, replacement) {
+    var result = '', source = this, match;
+    replacement = prepareReplacement(replacement);
+
+    if (Object.isString(pattern))
+      pattern = RegExp.escape(pattern);
+
+    if (!(pattern.length || pattern.source)) {
+      replacement = replacement('');
+      return replacement + source.split('').join(replacement) + replacement;
     }
 
-    /**
-     *  String#gsub(pattern, replacement) -> String
-     *
-     *  Returns the string with _every_ occurence of a given pattern replaced by either a
-     *  regular string, the returned value of a function or a [[Template]] string.
-     *  The pattern can be a string or a regular expression.
-     *  
-     *  If its second argument is a string [[String#gsub]] works just like the native JavaScript
-     *  method `replace()` set to global match.
-     *  
-     *      var mouseEvents = 'click dblclick mousedown mouseup mouseover mousemove mouseout';
-     *      
-     *      mouseEvents.gsub(' ', ', ');
-     *      // -> 'click, dblclick, mousedown, mouseup, mouseover, mousemove, mouseout'
-     *      
-     *      mouseEvents.gsub(/\s+/, ', ');
-     *      // -> 'click, dblclick, mousedown, mouseup, mouseover, mousemove, mouseout'
-     *  
-     *  If you pass it a function, it will be invoked for every occurrence of the pattern
-     *  with the match of the current pattern as its unique argument. Note that this argument
-     *  is the returned value of the `match()` method called on the current pattern. It is
-     *  in the form of an array where the first element is the entire match and every subsequent
-     *  one corresponds to a parenthesis group in the regex.
-     *  
-     *      mouseEvents.gsub(/\w+/, function(match){ return 'on' + match[0].capitalize() });
-     *      // -> 'onClick onDblclick onMousedown onMouseup onMouseover onMousemove onMouseout'
-     *      
-     *      var markdown = '![a pear](/img/pear.jpg) ![an orange](/img/orange.jpg)';
-     *      
-     *      markdown.gsub(/!\[(.*?)\]\((.*?)\)/, function(match) {
-     *        return '<img alt="' + match[1] + '" src="' + match[2] + '" />';
-     *      });
-     *      // -> '<img alt="a pear" src="/img/pear.jpg" /> <img alt="an orange" src="/img/orange.jpg" />'
-     *  
-     *  Lastly, you can pass [[String#gsub]] a [[Template]] string in which you can also access
-     *  the returned value of the `match()` method using the ruby inspired notation: `#{0}` 
-     *  for the first element of the array, `#{1}` for the second one, and so on.
-     *  So our last example could be easily re-written as:
-     *  
-     *      markdown.gsub(/!\[(.*?)\]\((.*?)\)/, '<img alt="#{1}" src="#{2}" />');
-     *      // -> '<img alt="a pear" src="/img/pear.jpg" /> <img alt="an orange" src="/img/orange.jpg" />'
-     *  
-     *  If you need an equivalent to [[String#gsub]] but without global match set on, try [[String#sub]].
-     *  
-     *  ##### Note
-     *  
-     *  Do _not_ use the `"g"` flag on the regex as this will create an infinite loop.
-    **/
-    function gsub(pattern, replacement) {
-        var result = '', source = this, match;
-        replacement = prepareReplacement(replacement);
+    while (source.length > 0) {
+      match = source.match(pattern)
+      if (match && match[0].length > 0) {
+        result += source.slice(0, match.index);
+        result += String.interpret(replacement(match));
+        source  = source.slice(match.index + match[0].length);
+      } else {
+        result += source, source = '';
+      }
+    }
+    return result;
+  }
 
-        if (Object.isString(pattern))
-            pattern = RegExp.escape(pattern);
+  /**
+   *  String#sub(pattern, replacement[, count = 1]) -> String
+   *
+   *  Returns a string with the _first_ `count` occurrences of `pattern` replaced by either
+   *  a regular string, the returned value of a function or a [[Template]] string.
+   *  `pattern` can be a string or a regular expression.
+   *  
+   *  Unlike [[String#gsub]], [[String#sub]] takes a third optional parameter which specifies
+   *  the number of occurrences of the pattern which will be replaced.
+   *  If not specified, it will default to 1.
+   *  
+   *  Apart from that, [[String#sub]] works just like [[String#gsub]].
+   *  Please refer to it for a complete explanation.
+   *  
+   *  ##### Examples
+   *
+   *      var fruits = 'apple pear orange';
+   *      
+   *      fruits.sub(' ', ', ');
+   *      // -> 'apple, pear orange'
+   *      
+   *      fruits.sub(' ', ', ', 1);
+   *      // -> 'apple, pear orange'
+   *      
+   *      fruits.sub(' ', ', ', 2);
+   *      // -> 'apple, pear, orange'
+   *      
+   *      fruits.sub(/\w+/, function(match){ return match[0].capitalize() + ',' }, 2);
+   *      // -> 'Apple, Pear, orange'
+   *      
+   *      var markdown = '![a pear](/img/pear.jpg) ![an orange](/img/orange.jpg)';
+   *      
+   *      markdown.sub(/!\[(.*?)\]\((.*?)\)/, function(match) {
+   *        return '<img alt="' + match[1] + '" src="' + match[2] + '" />';
+   *      });
+   *      // -> '<img alt="a pear" src="/img/pear.jpg" /> ![an orange](/img/orange.jpg)'
+   *      
+   *      markdown.sub(/!\[(.*?)\]\((.*?)\)/, '<img alt="#{1}" src="#{2}" />');
+   *      // -> '<img alt="a pear" src="/img/pear.jpg" /> ![an orange](/img/orange.jpg)'
+   *
+   *  ##### Note
+   *  
+   *  Do _not_ use the `"g"` flag on the regex as this will create an infinite loop.
+  **/
+  function sub(pattern, replacement, count) {
+    replacement = prepareReplacement(replacement);
+    count = Object.isUndefined(count) ? 1 : count;
 
-        if (!(pattern.length || pattern.source)) {
-            replacement = replacement('');
-            return replacement + source.split('').join(replacement) + replacement;
+    return this.gsub(pattern, function(match) {
+      if (--count < 0) return match[0];
+      return replacement(match);
+    });
+  }
+
+  /** related to: String#gsub
+   *  String#scan(pattern, iterator) -> String
+   *
+   *  Allows iterating over every occurrence of the given pattern (which can be a
+   *  string or a regular expression).
+   *  Returns the original string.
+   *  
+   *  Internally just calls [[String#gsub]] passing it `pattern` and `iterator` as arguments.
+   *  
+   *  ##### Examples
+   *  
+   *      'apple, pear & orange'.scan(/\w+/, alert);
+   *      // -> 'apple pear & orange' (and displays 'apple', 'pear' and 'orange' in three successive alert dialogs)
+   *  
+   *  Can be used to populate an array:
+   *  
+   *      var fruits = [];
+   *      'apple, pear & orange'.scan(/\w+/, function(match) { fruits.push(match[0]) });
+   *      fruits.inspect()
+   *      // -> ['apple', 'pear', 'orange']
+   *  
+   *  or even to work on the DOM:
+   *  
+   *      'failure-message, success-message & spinner'.scan(/(\w|-)+/, Element.toggle)
+   *      // -> 'failure-message, success-message & spinner' (and toggles the visibility of each DOM element)
+   *  
+   *  ##### Note
+   *  
+   *  Do _not_ use the `"g"` flag on the regex as this will create an infinite loop.
+  **/
+  function scan(pattern, iterator) {
+    this.gsub(pattern, iterator);
+    return String(this);
+  }
+
+  /**
+   *  String#truncate([length = 30[, suffix = '...']]) -> String
+   *
+   *  Truncates a string to given `length` and appends `suffix` to it (indicating
+   *  that it is only an excerpt).
+   *  
+   *  ##### Examples
+   *  
+   *      'A random sentence whose length exceeds 30 characters.'.truncate();
+   *      // -> 'A random sentence whose len...'
+   *      
+   *      'Some random text'.truncate();
+   *      // -> 'Some random text.'
+   *      
+   *      'Some random text'.truncate(10);
+   *      // -> 'Some ra...'
+   *      
+   *      'Some random text'.truncate(10, ' [...]');
+   *      // -> 'Some [...]'
+  **/
+  function truncate(length, truncation) {
+    length = length || 30;
+    truncation = Object.isUndefined(truncation) ? '...' : truncation;
+    return this.length > length ?
+      this.slice(0, length - truncation.length) + truncation : String(this);
+  }
+
+  /**
+   *  String#strip() -> String
+   *
+   *  Strips all leading and trailing whitespace from a string.
+   *  
+   *  ##### Example
+   *  
+   *      '    hello world!    '.strip();
+   *      // -> 'hello world!'
+  **/
+  function strip() {
+    return this.replace(/^\s+/, '').replace(/\s+$/, '');
+  }
+
+  /**
+   *  String#stripTags() -> String
+   *
+   *  Strips a string of any HTML tags.
+   *
+   *  Note that [[String#stripTags]] will only strip HTML 4.01 tags &mdash; like
+   *  `div`, `span`, and `abbr`. It _will not_ strip namespace-prefixed tags
+   *  such as `h:table` or `xsl:template`.
+   *
+   *  Watch out for `<script>` tags in your string, as [[String#stripTags]] will
+   *  _not_ remove their content. Use [[String#stripScripts]] to do so.
+   *
+   *  ##### Caveat User
+   *
+   *  Note that the processing [[String#stripTags]] does is good enough for most
+   *  purposes, but you cannot rely on it for security purposes. If you're
+   *  processing end-user-supplied content, [[String#stripTags]] is _not_
+   *  sufficiently robust to ensure that the content is completely devoid of
+   *  HTML tags in the case of a user intentionally trying to circumvent tag
+   *  restrictions. But then, you'll be running them through
+   *  [[String#escapeHTML]] anyway, won't you?
+   *  
+   *  ##### Examples
+   *  
+   *      'a <a href="#">link</a>'.stripTags();
+   *       // -> 'a link'
+   *      
+   *      'a <a href="#">link</a><script>alert("hello world!");</script>'.stripTags();
+   *      // -> 'a linkalert("hello world!");'
+   *      
+   *      'a <a href="#">link</a><script>alert("hello world!");</script>'.stripScripts().stripTags();
+   *      // -> 'a link'
+  **/
+  function stripTags() {
+    return this.replace(/<\w+(\s+("[^"]*"|'[^']*'|[^>])+)?>|<\/\w+>/gi, '');
+  }
+
+  /**
+   *  String#stripScripts() -> String
+   *
+   *  Strips a string of things that look like an HTML script blocks.
+   *
+   *  ##### Example
+   *
+   *      "<p>This is a test.<script>alert("Look, a test!");</script>End of test</p>".stripScripts();
+   *      // => "<p>This is a test.End of test</p>"
+   *
+   *  ##### Caveat User
+   *
+   *  Note that the processing [[String#stripScripts]] does is good enough for
+   *  most purposes, but you cannot rely on it for security purposes. If you're
+   *  processing end-user-supplied content, [[String#stripScripts]] is probably
+   *  not sufficiently robust to prevent hack attacks.
+  **/
+  function stripScripts() {
+    return this.replace(new RegExp(Prototype.ScriptFragment, 'img'), '');
+  }
+
+  /**
+   *  String#extractScripts() -> Array
+   *
+   *  Extracts the content of any `<script>` blocks present in the string and
+   *  returns them as an array of strings.
+   *  
+   *  This method is used internally by [[String#evalScripts]]. It does _not_
+   *  evaluate the scripts (use [[String#evalScripts]] to do that), but can be
+   *  usefull if you need to evaluate the scripts at a later date.
+   *  
+   *  ##### Examples
+   *  
+   *      'lorem... <script>2 + 2</script>'.extractScripts();
+   *      // -> ['2 + 2']
+   *      
+   *      '<script>2 + 2</script><script>alert("hello world!")</script>'.extractScripts();
+   *      // -> ['2 + 2', 'alert("hello world!")']
+   *  
+   *  ##### Notes
+   *  
+   *  To evaluate the scripts later on, you can use the following:
+   *  
+   *      var myScripts = '<script>2 + 2</script><script>alert("hello world!")</script>'.extractScripts();
+   *      // -> ['2 + 2', 'alert("hello world!")']
+   *      
+   *      var myReturnedValues = myScripts.map(function(script) {
+   *        return eval(script);
+   *      });
+   *      // -> [4, undefined] (and displays 'hello world!' in the alert dialog)
+  **/
+  function extractScripts() {
+    var matchAll = new RegExp(Prototype.ScriptFragment, 'img'),
+        matchOne = new RegExp(Prototype.ScriptFragment, 'im');
+    return (this.match(matchAll) || []).map(function(scriptTag) {
+      return (scriptTag.match(matchOne) || ['', ''])[1];
+    });
+  }
+
+  /**
+   *  String#evalScripts() -> Array
+   *
+   *  Evaluates the content of any inline `<script>` block present in the string.
+   *  Returns an array containing the value returned by each script.
+   *  `<script>`  blocks referencing external files will be treated as though
+   *  they were empty (the result for that position in the array will be `undefined`);
+   *  external files are _not_ loaded and processed by [[String#evalScripts]].
+   *  
+   *  ##### Examples
+   *  
+   *      'lorem... <script>2 + 2</script>'.evalScripts();
+   *      // -> [4]
+   *      
+   *      '<script>2 + 2<script><script>alert("hello world!")</script>'.evalScripts();
+   *      // -> [4, undefined] (and displays 'hello world!' in the alert dialog)
+   *
+   *  ##### About `evalScripts`, `var`s, and defining functions
+   *
+   *  [[String#evalScripts]] evaluates script blocks, but this **does not** mean
+   *  they are evaluated in the global scope. They aren't, they're evaluated in
+   *  the scope of the [[String#evalScripts]] method. This has important
+   *  ramifications for your scripts:
+   *
+   *  * Anything in your script declared with the `var` keyword will be
+   *    discarded momentarily after evaluation, and will be invisible to any
+   *    other scope.
+   *  * If any `<script>` blocks _define functions_, they will need to be
+   *    assigned to properties of the `window` object.
+   *
+   *  For example, this won't work:
+   *
+   *      // This kind of script won't work if processed by evalScripts:
+   *      function coolFunc() {
+   *        // Amazing stuff!
+   *      }
+   *
+   *  Instead, use the following syntax:
+   *
+   *      // This kind of script WILL work if processed by evalScripts:
+   *      window.coolFunc = function() {
+   *        // Amazing stuff!
+   *      }
+   *
+   *  (You can leave off the `window.` part of that, but it's bad form.)   
+  **/
+  function evalScripts() {
+    return this.extractScripts().map(function(script) { return eval(script); });
+  }
+
+  /** related to: String#unescapeHTML
+   *  String#escapeHTML() -> String
+   *
+   *  Converts HTML special characters to their entity equivalents.
+   *  
+   *  ##### Example
+   *  
+   *      '<div class="article">This is an article</div>'.escapeHTML();
+   *      // -> "&lt;div class="article"&gt;This is an article&lt;/div&gt;"
+  **/
+  function escapeHTML() {
+    return this.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  /** related to: String#escapeHTML
+   *  String#unescapeHTML() -> String
+   *
+   *  Strips tags and converts the entity forms of special HTML characters
+   *  to their normal form.
+   *  
+   *  ##### Examples
+   *  
+   *      'x &gt; 10'.unescapeHTML()
+   *      // -> 'x > 10'
+   *      
+   *      '<h1>Pride &amp; Prejudice</h1>;'.unescapeHTML()
+   *      // -> '<h1>Pride & Prejudice</h1>'
+  **/
+  function unescapeHTML() {
+    // Warning: In 1.7 String#unescapeHTML will no longer call String#stripTags.
+    return this.stripTags().replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&');
+  }
+
+  /**
+   *  String#parseQuery([separator = '&']) -> Object
+  **/
+
+  /** alias of: String#parseQuery, related to: Hash#toQueryString
+   *  String#toQueryParams([separator = '&']) -> Object
+   *
+   *  Parses a URI-like query string and returns an object composed of
+   *  parameter/value pairs.
+   *  
+   *  This method is realy targeted at parsing query strings (hence the default 
+   *  value of`"&"` for the `separator` argument).
+   *  
+   *  For this reason, it does _not_ consider anything that is either before a 
+   *  question  mark (which signals the beginning of a query string) or beyond 
+   *  the hash symbol (`"#"`), and runs `decodeURIComponent()` on each 
+   *  parameter/value pair.
+   *  
+   *  [[String#toQueryParams]] also aggregates the values of identical keys into 
+   *  an array of values.
+   *  
+   *  Note that parameters which do not have a specified value will be set to 
+   *  `undefined`.
+   *  
+   *  ##### Examples
+   *  
+   *      'section=blog&id=45'.toQueryParams();
+   *      // -> {section: 'blog', id: '45'}
+   *      
+   *      'section=blog;id=45'.toQueryParams(';');
+   *      // -> {section: 'blog', id: '45'}
+   *      
+   *      'http://www.example.com?section=blog&id=45#comments'.toQueryParams();
+   *      // -> {section: 'blog', id: '45'}
+   *      
+   *      'section=blog&tag=javascript&tag=prototype&tag=doc'.toQueryParams();
+   *      // -> {section: 'blog', tag: ['javascript', 'prototype', 'doc']}
+   *      
+   *      'tag=ruby%20on%20rails'.toQueryParams();
+   *      // -> {tag: 'ruby on rails'}
+   *      
+   *      'id=45&raw'.toQueryParams();
+   *      // -> {id: '45', raw: undefined}
+  **/
+  function toQueryParams(separator) {
+    var match = this.strip().match(/([^?#]*)(#.*)?$/);
+    if (!match) return { };
+
+    return match[1].split(separator || '&').inject({ }, function(hash, pair) {
+      if ((pair = pair.split('='))[0]) {
+        var key = decodeURIComponent(pair.shift()),
+            value = pair.length > 1 ? pair.join('=') : pair[0];
+
+        if (value != undefined) {
+          value = value.gsub('+', ' ');
+          value = decodeURIComponent(value);
         }
 
-        while (source.length > 0) {
-            match = source.match(pattern)
-            if (match && match[0].length > 0) {
-                result += source.slice(0, match.index);
-                result += String.interpret(replacement(match));
-                source = source.slice(match.index + match[0].length);
-            } else {
-                result += source, source = '';
-            }
+        if (key in hash) {
+          if (!Object.isArray(hash[key])) hash[key] = [hash[key]];
+          hash[key].push(value);
         }
-        return result;
+        else hash[key] = value;
+      }
+      return hash;
+    });
+  }
+
+  /**
+   *  String#toArray() -> Array
+   *
+   *  Splits the string character-by-character and returns an array with
+   *  the result.
+   *
+   *  ##### Examples
+   *  
+   *      'a'.toArray();
+   *      // -> ['a']
+   *      
+   *      'hello world!'.toArray();
+   *      // -> ['h', 'e', 'l', 'l', 'o', ' ', 'w', 'o', 'r', 'l', 'd', '!']
+  **/
+  function toArray() {
+    return this.split('');
+  }
+
+  /**
+   *  String#succ() -> String
+   *
+   *  Used internally by ObjectRange.
+   *
+   *  Converts the last character of the string to the following character in
+   *  the Unicode alphabet.
+   *  
+   *  ##### Examples
+   *  
+   *      'a'.succ();
+   *      // -> 'b'
+   *      
+   *      'aaaa'.succ();
+   *      // -> 'aaab'
+  **/
+  function succ() {
+    return this.slice(0, this.length - 1) +
+      String.fromCharCode(this.charCodeAt(this.length - 1) + 1);
+  }
+
+  /**
+   *  String#times(count) -> String
+   *
+   *  Concatenates the string `count` times.
+   *  
+   *  ##### Example
+   *  
+   *      "echo ".times(3);
+   *      // -> "echo echo echo "
+  **/
+  function times(count) {
+    return count < 1 ? '' : new Array(count + 1).join(this);
+  }
+
+  /**
+   *  String#camelize() -> String
+   *
+   *  Converts a string separated by dashes into a camelCase equivalent. For
+   *  instance, `'foo-bar'` would be converted to `'fooBar'`.
+   *  
+   *  Prototype uses this internally for translating CSS properties into their
+   *  DOM `style` property equivalents.
+   *
+   *  ##### Examples
+   *
+   *      'background-color'.camelize();
+   *      // -> 'backgroundColor'
+   *
+   *      '-moz-binding'.camelize();
+   *      // -> 'MozBinding'
+  **/
+  function camelize() {
+    return this.replace(/-+(.)?/g, function(match, chr) {
+      return chr ? chr.toUpperCase() : '';
+    });
+  }
+
+  /**
+   *  String#capitalize() -> String
+   *
+   *  Capitalizes the first letter of a string and downcases all the others.
+   *  
+   *  ##### Examples
+   *  
+   *      'hello'.capitalize();
+   *      // -> 'Hello'
+   *      
+   *      'HELLO WORLD!'.capitalize();
+   *      // -> 'Hello world!'
+  **/
+  function capitalize() {
+    return this.charAt(0).toUpperCase() + this.substring(1).toLowerCase();
+  }
+
+  /**
+   *  String#underscore() -> String
+   *
+   *  Converts a camelized string into a series of words separated by an
+   *  underscore (`_`).
+   *
+   *  ##### Example
+   *  
+   *      'borderBottomWidth'.underscore();
+   *      // -> 'border_bottom_width'
+   *  
+   *  ##### Note
+   *  
+   *  Used in conjunction with [[String#dasherize]], [[String#underscore]]
+   *  converts a DOM style into its CSS equivalent.
+   *  
+   *      'borderBottomWidth'.underscore().dasherize();
+   *      // -> 'border-bottom-width'
+  **/
+  function underscore() {
+    return this.replace(/::/g, '/')
+               .replace(/([A-Z]+)([A-Z][a-z])/g, '$1_$2')
+               .replace(/([a-z\d])([A-Z])/g, '$1_$2')
+               .replace(/-/g, '_')
+               .toLowerCase();
+  }
+
+  /**
+   *  String#dasherize() -> String
+   *
+   *  Replaces every instance of the underscore character `"_"` by a dash `"-"`.
+   *
+   *  ##### Example
+   *  
+   *      'border_bottom_width'.dasherize();
+   *      // -> 'border-bottom-width'
+   *  
+   *  ##### Note
+   *  
+   *  Used in conjunction with [[String#underscore]], [[String#dasherize]]
+   *  converts a DOM style into its CSS equivalent.
+   *  
+   *      'borderBottomWidth'.underscore().dasherize();
+   *      // -> 'border-bottom-width'
+  **/
+  function dasherize() {
+    return this.replace(/_/g, '-');
+  }
+
+  /** related to: Object.inspect
+   *  String#inspect([useDoubleQuotes = false]) -> String
+   *
+   *  Returns a debug-oriented version of the string (i.e. wrapped in single or
+   *  double quotes, with backslashes and quotes escaped).
+   *  
+   *  For more information on `inspect` methods, see [[Object.inspect]].
+   *  
+   *  #### Examples
+   *  
+   *      'I\'m so happy.'.inspect();
+   *      // -> '\'I\\\'m so happy.\''
+   *      // (displayed as 'I\'m so happy.' in an alert dialog or the console)
+   *      
+   *      'I\'m so happy.'.inspect(true);
+   *      // -> '"I'm so happy."'
+   *      // (displayed as "I'm so happy." in an alert dialog or the console)
+  **/
+  function inspect(useDoubleQuotes) {
+    var escapedString = this.replace(/[\x00-\x1f\\]/g, function(character) {
+      if (character in String.specialChar) {
+        return String.specialChar[character];
+      }
+      return '\\u00' + character.charCodeAt().toPaddedString(2, 16);
+    });
+    if (useDoubleQuotes) return '"' + escapedString.replace(/"/g, '\\"') + '"';
+    return "'" + escapedString.replace(/'/g, '\\\'') + "'";
+  }
+
+  /**
+   *  String#unfilterJSON([filter = Prototype.JSONFilter]) -> String
+   *
+   *  Strips comment delimiters around Ajax JSON or JavaScript responses.
+   *  This security method is called internally.
+   *  
+   *  ##### Example
+   *  
+   *      '/*-secure-\n{"name": "Violet", "occupation": "character", "age": 25}\n*\/'.unfilterJSON()
+   *      // -> '{"name": "Violet", "occupation": "character", "age": 25}'
+  **/
+  function unfilterJSON(filter) {
+    return this.replace(filter || Prototype.JSONFilter, '$1');
+  }
+
+  /**
+   *  String#isJSON() -> Boolean
+   *
+   *  Check if the string is valid JSON by the use of regular expressions.
+   *  This security method is called internally.
+   *  
+   *  ##### Examples
+   *  
+   *      "something".isJSON();
+   *      // -> false
+   *      "\"something\"".isJSON();
+   *      // -> true
+   *      "{ foo: 42 }".isJSON();
+   *      // -> false
+   *      "{ \"foo\": 42 }".isJSON();
+   *      // -> true
+  **/
+  function isJSON() {
+    var str = this;
+    if (str.blank()) return false;
+    str = str.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g, '@');
+    str = str.replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']');
+    str = str.replace(/(?:^|:|,)(?:\s*\[)+/g, '');
+    return (/^[\],:{}\s]*$/).test(str);
+  }
+
+  /**
+   *  String#evalJSON([sanitize = false]) -> object
+   *
+   *  Evaluates the JSON in the string and returns the resulting object.
+   *
+   *  If the optional `sanitize` parameter is set to `true`, the string is
+   *  checked for possible malicious attempts; if one is detected, `eval`
+   *  is _not called_.
+   *  
+   *  ##### Warning
+   *  
+   *  If the JSON string is not well formated or if a malicious attempt is
+   *  detected a `SyntaxError` is thrown.
+   *  
+   *  ##### Examples
+   *  
+   *      var person = '{ "name": "Violet", "occupation": "character" }'.evalJSON();
+   *      person.name;
+   *      //-> "Violet"
+   *      
+   *      person = 'grabUserPassword()'.evalJSON(true);
+   *      //-> SyntaxError: Badly formed JSON string: 'grabUserPassword()'
+   *      
+   *      person = '/*-secure-\n{"name": "Violet", "occupation": "character"}\n*\/'.evalJSON()
+   *      person.name;
+   *      //-> "Violet"
+   *  
+   *  ##### Note
+   *  
+   *  Always set the `sanitize` parameter to `true` for data coming from
+   *  externals sources to prevent XSS attacks.
+   *  
+   *  As [[String#evalJSON]] internally calls [[String#unfilterJSON]], optional
+   *  security comment delimiters (defined in [[Prototype.JSONFilter]]) are
+   *  automatically removed.
+  **/
+  function evalJSON(sanitize) {
+    var json = this.unfilterJSON(),
+        cx = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g;
+    if (cx.test(json)) {
+      json = json.replace(cx, function (a) {
+        return '\\u' + ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
+      });
     }
+    try {
+      if (!sanitize || json.isJSON()) return eval('(' + json + ')');
+    } catch (e) { }
+    throw new SyntaxError('Badly formed JSON string: ' + this.inspect());
+  }
+  
+  function parseJSON() {
+    var json = this.unfilterJSON();
+    return JSON.parse(json);
+  }
 
-    /**
-     *  String#sub(pattern, replacement[, count = 1]) -> String
-     *
-     *  Returns a string with the _first_ `count` occurrences of `pattern` replaced by either
-     *  a regular string, the returned value of a function or a [[Template]] string.
-     *  `pattern` can be a string or a regular expression.
-     *  
-     *  Unlike [[String#gsub]], [[String#sub]] takes a third optional parameter which specifies
-     *  the number of occurrences of the pattern which will be replaced.
-     *  If not specified, it will default to 1.
-     *  
-     *  Apart from that, [[String#sub]] works just like [[String#gsub]].
-     *  Please refer to it for a complete explanation.
-     *  
-     *  ##### Examples
-     *
-     *      var fruits = 'apple pear orange';
-     *      
-     *      fruits.sub(' ', ', ');
-     *      // -> 'apple, pear orange'
-     *      
-     *      fruits.sub(' ', ', ', 1);
-     *      // -> 'apple, pear orange'
-     *      
-     *      fruits.sub(' ', ', ', 2);
-     *      // -> 'apple, pear, orange'
-     *      
-     *      fruits.sub(/\w+/, function(match){ return match[0].capitalize() + ',' }, 2);
-     *      // -> 'Apple, Pear, orange'
-     *      
-     *      var markdown = '![a pear](/img/pear.jpg) ![an orange](/img/orange.jpg)';
-     *      
-     *      markdown.sub(/!\[(.*?)\]\((.*?)\)/, function(match) {
-     *        return '<img alt="' + match[1] + '" src="' + match[2] + '" />';
-     *      });
-     *      // -> '<img alt="a pear" src="/img/pear.jpg" /> ![an orange](/img/orange.jpg)'
-     *      
-     *      markdown.sub(/!\[(.*?)\]\((.*?)\)/, '<img alt="#{1}" src="#{2}" />');
-     *      // -> '<img alt="a pear" src="/img/pear.jpg" /> ![an orange](/img/orange.jpg)'
-     *
-     *  ##### Note
-     *  
-     *  Do _not_ use the `"g"` flag on the regex as this will create an infinite loop.
-    **/
-    function sub(pattern, replacement, count) {
-        replacement = prepareReplacement(replacement);
-        count = Object.isUndefined(count) ? 1 : count;
+  /**
+   *  String#include(substring) -> Boolean
+   *
+   *  Checks if the string contains `substring`.
+   *  
+   *  ##### Example
+   *  
+   *      'Prototype framework'.include('frame');
+   *      //-> true
+   *      'Prototype framework'.include('frameset');
+   *      //-> false
+  **/
+  function include(pattern) {
+    return this.indexOf(pattern) > -1;
+  }
 
-        return this.gsub(pattern, function (match) {
-            if (--count < 0) return match[0];
-            return replacement(match);
-        });
-    }
+  /**
+   *  String#startsWith(substring[, position]) -> Boolean
+   *  - substring (String): The characters to be searched for at the start of
+   *    this string.
+   *  - [position] (Number): The position in this string at which to begin
+   *    searching for `substring`; defaults to 0.
+   *
+   *  Checks if the string starts with `substring`.
+   *  
+   *  `String#startsWith` acts as an ECMAScript 6 [polyfill](http://remysharp.com/2010/10/08/what-is-a-polyfill/).
+   *  It is only defined if not already present in the user's browser, and it
+   *  is meant to behave like the native version as much as possible. Consult
+   *  the [ES6 specification](http://wiki.ecmascript.org/doku.php?id=harmony%3Aspecification_drafts) for more
+   *  information.
+   *  
+   *  ##### Example
+   *  
+   *      'Prototype JavaScript'.startsWith('Pro');
+   *      //-> true
+   *      'Prototype JavaScript'.startsWith('Java', 10);
+   *      //-> true
+  **/
+  function startsWith(pattern, position) {
+    position = Object.isNumber(position) ? position : 0;
+    // We use `lastIndexOf` instead of `indexOf` to avoid tying execution
+    // time to string length when string doesn't start with pattern.
+    return this.lastIndexOf(pattern, position) === position;
+  }
 
-    /** related to: String#gsub
-     *  String#scan(pattern, iterator) -> String
-     *
-     *  Allows iterating over every occurrence of the given pattern (which can be a
-     *  string or a regular expression).
-     *  Returns the original string.
-     *  
-     *  Internally just calls [[String#gsub]] passing it `pattern` and `iterator` as arguments.
-     *  
-     *  ##### Examples
-     *  
-     *      'apple, pear & orange'.scan(/\w+/, alert);
-     *      // -> 'apple pear & orange' (and displays 'apple', 'pear' and 'orange' in three successive alert dialogs)
-     *  
-     *  Can be used to populate an array:
-     *  
-     *      var fruits = [];
-     *      'apple, pear & orange'.scan(/\w+/, function(match) { fruits.push(match[0]) });
-     *      fruits.inspect()
-     *      // -> ['apple', 'pear', 'orange']
-     *  
-     *  or even to work on the DOM:
-     *  
-     *      'failure-message, success-message & spinner'.scan(/(\w|-)+/, Element.toggle)
-     *      // -> 'failure-message, success-message & spinner' (and toggles the visibility of each DOM element)
-     *  
-     *  ##### Note
-     *  
-     *  Do _not_ use the `"g"` flag on the regex as this will create an infinite loop.
-    **/
-    function scan(pattern, iterator) {
-        this.gsub(pattern, iterator);
-        return String(this);
-    }
+  /**
+   *  String#endsWith(substring[, position]) -> Boolean
+   *  - substring (String): The characters to be searched for at the end of
+   *    this string.
+   *  - [position] (Number): Search within this string as if this string were
+   *    only this long; defaults to this string's actual length, clamped
+   *    within the range established by this string's length.
+   *
+   *  Checks if the string ends with `substring`.
+   *  
+   *  `String#endsWith` acts as an ECMAScript 6 [polyfill](http://remysharp.com/2010/10/08/what-is-a-polyfill/).
+   *  It is only defined if not already present in the user's browser, and it
+   *  is meant to behave like the native version as much as possible. Consult
+   *  the [ES6 specification](http://wiki.ecmascript.org/doku.php?id=harmony%3Aspecification_drafts) for more
+   *  information.
+   *  
+   *  ##### Example
+   *  
+   *      'slaughter'.endsWith('laughter')
+   *      // -> true
+   *      'slaughter'.endsWith('laugh', 6)
+   *      // -> true
+  **/
+  function endsWith(pattern, position) {
+    pattern = String(pattern);
+    position = Object.isNumber(position) ? position : this.length;
+    if (position < 0) position = 0;
+    if (position > this.length) position = this.length;
+    var d = position - pattern.length;
+    // We use `indexOf` instead of `lastIndexOf` to avoid tying execution
+    // time to string length when string doesn't end with pattern.
+    return d >= 0 && this.indexOf(pattern, d) === d;
+  }
 
-    /**
-     *  String#truncate([length = 30[, suffix = '...']]) -> String
-     *
-     *  Truncates a string to given `length` and appends `suffix` to it (indicating
-     *  that it is only an excerpt).
-     *  
-     *  ##### Examples
-     *  
-     *      'A random sentence whose length exceeds 30 characters.'.truncate();
-     *      // -> 'A random sentence whose len...'
-     *      
-     *      'Some random text'.truncate();
-     *      // -> 'Some random text.'
-     *      
-     *      'Some random text'.truncate(10);
-     *      // -> 'Some ra...'
-     *      
-     *      'Some random text'.truncate(10, ' [...]');
-     *      // -> 'Some [...]'
-    **/
-    function truncate(length, truncation) {
-        length = length || 30;
-        truncation = Object.isUndefined(truncation) ? '...' : truncation;
-        return this.length > length ?
-          this.slice(0, length - truncation.length) + truncation : String(this);
-    }
+  /**
+   *  String#empty() -> Boolean
+   *
+   *  Checks if the string is empty.
+   *  
+   *  ##### Example
+   *  
+   *      ''.empty();
+   *      //-> true
+   *      
+   *      '  '.empty();
+   *      //-> false  
+  **/
+  function empty() {
+    return this == '';
+  }
 
-    /**
-     *  String#strip() -> String
-     *
-     *  Strips all leading and trailing whitespace from a string.
-     *  
-     *  ##### Example
-     *  
-     *      '    hello world!    '.strip();
-     *      // -> 'hello world!'
-    **/
-    function strip() {
-        return this.replace(/^\s+/, '').replace(/\s+$/, '');
-    }
+  /**
+   *  String#blank() -> Boolean
+   *
+   *  Check if the string is "blank" &mdash; either empty (length of `0`) or
+   *  containing only whitespace.
+   *
+   *  ##### Example
+   *  
+   *      ''.blank();
+   *      //-> true
+   *      
+   *      '  '.blank();
+   *      //-> true
+   *      
+   *      ' a '.blank();
+   *      //-> false
+  **/
+  function blank() {
+    return /^\s*$/.test(this);
+  }
 
-    /**
-     *  String#stripTags() -> String
-     *
-     *  Strips a string of any HTML tags.
-     *
-     *  Note that [[String#stripTags]] will only strip HTML 4.01 tags &mdash; like
-     *  `div`, `span`, and `abbr`. It _will not_ strip namespace-prefixed tags
-     *  such as `h:table` or `xsl:template`.
-     *
-     *  Watch out for `<script>` tags in your string, as [[String#stripTags]] will
-     *  _not_ remove their content. Use [[String#stripScripts]] to do so.
-     *
-     *  ##### Caveat User
-     *
-     *  Note that the processing [[String#stripTags]] does is good enough for most
-     *  purposes, but you cannot rely on it for security purposes. If you're
-     *  processing end-user-supplied content, [[String#stripTags]] is _not_
-     *  sufficiently robust to ensure that the content is completely devoid of
-     *  HTML tags in the case of a user intentionally trying to circumvent tag
-     *  restrictions. But then, you'll be running them through
-     *  [[String#escapeHTML]] anyway, won't you?
-     *  
-     *  ##### Examples
-     *  
-     *      'a <a href="#">link</a>'.stripTags();
-     *       // -> 'a link'
-     *      
-     *      'a <a href="#">link</a><script>alert("hello world!");</script>'.stripTags();
-     *      // -> 'a linkalert("hello world!");'
-     *      
-     *      'a <a href="#">link</a><script>alert("hello world!");</script>'.stripScripts().stripTags();
-     *      // -> 'a link'
-    **/
-    function stripTags() {
-        return this.replace(/<\w+(\s+("[^"]*"|'[^']*'|[^>])+)?>|<\/\w+>/gi, '');
-    }
+  /**
+   *  String#interpolate(object[, pattern]) -> String
+   *
+   *  Treats the string as a [[Template]] and fills it with `object`'s
+   *  properties.
+  **/
+  function interpolate(object, pattern) {
+    return new Template(this, pattern).evaluate(object);
+  }
 
-    /**
-     *  String#stripScripts() -> String
-     *
-     *  Strips a string of things that look like an HTML script blocks.
-     *
-     *  ##### Example
-     *
-     *      "<p>This is a test.<script>alert("Look, a test!");</script>End of test</p>".stripScripts();
-     *      // => "<p>This is a test.End of test</p>"
-     *
-     *  ##### Caveat User
-     *
-     *  Note that the processing [[String#stripScripts]] does is good enough for
-     *  most purposes, but you cannot rely on it for security purposes. If you're
-     *  processing end-user-supplied content, [[String#stripScripts]] is probably
-     *  not sufficiently robust to prevent hack attacks.
-    **/
-    function stripScripts() {
-        return this.replace(new RegExp(Prototype.ScriptFragment, 'img'), '');
-    }
-
-    /**
-     *  String#extractScripts() -> Array
-     *
-     *  Extracts the content of any `<script>` blocks present in the string and
-     *  returns them as an array of strings.
-     *  
-     *  This method is used internally by [[String#evalScripts]]. It does _not_
-     *  evaluate the scripts (use [[String#evalScripts]] to do that), but can be
-     *  usefull if you need to evaluate the scripts at a later date.
-     *  
-     *  ##### Examples
-     *  
-     *      'lorem... <script>2 + 2</script>'.extractScripts();
-     *      // -> ['2 + 2']
-     *      
-     *      '<script>2 + 2</script><script>alert("hello world!")</script>'.extractScripts();
-     *      // -> ['2 + 2', 'alert("hello world!")']
-     *  
-     *  ##### Notes
-     *  
-     *  To evaluate the scripts later on, you can use the following:
-     *  
-     *      var myScripts = '<script>2 + 2</script><script>alert("hello world!")</script>'.extractScripts();
-     *      // -> ['2 + 2', 'alert("hello world!")']
-     *      
-     *      var myReturnedValues = myScripts.map(function(script) {
-     *        return eval(script);
-     *      });
-     *      // -> [4, undefined] (and displays 'hello world!' in the alert dialog)
-    **/
-    function extractScripts() {
-        var matchAll = new RegExp(Prototype.ScriptFragment, 'img'),
-            matchOne = new RegExp(Prototype.ScriptFragment, 'im');
-        return (this.match(matchAll) || []).map(function (scriptTag) {
-            return (scriptTag.match(matchOne) || ['', ''])[1];
-        });
-    }
-
-    /**
-     *  String#evalScripts() -> Array
-     *
-     *  Evaluates the content of any inline `<script>` block present in the string.
-     *  Returns an array containing the value returned by each script.
-     *  `<script>`  blocks referencing external files will be treated as though
-     *  they were empty (the result for that position in the array will be `undefined`);
-     *  external files are _not_ loaded and processed by [[String#evalScripts]].
-     *  
-     *  ##### Examples
-     *  
-     *      'lorem... <script>2 + 2</script>'.evalScripts();
-     *      // -> [4]
-     *      
-     *      '<script>2 + 2<script><script>alert("hello world!")</script>'.evalScripts();
-     *      // -> [4, undefined] (and displays 'hello world!' in the alert dialog)
-     *
-     *  ##### About `evalScripts`, `var`s, and defining functions
-     *
-     *  [[String#evalScripts]] evaluates script blocks, but this **does not** mean
-     *  they are evaluated in the global scope. They aren't, they're evaluated in
-     *  the scope of the [[String#evalScripts]] method. This has important
-     *  ramifications for your scripts:
-     *
-     *  * Anything in your script declared with the `var` keyword will be
-     *    discarded momentarily after evaluation, and will be invisible to any
-     *    other scope.
-     *  * If any `<script>` blocks _define functions_, they will need to be
-     *    assigned to properties of the `window` object.
-     *
-     *  For example, this won't work:
-     *
-     *      // This kind of script won't work if processed by evalScripts:
-     *      function coolFunc() {
-     *        // Amazing stuff!
-     *      }
-     *
-     *  Instead, use the following syntax:
-     *
-     *      // This kind of script WILL work if processed by evalScripts:
-     *      window.coolFunc = function() {
-     *        // Amazing stuff!
-     *      }
-     *
-     *  (You can leave off the `window.` part of that, but it's bad form.)   
-    **/
-    function evalScripts() {
-        return this.extractScripts().map(function (script) { return eval(script); });
-    }
-
-    /** related to: String#unescapeHTML
-     *  String#escapeHTML() -> String
-     *
-     *  Converts HTML special characters to their entity equivalents.
-     *  
-     *  ##### Example
-     *  
-     *      '<div class="article">This is an article</div>'.escapeHTML();
-     *      // -> "&lt;div class="article"&gt;This is an article&lt;/div&gt;"
-    **/
-    function escapeHTML() {
-        return this.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    }
-
-    /** related to: String#escapeHTML
-     *  String#unescapeHTML() -> String
-     *
-     *  Strips tags and converts the entity forms of special HTML characters
-     *  to their normal form.
-     *  
-     *  ##### Examples
-     *  
-     *      'x &gt; 10'.unescapeHTML()
-     *      // -> 'x > 10'
-     *      
-     *      '<h1>Pride &amp; Prejudice</h1>;'.unescapeHTML()
-     *      // -> '<h1>Pride & Prejudice</h1>'
-    **/
-    function unescapeHTML() {
-        // Warning: In 1.7 String#unescapeHTML will no longer call String#stripTags.
-        return this.stripTags().replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
-    }
-
-    /**
-     *  String#parseQuery([separator = '&']) -> Object
-    **/
-
-    /** alias of: String#parseQuery, related to: Hash#toQueryString
-     *  String#toQueryParams([separator = '&']) -> Object
-     *
-     *  Parses a URI-like query string and returns an object composed of
-     *  parameter/value pairs.
-     *  
-     *  This method is realy targeted at parsing query strings (hence the default 
-     *  value of`"&"` for the `separator` argument).
-     *  
-     *  For this reason, it does _not_ consider anything that is either before a 
-     *  question  mark (which signals the beginning of a query string) or beyond 
-     *  the hash symbol (`"#"`), and runs `decodeURIComponent()` on each 
-     *  parameter/value pair.
-     *  
-     *  [[String#toQueryParams]] also aggregates the values of identical keys into 
-     *  an array of values.
-     *  
-     *  Note that parameters which do not have a specified value will be set to 
-     *  `undefined`.
-     *  
-     *  ##### Examples
-     *  
-     *      'section=blog&id=45'.toQueryParams();
-     *      // -> {section: 'blog', id: '45'}
-     *      
-     *      'section=blog;id=45'.toQueryParams(';');
-     *      // -> {section: 'blog', id: '45'}
-     *      
-     *      'http://www.example.com?section=blog&id=45#comments'.toQueryParams();
-     *      // -> {section: 'blog', id: '45'}
-     *      
-     *      'section=blog&tag=javascript&tag=prototype&tag=doc'.toQueryParams();
-     *      // -> {section: 'blog', tag: ['javascript', 'prototype', 'doc']}
-     *      
-     *      'tag=ruby%20on%20rails'.toQueryParams();
-     *      // -> {tag: 'ruby on rails'}
-     *      
-     *      'id=45&raw'.toQueryParams();
-     *      // -> {id: '45', raw: undefined}
-    **/
-    function toQueryParams(separator) {
-        var match = this.strip().match(/([^?#]*)(#.*)?$/);
-        if (!match) return {};
-
-        return match[1].split(separator || '&').inject({}, function (hash, pair) {
-            if ((pair = pair.split('='))[0]) {
-                var key = decodeURIComponent(pair.shift()),
-                    value = pair.length > 1 ? pair.join('=') : pair[0];
-
-                if (value != undefined) {
-                    value = value.gsub('+', ' ');
-                    value = decodeURIComponent(value);
-                }
-
-                if (key in hash) {
-                    if (!Object.isArray(hash[key])) hash[key] = [hash[key]];
-                    hash[key].push(value);
-                }
-                else hash[key] = value;
-            }
-            return hash;
-        });
-    }
-
-    /**
-     *  String#toArray() -> Array
-     *
-     *  Splits the string character-by-character and returns an array with
-     *  the result.
-     *
-     *  ##### Examples
-     *  
-     *      'a'.toArray();
-     *      // -> ['a']
-     *      
-     *      'hello world!'.toArray();
-     *      // -> ['h', 'e', 'l', 'l', 'o', ' ', 'w', 'o', 'r', 'l', 'd', '!']
-    **/
-    function toArray() {
-        return this.split('');
-    }
-
-    /**
-     *  String#succ() -> String
-     *
-     *  Used internally by ObjectRange.
-     *
-     *  Converts the last character of the string to the following character in
-     *  the Unicode alphabet.
-     *  
-     *  ##### Examples
-     *  
-     *      'a'.succ();
-     *      // -> 'b'
-     *      
-     *      'aaaa'.succ();
-     *      // -> 'aaab'
-    **/
-    function succ() {
-        return this.slice(0, this.length - 1) +
-          String.fromCharCode(this.charCodeAt(this.length - 1) + 1);
-    }
-
-    /**
-     *  String#times(count) -> String
-     *
-     *  Concatenates the string `count` times.
-     *  
-     *  ##### Example
-     *  
-     *      "echo ".times(3);
-     *      // -> "echo echo echo "
-    **/
-    function times(count) {
-        return count < 1 ? '' : new Array(count + 1).join(this);
-    }
-
-    /**
-     *  String#camelize() -> String
-     *
-     *  Converts a string separated by dashes into a camelCase equivalent. For
-     *  instance, `'foo-bar'` would be converted to `'fooBar'`.
-     *  
-     *  Prototype uses this internally for translating CSS properties into their
-     *  DOM `style` property equivalents.
-     *
-     *  ##### Examples
-     *
-     *      'background-color'.camelize();
-     *      // -> 'backgroundColor'
-     *
-     *      '-moz-binding'.camelize();
-     *      // -> 'MozBinding'
-    **/
-    function camelize() {
-        return this.replace(/-+(.)?/g, function (match, chr) {
-            return chr ? chr.toUpperCase() : '';
-        });
-    }
-
-    /**
-     *  String#capitalize() -> String
-     *
-     *  Capitalizes the first letter of a string and downcases all the others.
-     *  
-     *  ##### Examples
-     *  
-     *      'hello'.capitalize();
-     *      // -> 'Hello'
-     *      
-     *      'HELLO WORLD!'.capitalize();
-     *      // -> 'Hello world!'
-    **/
-    function capitalize() {
-        return this.charAt(0).toUpperCase() + this.substring(1).toLowerCase();
-    }
-
-    /**
-     *  String#underscore() -> String
-     *
-     *  Converts a camelized string into a series of words separated by an
-     *  underscore (`_`).
-     *
-     *  ##### Example
-     *  
-     *      'borderBottomWidth'.underscore();
-     *      // -> 'border_bottom_width'
-     *  
-     *  ##### Note
-     *  
-     *  Used in conjunction with [[String#dasherize]], [[String#underscore]]
-     *  converts a DOM style into its CSS equivalent.
-     *  
-     *      'borderBottomWidth'.underscore().dasherize();
-     *      // -> 'border-bottom-width'
-    **/
-    function underscore() {
-        return this.replace(/::/g, '/')
-                   .replace(/([A-Z]+)([A-Z][a-z])/g, '$1_$2')
-                   .replace(/([a-z\d])([A-Z])/g, '$1_$2')
-                   .replace(/-/g, '_')
-                   .toLowerCase();
-    }
-
-    /**
-     *  String#dasherize() -> String
-     *
-     *  Replaces every instance of the underscore character `"_"` by a dash `"-"`.
-     *
-     *  ##### Example
-     *  
-     *      'border_bottom_width'.dasherize();
-     *      // -> 'border-bottom-width'
-     *  
-     *  ##### Note
-     *  
-     *  Used in conjunction with [[String#underscore]], [[String#dasherize]]
-     *  converts a DOM style into its CSS equivalent.
-     *  
-     *      'borderBottomWidth'.underscore().dasherize();
-     *      // -> 'border-bottom-width'
-    **/
-    function dasherize() {
-        return this.replace(/_/g, '-');
-    }
-
-    /** related to: Object.inspect
-     *  String#inspect([useDoubleQuotes = false]) -> String
-     *
-     *  Returns a debug-oriented version of the string (i.e. wrapped in single or
-     *  double quotes, with backslashes and quotes escaped).
-     *  
-     *  For more information on `inspect` methods, see [[Object.inspect]].
-     *  
-     *  #### Examples
-     *  
-     *      'I\'m so happy.'.inspect();
-     *      // -> '\'I\\\'m so happy.\''
-     *      // (displayed as 'I\'m so happy.' in an alert dialog or the console)
-     *      
-     *      'I\'m so happy.'.inspect(true);
-     *      // -> '"I'm so happy."'
-     *      // (displayed as "I'm so happy." in an alert dialog or the console)
-    **/
-    function inspect(useDoubleQuotes) {
-        var escapedString = this.replace(/[\x00-\x1f\\]/g, function (character) {
-            if (character in String.specialChar) {
-                return String.specialChar[character];
-            }
-            return '\\u00' + character.charCodeAt().toPaddedString(2, 16);
-        });
-        if (useDoubleQuotes) return '"' + escapedString.replace(/"/g, '\\"') + '"';
-        return "'" + escapedString.replace(/'/g, '\\\'') + "'";
-    }
-
-    /**
-     *  String#unfilterJSON([filter = Prototype.JSONFilter]) -> String
-     *
-     *  Strips comment delimiters around Ajax JSON or JavaScript responses.
-     *  This security method is called internally.
-     *  
-     *  ##### Example
-     *  
-     *      '/*-secure-\n{"name": "Violet", "occupation": "character", "age": 25}\n*\/'.unfilterJSON()
-     *      // -> '{"name": "Violet", "occupation": "character", "age": 25}'
-    **/
-    function unfilterJSON(filter) {
-        return this.replace(filter || /^\/\*-secure-([\s\S]*)\*\/\s*$/, '$1');
-    }
-
-    /**
-     *  String#isJSON() -> Boolean
-     *
-     *  Check if the string is valid JSON by the use of regular expressions.
-     *  This security method is called internally.
-     *  
-     *  ##### Examples
-     *  
-     *      "something".isJSON();
-     *      // -> false
-     *      "\"something\"".isJSON();
-     *      // -> true
-     *      "{ foo: 42 }".isJSON();
-     *      // -> false
-     *      "{ \"foo\": 42 }".isJSON();
-     *      // -> true
-    **/
-    function isJSON() {
-        var str = this;
-        if (str.blank()) return false;
-        str = str.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g, '@');
-        str = str.replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']');
-        str = str.replace(/(?:^|:|,)(?:\s*\[)+/g, '');
-        return (/^[\],:{}\s]*$/).test(str);
-    }
-
-    /**
-     *  String#evalJSON([sanitize = false]) -> object
-     *
-     *  Evaluates the JSON in the string and returns the resulting object.
-     *
-     *  If the optional `sanitize` parameter is set to `true`, the string is
-     *  checked for possible malicious attempts; if one is detected, `eval`
-     *  is _not called_.
-     *  
-     *  ##### Warning
-     *  
-     *  If the JSON string is not well formated or if a malicious attempt is
-     *  detected a `SyntaxError` is thrown.
-     *  
-     *  ##### Examples
-     *  
-     *      var person = '{ "name": "Violet", "occupation": "character" }'.evalJSON();
-     *      person.name;
-     *      //-> "Violet"
-     *      
-     *      person = 'grabUserPassword()'.evalJSON(true);
-     *      //-> SyntaxError: Badly formed JSON string: 'grabUserPassword()'
-     *      
-     *      person = '/*-secure-\n{"name": "Violet", "occupation": "character"}\n*\/'.evalJSON()
-     *      person.name;
-     *      //-> "Violet"
-     *  
-     *  ##### Note
-     *  
-     *  Always set the `sanitize` parameter to `true` for data coming from
-     *  externals sources to prevent XSS attacks.
-     *  
-     *  As [[String#evalJSON]] internally calls [[String#unfilterJSON]], optional
-     *  security comment delimiters (defined in [[Prototype.JSONFilter]]) are
-     *  automatically removed.
-    **/
-    function evalJSON(sanitize) {
-        var json = this.unfilterJSON(),
-            cx = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g;
-        if (cx.test(json)) {
-            json = json.replace(cx, function (a) {
-                return '\\u' + ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
-            });
-        }
-        try {
-            if (!sanitize || json.isJSON()) return eval('(' + json + ')');
-        } catch (e) { }
-        throw new SyntaxError('Badly formed JSON string: ' + this.inspect());
-    }
-
-    function parseJSON() {
-        var json = this.unfilterJSON();
-        return JSON.parse(json);
-    }
-
-    /**
-     *  String#include(substring) -> Boolean
-     *
-     *  Checks if the string contains `substring`.
-     *  
-     *  ##### Example
-     *  
-     *      'Prototype framework'.include('frame');
-     *      //-> true
-     *      'Prototype framework'.include('frameset');
-     *      //-> false
-    **/
-    function include(pattern) {
-        return this.indexOf(pattern) > -1;
-    }
-
-    /**
-     *  String#startsWith(substring[, position]) -> Boolean
-     *  - substring (String): The characters to be searched for at the start of
-     *    this string.
-     *  - [position] (Number): The position in this string at which to begin
-     *    searching for `substring`; defaults to 0.
-     *
-     *  Checks if the string starts with `substring`.
-     *  
-     *  `String#startsWith` acts as an ECMAScript 6 [polyfill](http://remysharp.com/2010/10/08/what-is-a-polyfill/).
-     *  It is only defined if not already present in the user's browser, and it
-     *  is meant to behave like the native version as much as possible. Consult
-     *  the [ES6 specification](http://wiki.ecmascript.org/doku.php?id=harmony%3Aspecification_drafts) for more
-     *  information.
-     *  
-     *  ##### Example
-     *  
-     *      'Prototype JavaScript'.startsWith('Pro');
-     *      //-> true
-     *      'Prototype JavaScript'.startsWith('Java', 10);
-     *      //-> true
-    **/
-    function startsWith(pattern, position) {
-        position = Object.isNumber(position) ? position : 0;
-        // We use `lastIndexOf` instead of `indexOf` to avoid tying execution
-        // time to string length when string doesn't start with pattern.
-        return this.lastIndexOf(pattern, position) === position;
-    }
-
-    /**
-     *  String#endsWith(substring[, position]) -> Boolean
-     *  - substring (String): The characters to be searched for at the end of
-     *    this string.
-     *  - [position] (Number): Search within this string as if this string were
-     *    only this long; defaults to this string's actual length, clamped
-     *    within the range established by this string's length.
-     *
-     *  Checks if the string ends with `substring`.
-     *  
-     *  `String#endsWith` acts as an ECMAScript 6 [polyfill](http://remysharp.com/2010/10/08/what-is-a-polyfill/).
-     *  It is only defined if not already present in the user's browser, and it
-     *  is meant to behave like the native version as much as possible. Consult
-     *  the [ES6 specification](http://wiki.ecmascript.org/doku.php?id=harmony%3Aspecification_drafts) for more
-     *  information.
-     *  
-     *  ##### Example
-     *  
-     *      'slaughter'.endsWith('laughter')
-     *      // -> true
-     *      'slaughter'.endsWith('laugh', 6)
-     *      // -> true
-    **/
-    function endsWith(pattern, position) {
-        pattern = String(pattern);
-        position = Object.isNumber(position) ? position : this.length;
-        if (position < 0) position = 0;
-        if (position > this.length) position = this.length;
-        var d = position - pattern.length;
-        // We use `indexOf` instead of `lastIndexOf` to avoid tying execution
-        // time to string length when string doesn't end with pattern.
-        return d >= 0 && this.indexOf(pattern, d) === d;
-    }
-
-    /**
-     *  String#empty() -> Boolean
-     *
-     *  Checks if the string is empty.
-     *  
-     *  ##### Example
-     *  
-     *      ''.empty();
-     *      //-> true
-     *      
-     *      '  '.empty();
-     *      //-> false  
-    **/
-    function empty() {
-        return this == '';
-    }
-
-    /**
-     *  String#blank() -> Boolean
-     *
-     *  Check if the string is "blank" &mdash; either empty (length of `0`) or
-     *  containing only whitespace.
-     *
-     *  ##### Example
-     *  
-     *      ''.blank();
-     *      //-> true
-     *      
-     *      '  '.blank();
-     *      //-> true
-     *      
-     *      ' a '.blank();
-     *      //-> false
-    **/
-    function blank() {
-        return /^\s*$/.test(this);
-    }
-
-    /**
-     *  String#interpolate(object[, pattern]) -> String
-     *
-     *  Treats the string as a [[Template]] and fills it with `object`'s
-     *  properties.
-    **/
-    function interpolate(object, pattern) {
-        return new Template(this, pattern).evaluate(object);
-    }
-
-    return {
-        gsub: gsub,
-        sub: sub,
-        scan: scan,
-        truncate: truncate,
-        // Firefox 3.5+ supports String.prototype.trim
-        // (`trim` is ~ 5x faster than `strip` in FF3.5)
-        strip: String.prototype.trim || strip,
-        stripTags: stripTags,
-        stripScripts: stripScripts,
-        extractScripts: extractScripts,
-        evalScripts: evalScripts,
-        escapeHTML: escapeHTML,
-        unescapeHTML: unescapeHTML,
-        toQueryParams: toQueryParams,
-        parseQuery: toQueryParams,
-        toArray: toArray,
-        succ: succ,
-        times: times,
-        camelize: camelize,
-        capitalize: capitalize,
-        underscore: underscore,
-        dasherize: dasherize,
-        inspect: inspect,
-        unfilterJSON: unfilterJSON,
-        isJSON: isJSON,
-        evalJSON: NATIVE_JSON_PARSE_SUPPORT ? parseJSON : evalJSON,
-        include: include,
-        // Firefox 18+ supports String.prototype.startsWith, String.prototype.endsWith
-        startsWith: String.prototype.startsWith || startsWith,
-        endsWith: String.prototype.endsWith || endsWith,
-        empty: empty,
-        blank: blank,
-        interpolate: interpolate
-    };
+  return {
+    gsub:           gsub,
+    sub:            sub,
+    scan:           scan,
+    truncate:       truncate,
+    // Firefox 3.5+ supports String.prototype.trim
+    // (`trim` is ~ 5x faster than `strip` in FF3.5)
+    strip:          String.prototype.trim || strip,
+    stripTags:      stripTags,
+    stripScripts:   stripScripts,
+    extractScripts: extractScripts,
+    evalScripts:    evalScripts,
+    escapeHTML:     escapeHTML,
+    unescapeHTML:   unescapeHTML,
+    toQueryParams:  toQueryParams,
+    parseQuery:     toQueryParams,
+    toArray:        toArray,
+    succ:           succ,
+    times:          times,
+    camelize:       camelize,
+    capitalize:     capitalize,
+    underscore:     underscore,
+    dasherize:      dasherize,
+    inspect:        inspect,
+    unfilterJSON:   unfilterJSON,
+    isJSON:         isJSON,
+    evalJSON:       NATIVE_JSON_PARSE_SUPPORT ? parseJSON : evalJSON,
+    include:        include,
+    // Firefox 18+ supports String.prototype.startsWith, String.prototype.endsWith
+    startsWith:     String.prototype.startsWith || startsWith,
+    endsWith:       String.prototype.endsWith || endsWith,
+    empty:          empty,
+    blank:          blank,
+    interpolate:    interpolate
+  };
 })());
 
 /** section: Language

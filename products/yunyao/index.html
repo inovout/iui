@@ -9,27 +9,44 @@
     <script src="../../lib/modernizr.min.js"></script>
 </head>
 <body>
-    <style>
-        header > nav {
-            display: inline-block;
-        }
+    <header class="w80">
+        <div class="wgt">
+            <div class="w14">
+                <a id="site-logo" href="/">
+                    <img src="Images/site-logo.gif" title="云遥—物联网数据库平台" /></a>
+            </div>
+            <div class="w8">
+                <span id="title">控制台</span>
+            </div>
+            <div class="w43 wgt-l4-r10">
+                <ul id="searcherList" class="tabList w-1">
+                    <li data-action="/Solution/Search" data-tip="请输入方案搜索条件" class="selected">
+                        <label for="kwyword">方案</label></li>
+                    <li data-action="/MonitoringNode/Search" data-tip="请输入测点搜索条件">
+                        <label for="kwyword">测点</label></li>
+                    <li data-action="/Alert/Search" data-tip="请输入预警搜索条件">
+                        <label for="kwyword">预警</label></li>
+                </ul>
+                <div class="searcher wgt-r8">
+                    <form id="searcherForm" method="get" action="/Solution/Search" data-event-adapter="searcherList.selectedChanged=attr(action,args.action)">
+                        <input id="kwyword" placeholder="请输入方案搜索条件" value="" type="search" name="keyword" class="w-1" data-event-adapter="searcherList.selectedChanged=prop(placeholder,args.tip)" />
+                        <button type="submit" class="w8">搜 索</button>
+                    </form>
+                </div>
+            </div>
+        </div>
 
-        header {
-            vertical-align: bottom;
-        }
-
-        #site-logo > img {
-            height: 4em;
-        }
-    </style>
-    <header class="w100">
-        <a id="site-logo" href="/" class="w18">
-            <img src="Images/site-logo.gif" title="云遥—物联网数据库平台" /></a>
-        <nav id="page-nav" class="w82">
-            <a href="/">首页</a>
-            <a href="/solution/">方案</a>
-            <a href="/node/">测点</a>
+        <nav id="page-nav" class="w78 t-b-b">
+            <span class="selected">首页</span>
+            <a href='/Solution/List'>方案</a>
+            <a href='/MonitoringNode/List'>测点</a>
+            <a href='/Location/List'>位置</a>
+            <a href='/Alert/List'>预警</a>
+            <a href='http://172.10.2.100:10102/'>Live</a>
+            <a href='http://172.10.2.100:10199/'>仿真器</a>
         </nav>
     </header>
+    <script src="../../build/jClass.js"></script>
+    <script src="../../build/jWidget.js"></script>
 </body>
 </html>

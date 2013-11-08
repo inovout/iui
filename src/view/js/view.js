@@ -1,4 +1,5 @@
-Inovout.Widget = {};
+Inovout.Widgets = {};
+Inovout.Controls = {};
 
 Inovout.View = Class.create({
     initialize: function (element) {
@@ -8,7 +9,6 @@ Inovout.View = Class.create({
 });
 Object.extend(Inovout.View, {
     factories: {},
-    inits: {},
     cache: new HashMap(),
     get: function (element) {
         if (element instanceof Inovout.View) {
@@ -25,7 +25,7 @@ Object.extend(Inovout.View, {
                 }
             }
             if (!widgetType) {
-                for (var widget in Inovout.Widget) {
+                for (var widget in Inovout.Widgets) {
                     var wc = widget.substring(0, 1).toLowerCase() + widget.substring(1, widget.length);
                     if (element.hasClass(wc)) {
                         widgetType = widget;
@@ -35,16 +35,38 @@ Object.extend(Inovout.View, {
                 }
             }
             if (widgetType) {
-                view = new Inovout.Widget[widgetType](element);
+                view = new Inovout.Widgets[widgetType](element);
             } else {
-                view = new Inovout.View(element);
-                Object.extend(view, element);
+                for (var control in Inovout.Controls) {
+                    if (control.toLowerCase() == element.dom.tagName.toLowerCase()) {
+                        widgetType = control;
+                        break;
+                    }
+                }
+                if (widgetType) {
+                    view = new Inovout.Controls[widgetType](element);
+                } else {
+                    view = new Inovout.View(element);
+                    Object.extend(view, element);
+                }
             }
             Inovout.View.cache.add(element, view);
         }
         return view;
-    },
-    loadWidget: function (components, loader) {
-        loader(components, Inovout.Element.get(document))
+    }
+});
+
+iui.load(function () {
+    var doc = Inovout.Element.get(document);
+    for (var widget in Inovout.Widgets) {
+        var wc = widget.substring(0, 1).toLowerCase() + widget.substring(1, widget.length);
+        doc.find("." + wc).each(function (element) {
+            Inovout.View.get(element);
+        });
+    }
+    for (var control in Inovout.Controls) {
+        doc.find(control).each(function (element) {
+            Inovout.View.get(element);
+        });
     }
 });

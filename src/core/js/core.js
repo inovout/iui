@@ -50,7 +50,7 @@ var basePath,
 })();
 
 function define(data) {
-    if (basePath) {
+    if (basePath && data.path.substr(0,4)!="http") {
         basePath = basePath.substr(basePath.length - 1) == "/" ? basePath.substr(0, basePath.length - 1) : basePath;
         data.path = basePath + data.path;
     }

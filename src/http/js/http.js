@@ -12,25 +12,43 @@ HttpClient = Class.create({
     initialize: function (element) {
         return this;
     },
-    send: function (data) {
+    send: function (request,convert) {
+        return request.execute().getResult(convert);
     },
-    get: function (selectedItem) {
+    get: function (url) {
+        return this.send(new HttpRequest("get", url));
     },
     getJson: function () {
+        return this.send(new HttpRequest("get", url), Object.toJson);
     },
-    post: function () {
+    post: function (uri, content) {
+        return this.send(new HttpRequest("post", url,content));
     }
 });
 HttpRequest = Class.create({
-    initialize: function (uri, method, paras) {
+    initialize: function (method, uri) {
+        this.method = method;
+        this.uri = uri;
         return this;
     },
     execute: function () {
+        var options = {
+            url: this.url,
+            type: this.method
+        }
+        if (this.method == "get") {
+
+        } else if (this.method == "post") {
+
+        }
+        return new HttpResponse(this, $.ajax(options));
     }
 });
 
 HttpResponse = Class.create({
-    initialize: function (element) {
+    initialize: function (request, jqXHR) {
+        this.request = request;
+        this.jqXHR = jqXHR;
         return this;
     },
     add: function (item) {
@@ -52,7 +70,6 @@ StreamContent = Class.create(HttpContent, {
     }
 });
 
-var client = new HttpClient("http://www.baidu.com");
-var response = client.get();
-client = new HttpRequest("http://www.baidu.com");
-response = client.post("test");
+var response,client = new HttpClient();
+response = client.get("http://www.baidu.com");
+response = client.post("http://www.baidu.com");

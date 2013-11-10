@@ -53,7 +53,20 @@ Object.extend(Inovout.View, {
             Inovout.View.cache.add(element, view);
         }
         return view;
-    }
+    },
+    wrapFunction: function (args, fnExpression) {
+        var dot = fnExpression.indexOf("."),
+            bracket = fnExpression.indexOf("(");
+        if (dot == -1 || dot > bracket) {
+            //fn(sender)
+            fnExpression = "this." + fnExpression;
+        } else if (dot < bracket) {
+            //view.bindData(args.value);
+            fnExpression = "Inovout.View.get(" + fnExpression.substr(0, dot) + ")" + fnExpression.substring(dot, fnExpression.length);
+        }
+        return Function(args, fnExpression);
+
+}
 });
 
 iui.load(function () {

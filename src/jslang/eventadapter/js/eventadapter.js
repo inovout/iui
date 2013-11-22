@@ -1,18 +1,13 @@
 var EventAdapter = Class.create({
-    initialize: function (event,wrapFunction) {
+    initialize: function (event, buildFunction) {
         this.event = event;
-        this.wrapFunction = wrapFunction;
+        buildFunction = buildFunction || Function.wrap;
+        this.buildFunction = buildFunction;
         return this;
     },
     listen: function (sender, args) {
-        var fnArgs = "sender,args";
-        if (this.wrapFunction) {
-            this.wrapFunction(fnArgs, this.fnExpression).call(this.scope, sender, args);
-        } else {
-            Function(fnArgs,this.fnExpression).call(this.scope, sender, args);
-
-        }
-    },
+        this.buildFunction("sender,args", this.fnExpression).call(this.scope, sender, args);
+     },
     addListener: function (fnExpression, scope, options) {
         this.fnExpression = fnExpression;
         this.scope = scope;

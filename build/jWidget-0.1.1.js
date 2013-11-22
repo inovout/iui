@@ -1,12 +1,12 @@
-if (!Inovout) {
-    var Inovout = {};
-}
+var Inovout = {};
+
 Inovout.Element = Class.create({
     initialize: function (dom) {
         var me = this;
         this.dom = dom;
         this.dom.uid = new Date().getTime() + "" + parseInt(Math.random() * 100000, 10);
-
+        this.eventHnadles = {};
+        this.eventCallbacks = {};
         ("blur focus focusin focusout load resize scroll unload click dblclick " +
 	    "mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave " +
 	    "change select submit keydown keypress keyup error contextmenu").split(" ").each(function (name) {
@@ -23,6 +23,48 @@ Inovout.Element = Class.create({
 	        };
 	    });
     },
+    complete: function (event, callback) {
+        var name = Object.isString(event) ? event : event.name,
+            eventCallbacks,
+            me = this;
+
+        if (!(eventCallbacks = this.eventCallbacks[name])) {
+            eventCallbacks = this.eventCallbacks[name] = $.Callbacks();
+            var elemData = jQuery._data(me.dom);
+            me.eventHnadles[name] = elemData.handle || $.event.dispatch;
+            var eventHandle = function (e) {
+                var ret = me.eventHnadles[name].apply(me.dom, arguments);
+                eventCallbacks.fire(e);
+                return ret;
+            };
+            me.removeEventtLister(name, me.eventHnadles[name]);
+            me.addEventLister(name, eventHandle);
+        }
+        eventCallbacks.add(callback);
+    },
+    addEventLister: function (type, eventHandle) {
+        var dom = this.dom;
+        if (dom.addEventListener) {
+            dom.addEventListener(type, eventHandle, false);
+
+        } else if (dom.attachEvent) {
+            dom.attachEvent("on" + type, eventHandle);
+        }
+    },
+    removeEventtLister: function (type, handle) {
+        var elem = this.dom;
+        if (elem.removeEventListener) {
+            elem.removeEventListener(type, handle, false);
+        }
+        else if (elem.detachEvent) {
+            var name = "on" + type;
+            if (typeof elem[name] === core_strundefined) {
+                elem[name] = null;
+            }
+
+            elem.detachEvent(name, handle);
+        }
+    },
     getClassName: function () {
         return this.dom.className;
     },
@@ -34,17 +76,6 @@ Inovout.Element = Class.create({
     },
     toString: function () {
         return this.dom.uid;
-    }
-});
-/**********jQeryAdapter，确保Elenet本身不依赖jQuery，彻底隔离相关Dom的类库**********/
-Object.extend(Inovout.Element.prototype, jQuery.fn);
-Object.extend(Inovout.Element.prototype, {
-    _pushStack: jQuery.fn.pushStack,
-    pushStack: function (elems) {
-        var ret = this._pushStack(elems);
-        return jQuery.map(ret, function (dom) {
-            return Inovout.Element.get(dom);
-        })
     }
 });
 
@@ -59,15 +90,30 @@ Object.extend(Inovout.Element, {
         var element = Inovout.Element.cache.get(dom);
         if (!element) {
             element = new Inovout.Element(dom);
-            element.init(dom);
             Inovout.Element.cache.add(dom, element);
         }
         return element;
     }
 });
 
+Inovout.Element.prototype._initialize = Inovout.Element.prototype.initialize;
+Inovout.Element.prototype.initialize = function (dom) {
+    Object.extend(this, jQuery.fn);
+    this.init(dom);
+    var me = this;
+    ["find"].each(function (name) {
+        me["_" + name] = me[name];
+        me[name] = function () {
+            var ret = me["_" + name].apply(me, arguments);
+            return jQuery.map(ret, function (dom) {
+                return Inovout.Element.get(dom);
+            })
+        };
+    });
+    Inovout.Element.prototype._initialize.call(this, dom);
 
-Inovout.Widget = {};
+};
+Inovout.Widgets = {};
 
 Inovout.View = Class.create({
     initialize: function (element) {
@@ -76,54 +122,48 @@ Inovout.View = Class.create({
     }
 });
 Object.extend(Inovout.View, {
-    factories: {},
     cache: new HashMap(),
+    tryGet: function (element) {
+        for (var widget in Inovout.Widgets) {
+            var view, wc = widget.substring(0, 1).toLowerCase() + widget.substring(1, widget.length);
+            if (element.hasClass(wc) || widget.toLowerCase() == element.dom.tagName.toLowerCase()) {
+                view = new Inovout.Widgets[widget](element);
+                Inovout.View.cache.add(element, view);
+                return view;
+            }
+        }
+    },
     get: function (element) {
         if (element instanceof Inovout.View) {
             return element;
         }
         element = Inovout.Element.get(element);
-        var view = Inovout.View.cache.get(element);
+        var view = Inovout.View.cache.get(element) || Inovout.View.tryGet(element);
         if (!view) {
-            var widgetType;
-            for (var viewClass in Inovout.View.factories) {
-                if (Inovout.View.factories[viewClass](element)) {
-                    widgetType = viewClass;
-                    break
-                }
-            }
-            if (!widgetType) {
-                for (var widget in Inovout.Widget) {
-                    var wc = widget.substring(0, 1).toLowerCase() + widget.substring(1, widget.length);
-                    if (element.hasClass(wc)) {
-                        widgetType = widget;
-                        Inovout.View.factories[widget] = function (ele) { return ele.hasClass(wc); };
-                        break
-                    }
-                }
-            }
-            if (widgetType) {
-                view = new Inovout.Widget[widgetType](element);
-            } else {
-                view = new Inovout.View(element);
-                Object.extend(view, element);
-            }
-            Inovout.View.cache.add(element, view);
+            Object.extend(view, element);
         }
+
         return view;
+    },
+    buildFunction: function (args, fnExpression) {
+        fnExpression = fnExpression.trim();
+        var dot = fnExpression.indexOf(".");
+        var owner = fnExpression.substring(0, dot);
+        if (owner != "this." && owner != "") {
+            //view.bindData(args.value);
+            fnExpression = "Inovout.View.get(" + owner + ")." + fnExpression.substring(dot, fnExpression.length);
+            return Function(args, fnExpression);
+        }
+        return Function.build(args,fnExpression);
     }
 });
 
 iui.load(function () {
-    var doc = Inovout.Element.get(document);
-    for (var widget in Inovout.Widget) {
+    var elements, doc = Inovout.Element.get(document);
+    for (var widget in Inovout.Widgets) {
         var wc = widget.substring(0, 1).toLowerCase() + widget.substring(1, widget.length);
-        doc.find("." + wc).each(function (element) {
+        doc.find("." + wc + "," + widget).each(function (element) {
             Inovout.View.get(element);
-            //var view = Inovout.View.get(element);
-            //if (view.init) {
-            //    view.init.call(view);
-            //}
         });
     }
 });var Page = Class.create(Inovout.View, {
@@ -172,7 +212,7 @@ iui.context.page = new Page(document);
 iui.load(function () {
     iui.context.page.init();
 });
-Inovout.Widget.List = Class.create(Inovout.View, {
+Inovout.Widgets.List = Class.create(Inovout.View, {
     initialize: function ($super, element) {
         $super(element);
         this.selectedChanged = new Event("selectedChanged", this);
@@ -214,8 +254,7 @@ Inovout.Widget.List = Class.create(Inovout.View, {
     },
     valueKeys: undefined
 });
-
-Inovout.Widget.DropDownList = Class.create(Inovout.Widget.List, {
+Inovout.Widgets.DropDownList = Class.create(Inovout.Widgets.List, {
     initialize: function ($super, element) {
         $super(element);
         var me = this;
@@ -230,7 +269,7 @@ Inovout.Widget.DropDownList = Class.create(Inovout.Widget.List, {
     }
 });
 
-Inovout.Widget.TabList = Class.create(Inovout.Widget.List, {
+Inovout.Widgets.TabList = Class.create(Inovout.Widgets.List, {
     initialize: function ($super, element) {
         $super(element);
         this.selectedChanged = new Event("selectedChanged", this);
@@ -269,7 +308,7 @@ Inovout.Widget.TabList = Class.create(Inovout.Widget.List, {
     },
     valueKeys: undefined
 });
-Inovout.Widget.DataChart = Class.create(Inovout.View, {
+Inovout.Widgets.DataChart = Class.create(Inovout.View, {
     initialize: function ($super, element) {
         $super(element);
         var option = new Function("return " + element.html().replace(/\n/g, ""))();
@@ -279,11 +318,7 @@ Inovout.Widget.DataChart = Class.create(Inovout.View, {
         element.css("visibility", "visible");
     }
 });
-$(function () {
-    $(".dataChart").each(function (i, dom) {
-        Inovout.View.get(dom);
-    });
-});Inovout.Widget.BinaryPad = Class.create(Inovout.View, {
+Inovout.Widgets.BinaryPad = Class.create(Inovout.View, {
     initialize: function ($super, element) {
         $super(element);
         this.navs = Inovout.Element.get(document).find(".binaryPad-nav>span");
@@ -302,11 +337,7 @@ $(function () {
         });
     }
 });
-$(function () {
-    $(".binaryPad").each(function (i, dom) {
-        Inovout.View.get(dom);
-    });
-});Inovout.Widget.Wizard = Class.create(Inovout.View, {
+Inovout.Widgets.Wizard = Class.create(Inovout.View, {
     initialize: function ($super, element) {
         $super(element);
         this.navs = element.find("nav>span");
@@ -344,9 +375,4 @@ $(function () {
         this.articles.each(function (item) { item.hide(); });
         this.articles[i].show();
     }
-});
-$(function () {
-    $(".wizard").each(function (i, dom) {
-        Inovout.View.get(dom);
-    });
 });

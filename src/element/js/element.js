@@ -78,17 +78,6 @@ Inovout.Element = Class.create({
         return this.dom.uid;
     }
 });
-/**********jQeryAdapter，确保Elenet本身不依赖jQuery，彻底隔离相关Dom的类库**********/
-Object.extend(Inovout.Element.prototype, jQuery.fn);
-Object.extend(Inovout.Element.prototype, {
-    _pushStack: jQuery.fn.pushStack,
-    pushStack: function (elems) {
-        var ret = this._pushStack(elems);
-        return jQuery.map(ret, function (dom) {
-            return Inovout.Element.get(dom);
-        })
-    }
-});
 
 Object.extend(Inovout.Element, {
     cache: new HashMap(),
@@ -101,11 +90,26 @@ Object.extend(Inovout.Element, {
         var element = Inovout.Element.cache.get(dom);
         if (!element) {
             element = new Inovout.Element(dom);
-            element.init(dom);
             Inovout.Element.cache.add(dom, element);
         }
         return element;
     }
 });
 
+Inovout.Element.prototype._initialize = Inovout.Element.prototype.initialize;
+Inovout.Element.prototype.initialize = function (dom) {
+    Object.extend(this, jQuery.fn);
+    this.init(dom);
+    var me = this;
+    ["find"].each(function (name) {
+        me["_" + name] = me[name];
+        me[name] = function () {
+            var ret = me["_" + name].apply(me, arguments);
+            return jQuery.map(ret, function (dom) {
+                return Inovout.Element.get(dom);
+            })
+        };
+    });
+    Inovout.Element.prototype._initialize.call(this, dom);
 
+};

@@ -1,4 +1,4 @@
-Inovout.Widget.Wizard = Class.create(Inovout.View, {
+Inovout.Widgets.Wizard = Class.create(Inovout.View, {
     initialize: function ($super, element) {
         $super(element);
         this.navs = element.find("nav>span");
@@ -36,9 +36,4 @@ Inovout.Widget.Wizard = Class.create(Inovout.View, {
         this.articles.each(function (item) { item.hide(); });
         this.articles[i].show();
     }
-});
-$(function () {
-    $(".wizard").each(function (i, dom) {
-        Inovout.View.get(dom);
-    });
 });

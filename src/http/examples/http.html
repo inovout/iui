@@ -5,14 +5,20 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <link rel="stylesheet" href="../../cssreset/css/cssreset.css" />
     <link rel="stylesheet" href="../../cssfonts/css/cssfonts.css" />
-    <script src="../../../lib/html5shiv.js"></script>
+    <!--[if lt IE 9]><script src="../../../lib/html5shiv.js"></script><![endif]-->
 </head>
 <body>
-    <form id="searcherForm" method="get" data-async="alert(response)" action="/Solution/Search" >
-        <input id="kwyword" type="search" />
-        <button type="submit">搜 索</button>
+    <form method="post" data-async="alert(data)" enctype="multipart/related"
+        action="http://www.huayong.com:10211/v1/b/bucket635179523870949784/o?key=app635179523870039732&uploadType=multipart">
+        <input name="name" type="text" />
+        <input name="file" type="file" />
+        <button type="submit">保存</button>
     </form>
-    <script src="../../../lib/yepnope.js"></script>
+
+    <!--[if lt IE 9]><script src="http://libs.baidu.com/jquery/1.10.2/jquery.js"></script><![endif]-->
+    <!--[if gte IE 9]><script src="http://libs.baidu.com/jquery/2.0.3/jquery.js"></script><![endif]-->
+
+    <script src="../../../lib/jquery.js"></script>
     <script data-config="../../config.js" src="../../core/js/core.js"></script>
 </body>
 </html>

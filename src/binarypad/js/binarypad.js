@@ -1,4 +1,4 @@
-Inovout.Widget.BinaryPad = Class.create(Inovout.View, {
+Inovout.Widgets.BinaryPad = Class.create(Inovout.View, {
     initialize: function ($super, element) {
         $super(element);
         this.navs = Inovout.Element.get(document).find(".binaryPad-nav>span");
@@ -16,9 +16,4 @@ Inovout.Widget.BinaryPad = Class.create(Inovout.View, {
             });
         });
     }
-});
-$(function () {
-    $(".binaryPad").each(function (i, dom) {
-        Inovout.View.get(dom);
-    });
 });

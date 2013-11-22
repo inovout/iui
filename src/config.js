@@ -1,11 +1,8 @@
-//Ò»¸öJSÎÄ¼þ±íÊ¾Ò»¸ömodule£¬
-//Ò»¸ömoduleµ±ÖÐÖÁÉÙÓÐÒ»¸öcomponent£¬¼´Àà¡£
-//ÒÀÀµ¹ØÏµÖ»¾ÖÏÞÓÚcomponentÃ»ÓÐmoduleµÄÒÀÀµ¡£
-//ÈôÃ»ÓÐÅäÖÃcomponet£¬ÔòcomponetµÄÃû³ÆÓëÄ£¿éÃûÏàÍ¬£¬²»¹ýÕâÖÖÇé¿öÓ¦¸ÃÏà¶Ô½ÏÉÙ¡£
-define({
-    name: "jQuery",
-    path: "../../../lib/jQuery.js"
-});
+//ä¸€ä¸ªJSæ–‡ä»¶è¡¨ç¤ºä¸€ä¸ªmoduleï¿?
+//ä¸€ä¸ªmoduleå½“ä¸­è‡³å°‘æœ‰ä¸€ä¸ªcomponentï¼Œå³ç±»ï¿½?
+//ä¾èµ–å…³ç³»åªå±€é™äºŽcomponentæ²¡æœ‰moduleçš„ä¾èµ–ï¿½?
+//è‹¥æ²¡æœ‰é…ç½®componetï¼Œåˆ™componetçš„åç§°ä¸Žæ¨¡å—åç›¸åŒï¼Œä¸è¿‡è¿™ç§æƒ…å†µåº”è¯¥ç›¸å¯¹è¾ƒå°‘ï¿?
+//basePath å¯¹è±¡è™šæ‹Ÿè·¯å¾„æˆ–å„ç«™ç‚¹ä½¿ç”¨åŒä¸€ä¸ªèµ„æºç«™ç‚¹æ—¶æœ‰ç”¨
 define({
     name: "prototype-lang",
     path: "../../jslang/prototype-lang.js",
@@ -29,7 +26,7 @@ define({
     components: [
         {
             name: "Inovout.Element",
-            depens: ["jQuery", "Class", "HashMap"]
+            depens: ["Class", "HashMap"]
         }
     ]
 });
@@ -69,28 +66,64 @@ define({
                 }
     ]
 });
-define({
-    name: "serializeJSON",
-    path: "../../../lib/jquery.serializeJSON.js"
-});
+
 define({
     name: "form",
     path: "../../form/js/form.js",
     components: [
                 {
                     name: "Inovout.Controls.Form",
-                    test: iui.hasAttr("form","data-async"),
-                    depens: ["Inovout.View", "serializeJSON"]
+                    test: iui.hasAttr("form", "data-async"),
+                    depens: ["Inovout.View", "jquery.serializeJSON"]
                 }
     ]
 });
+
+define({
+    name: "FileInput",
+    path: "../../form/js/fileinput.js",
+    components: [
+                {
+                    name: "Inovout.Controls.FileInput",
+                    test: iui.hasAttr("input", "type","file"),
+                    depens: ["Inovout.View", "moxie"]
+                }
+    ]
+});
+
 define({
     name: "http",
     path: "../../http/js/http.js",
     components: [
         {
-            name: "Http",test:true,
-            depens: ["Class"]
+            name: "HttpRequest", test: true,
+            depens: ["Class", "jQuery.XDomainRequest", "base64"]
         }
     ]
+});
+define({
+    name: "jquery.serializeJSON",
+    path: "../../../lib/jquery.serializeJSON.js"
+});
+
+define({
+    name: "jQuery.XDomainRequest",
+    path: "../../../lib/jQuery.XDomainRequest.js"
+});
+//ÓÐÐ©Ä£¿éËäÈ»TESTÂú×ã£¬²¢²»ÄÜµ¥¶ÀÊ¹ÓÃ£¬ÐèÒªÓÐÆäËüÄ£¿éÒÀÀµÊ±²ÅÐè¼ÓÔØ£¬ÔÝÎ´Íê³É¡£
+define({
+    name: "base64",
+    path: "../../../lib/base64.js",
+    required: "HttpRequest",
+    test: window.btoa && window.atob
+});
+
+define({
+    name: "moxie",
+    path: "../../../lib/moxie.js",
+    success: function () {
+        o.Env.swf_url = "../../../lib/flash/Moxie.swf";
+        o.Env.xap_url = "../../../lib/silverlight/Moxie.xap";
+    },
+    test: true
 });

@@ -1,5 +1,4 @@
 Inovout.Widgets = {};
-Inovout.Controls = {};
 
 Inovout.View = Class.create({
     initialize: function (element) {
@@ -8,77 +7,47 @@ Inovout.View = Class.create({
     }
 });
 Object.extend(Inovout.View, {
-    factories: {},
     cache: new HashMap(),
+    tryGet: function (element) {
+        for (var widget in Inovout.Widgets) {
+            var view, wc = widget.substring(0, 1).toLowerCase() + widget.substring(1, widget.length);
+            if (element.hasClass(wc) || widget.toLowerCase() == element.dom.tagName.toLowerCase()) {
+                view = new Inovout.Widgets[widget](element);
+                Inovout.View.cache.add(element, view);
+                return view;
+            }
+        }
+    },
     get: function (element) {
         if (element instanceof Inovout.View) {
             return element;
         }
         element = Inovout.Element.get(element);
-        var view = Inovout.View.cache.get(element);
+        var view = Inovout.View.cache.get(element) || Inovout.View.tryGet(element);
         if (!view) {
-            var widgetType;
-            for (var viewClass in Inovout.View.factories) {
-                if (Inovout.View.factories[viewClass](element)) {
-                    widgetType = viewClass;
-                    break
-                }
-            }
-            if (!widgetType) {
-                for (var widget in Inovout.Widgets) {
-                    var wc = widget.substring(0, 1).toLowerCase() + widget.substring(1, widget.length);
-                    if (element.hasClass(wc)) {
-                        widgetType = widget;
-                        Inovout.View.factories[widget] = function (ele) { return ele.hasClass(wc); };
-                        break
-                    }
-                }
-            }
-            if (widgetType) {
-                view = new Inovout.Widgets[widgetType](element);
-            } else {
-                for (var control in Inovout.Controls) {
-                    if (control.toLowerCase() == element.dom.tagName.toLowerCase()) {
-                        widgetType = control;
-                        break;
-                    }
-                }
-                if (widgetType) {
-                    view = new Inovout.Controls[widgetType](element);
-                } else {
-                    view = new Inovout.View(element);
-                    Object.extend(view, element);
-                }
-            }
-            Inovout.View.cache.add(element, view);
+            Object.extend(view, element);
         }
+
         return view;
     },
-    wrapFunction: function (args, fnExpression) {
-        var dot = fnExpression.indexOf("."),
-            bracket = fnExpression.indexOf("(");
-        if (dot == -1 || dot > bracket) {
-            //fn(sender)
-            fnExpression = "this." + fnExpression;
-        } else if (dot < bracket) {
+    buildFunction: function (args, fnExpression) {
+        fnExpression = fnExpression.trim();
+        var dot = fnExpression.indexOf(".");
+        var owner = fnExpression.substring(0, dot);
+        if (owner != "this." && owner != "") {
             //view.bindData(args.value);
-            fnExpression = "Inovout.View.get(" + fnExpression.substr(0, dot) + ")" + fnExpression.substring(dot, fnExpression.length);
+            fnExpression = "Inovout.View.get(" + owner + ")." + fnExpression.substring(dot, fnExpression.length);
+            return Function(args, fnExpression);
         }
-        return Function(args, fnExpression);
-
-}
+        return Function.build(args,fnExpression);
+    }
 });
 
 iui.load(function () {
-    var doc = Inovout.Element.get(document);
+    var elements, doc = Inovout.Element.get(document);
     for (var widget in Inovout.Widgets) {
         var wc = widget.substring(0, 1).toLowerCase() + widget.substring(1, widget.length);
-        doc.find("." + wc).each(function (element) {
-            Inovout.View.get(element);
-        });
-    }
-    for (var control in Inovout.Controls) {
-        doc.find(control).each(function (element) {
+        doc.find("." + wc + "," + widget).each(function (element) {
             Inovout.View.get(element);
         });
     }

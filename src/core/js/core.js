@@ -25,26 +25,20 @@ var basePath,
          */
         var context = {};
         function hasClass(c) {
-            return document.getElementsByClassName(c).length > 0;
+            return $("." + c).length > 0;
         }
         function hasTag(tag) {
-            return document.getElementsByTagName(tag).length > 0;
+            return $(tag).length > 0;
         }
         function hasAttr(tag, attr, value) {
-            var elems = document.getElementsByTagName(tag);
-            for (var i = 0; i < elems.length; i++) {
-                if (value) {
-                    if (elems[i].getAttribute(attr) == value) {
-                        return true;
-                    }
-                }
-                else {
-                    if (elems[i].getAttribute(attr)) {
-                        return true;
-                    }
-                }
+            return $(tag + "[" + attr + "=" + value + "]").length > 0;
+        }
+        function getUri(url) {
+            if (basePath && url.substr(0, 4) != "http") {
+                basePath = basePath.substr(basePath.length - 1) == "/" ? basePath.substr(0, basePath.length - 1) : basePath;
+                return basePath + url;
             }
-            return false;
+            return url;
         }
         return {
             configData: configData,
@@ -52,15 +46,13 @@ var basePath,
             hasClass: hasClass,
             hasTag: hasTag,
             hasAttr: hasAttr,
+            getUri: getUri,
             load: undefined
         };
     })();
 
 function define(data) {
-    if (basePath && data.path.substr(0, 4) != "http") {
-        basePath = basePath.substr(basePath.length - 1) == "/" ? basePath.substr(0, basePath.length - 1) : basePath;
-        data.path = basePath + data.path;
-    }
+    data.path = iui.getUri(data.path);
     var component,
         configData = iui.configData;
     data.depens = [];//设置data.depens为空数组
@@ -101,75 +93,118 @@ function define(data) {
      4、所有预加载module必须在window.loaded之后（以避影响DOM的资源加载，如：IMG），每隔2S加载一个module,而且是依次加载，以避免与AJAX或HTTP METHOD抢连接资源。
      */
     var configData = iui.configData, loadList = [],
-        head = document.head || $("head")[0] || document.documentElement,
-        scripts = document.getElementsByTagName("script"),
-        loaderScript = scripts[scripts.length - 1],
-        dataConfig = loaderScript.getAttribute("data-config"),
-        dataEntry = loaderScript.getAttribute("data-entry") || "Page",
-        dataPreload = loaderScript.getAttribute("data-preload");
-    //修改jquery异步加载JS的功能。
-    head._insertBefore = head.insertBefore;
-    head.insertBefore = function () {
-        //针对跨域加载JS
-        arguments[0].async = false;
-        head._insertBefore.apply(head, arguments);
-    }
+        head = $("head")[0],
+        loaderScript = $("script:last"),
+        dataConfig = loaderScript.data("config"),
+        dataEntry = loaderScript.data("entry") || "Page",
+        dataPreload = loaderScript.data("preload");
+
     if (!dataConfig) {
         var srcStr = loaderScript.getAttribute("src");
         dataConfig = srcStr.substring(0, srcStr.lastIndexOf("/") + 1) + "config.js";
     }
+    if (basePath = dataConfig.match(/https?:\/\/[a-z0-9\-._~%]+:?[0-9]*/)) {
+        basePath = basePath[0];
+    }
+    iui.load = function (fn) {
+        loadList.push(fn);
+    };
+
+
     //首先加载config.js
     injectJs(dataConfig, startApplication);
 
     /**
      * 动态加载js的工具
+     * status :
+     * 0 未加载
+     * 1 加载中
+     * 2 加载完成
      */
-    function injectJs(scripts, complete, failure) {
-        if (typeof scripts == "string") {
+    function injectJs(scripts, done, i) {
+        if (!$.isArray(scripts)) {
             scripts = [{ path: scripts }];
         }
-        var loader = [];
-        $(scripts).each(function (i, src) {
-            $.extend(src, {
-                components: null,
-                type: "get",
-                async: false,
-                cache: true,
-                crossDomain: true,
-                dataType: "script"
+        if (!$.isNumeric(i)) {
+            getScripts(scripts).done(function () {
+                $.each(scripts, function (_, script) {
+                    script.status = 2//loaded;
+                });
+                if (done) {
+                    done.apply(this, arguments);
+                }
             });
-            loader.push($.ajax(src.path, src));
+        } else {
+            //setTimeout(function () {
+            getScripts(scripts[i]).done(function () {
+                scripts[i].status = 2//loaded;
+                i++;
+                if (scripts.length == i) {
+                    done.apply(this.arguments);
+                }
+                else {
+                    injectJs(scripts, done, i);
+                }
+            });
+            //});
+        }
+    }
+
+    function getScripts(scripts, done) {
+        if (!$.isArray(scripts)) {
+            scripts = [scripts];
+        }
+        var xhrs = $.map(scripts, function (script) {
+            script.status = 1//loading;
+            return $.ajax($.extend(script, {
+                url: script.path,
+                components: null,
+                dataType: 'script',
+                cache: true
+            }));
         });
-        $.when.apply($, loader).then(complete, failure);
+        return $.when.apply($, xhrs).done(done);
     }
     /**
-     * 完成config.js的加载后执行此方法，
-     * 根据依赖关系以LIFO(last-in，first-out)方式加载js模块
-     */
+    * 完成config.js的加载后执行此方法，
+    * 根据依赖关系以LIFO(last-in，first-out)方式加载js模块
+    */
     function startApplication() {
-        iui.load = function (fn) {
-            loadList.push(fn);
-        };
         var modules = getModules(dataEntry);
         //加载所有有test的module
         modules = uniqueArray(modules.concat(modules, getTestModules(configData.components, $(document))));
-        modules = modules.filter(function (module) {
-            return !module.required || (modules.indexOf(configData.pathModules[module.required]) > -1);
+        modules = $.grep(modules, function (module) {
+            if (module.required) {
+                for (var i = 0; i < module.required.length; i++) {
+                    if (configData.nameComponents[module.required[i]].module.status > 0) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            return true;
         });
         injectJs(modules, function () {
-            head.insertBefore = head._insertBefore;
-
-            iui.load = function (fn) {
-                $(document).ready(fn);
-            };
             $(document).ready(loadList);
-
+            iui.load = $(document).ready;
             //预加载所有未加载的module
             $(window).ready(function () {
                 loadPreloadModule();
             });
-        });
+        }, 0);//支持并行加载顺序执行
+        //需修改？？暂时全部为顺序加载，顺序执行。/msie/.test(navigator.userAgent.toLowerCase()) ? undefined : 0
     }
+    function getTestModules(components) {
+        var i, c, ret = [], components = configData.components, modules;
+        for (i = 0; i < components.length; i++) {
+            c = components[i];
+            if (!!c.test || (typeof c.test == "function" && c.test.call(this, $(document)))) {
+                ret.push(c.module);
+            }
+        }
+        return getModules(ret);
+    }
+
     function loadPreloadModule() {
         if (!dataPreload) {
             return;
@@ -178,7 +213,7 @@ function define(data) {
             if (!m.isLoad) {
                 m.isLoad = true;
                 $("<img />").attr("src", m.path);
-                setTimeout(loadPreloadModule, 100);
+                setTimeout(loadPreloadModule, 50);
             }
         });
     }
@@ -189,6 +224,7 @@ function define(data) {
         var ret = [];
         for (var i = 0; i < modules.length; i++) {
             ret = ret.concat(getDependentModules(modules[i]));
+            modules[i].status = 1;
         }
         return uniqueArray(ret);
     }
@@ -217,6 +253,7 @@ function define(data) {
             //从后往前添加js依赖
             for (j = mods.length - 1; j > -1; j--) {
                 ret.push(mods[j]);
+                mods[j].status = 1;
             }
         }
         //Module等自身依赖的js全部加载完成后再进行加载
@@ -225,17 +262,6 @@ function define(data) {
 
     }
 
-    function getTestModules(components, testFunctionArgs) {
-        var i, c, ret = [];
-        for (i = 0; i < components.length; i++) {
-            c = components[i];
-            if (!!c.test || (typeof c.test == "function" && c.test.call(this, testFunctionArgs))) {
-                ret.push(c.module);
-            }
-        }
-
-        return getModules(ret);
-    };
 
     /**
      *

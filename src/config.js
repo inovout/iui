@@ -37,7 +37,7 @@ define({
     components: [
         {
             name: "Inovout.View",
-            depens: ["Inovout.Element"],
+            depens: ["Inovout.Element"]
         }
     ]
 });
@@ -85,7 +85,7 @@ define({
     components: [
                 {
                     name: "Inovout.Controls.FileInput",
-                    test: iui.hasAttr("input", "type","file"),
+                    test: iui.hasAttr("input", "type", "file"),
                     depens: ["Inovout.View", "moxie"]
                 }
     ]
@@ -97,7 +97,7 @@ define({
     components: [
         {
             name: "HttpRequest", test: true,
-            depens: ["Class", "jQuery.XDomainRequest", "base64"]
+            depens: ["Class"]
         }
     ]
 });
@@ -105,25 +105,29 @@ define({
     name: "jquery.serializeJSON",
     path: "../../../lib/jquery.serializeJSON.js"
 });
-
 define({
     name: "jQuery.XDomainRequest",
+    required: ["HttpRequest"],
+    test: !$.support.cors,
+    path: "../../../lib/moxie.js",
     path: "../../../lib/jQuery.XDomainRequest.js"
 });
-//有些模块虽然TEST满足，并不能单独使用，需要有其它模块依赖时才需加载，暂未完成。
-define({
-    name: "base64",
-    path: "../../../lib/base64.js",
-    required: "HttpRequest",
-    test: window.btoa && window.atob
-});
+
 
 define({
     name: "moxie",
     path: "../../../lib/moxie.js",
-    success: function () {
-        o.Env.swf_url = "../../../lib/flash/Moxie.swf";
-        o.Env.xap_url = "../../../lib/silverlight/Moxie.xap";
-    },
+    //success: function () {
+    //    o.Env.swf_url = "../../../lib/flash/Moxie.swf";
+    //    o.Env.xap_url = "../../../lib/silverlight/Moxie.xap";
+    //},
     test: true
 });
+
+//有些模块虽然TEST满足，并不能单独使用，需要有其它模块依赖时才需加载，暂未完成。
+//define({
+//    name: "base64",
+//    path: "../../../lib/base64.js",
+//    required: ["HttpRequest"],
+//    test: window.btoa && window.atob
+//});

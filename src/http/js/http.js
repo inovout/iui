@@ -20,22 +20,29 @@ HttpClient = Class.create({
     initialize: function () {
         return this;
     },
-    send: function (request, callback) {
+    send: function (request) {
         return request.execute();
     },
     get: function (url) {
         return this.send(new HttpRequest("get", url));
     },
-    getJson: function () {
-        return this.send(new HttpRequest("get", url), Object.toJson);
+    getJson: function (uri) {
+        return this.send(new HttpRequest("get", uri));
     },
     post: function (uri, content) {
-        return this.send(new HttpRequest("post", url, content));
+        return this.send(new HttpRequest("post", uri, content));
+    },
+    postFile: function (uri, file) {
+        return this.post(uri, new FileContent(file));
+    },
+    postJson: function (uri, json) {
+        return this.post(uri, new JsonContent(json));
     }
 });
 HttpRequest = Class.create({
-    initialize: function (method, uri) {
+    initialize: function (method, uri, content) {
         this.method = method.toLowerCase();
+        this.content = content;
         this.uri = uri;
         return this;
     },
@@ -43,17 +50,14 @@ HttpRequest = Class.create({
         if (!Object.isString(this.uri)) {
             this.uri = this.uri.build();
         }
+        this.uri = encodeURI(this.uri);
         var me = this,
         response = new HttpResponse(this),
         options = {
             type: this.method,
+            //dataType: "jsonp",
             headers: {}
         };
-        if (this.method == "get") {
-
-        } else if (this.method == "post") {
-
-        }
         if (this.content) {
             Object.extend(options.headers, this.content.headers);
             this.content.read().done(function () {
@@ -79,8 +83,7 @@ HttpResponse = Class.create({
         var me = this;
         this.xhr = xhr;
         this.xhr.done(function (data) {
-            debugger;
-            me.deferred.resolveWith(xhr,[data]);
+            me.deferred.resolveWith(xhr, [data]);
         });
     },
     read: function () {
@@ -112,7 +115,7 @@ JsonContent = Class.create(HttpContent, {
 });
 FileContent = Class.create(HttpContent, {
     initialize: function ($super, file) {
-        var base = $super(file.fileInput.files[0]);
+        var base = $super(file);
         base.addHeader("Content-Type", this.data.type || "application/octet-stream");
         //base.addHeader("Content-Transfer-Encoding", "base64");
     },

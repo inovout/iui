@@ -14,7 +14,7 @@ Inovout.Widgets.Form = Class.create(Inovout.View, {
 
             //替换FileInput
             element.find("input[type=file]").each(function (file) {
-                var fiDom = $("<div class=\"fileInput\"><button type=\"button\" class=\"fileInput_browse_button\">浏览</butoon><div>")[0];
+                var fiDom = $("<div class=\"fileInput\"><button type=\"button\" class=\"fileInput_browse_button\">浏览</button></div>")[0];
                 file.replaceWith(fiDom);
                 Inovout.View.get(fiDom);
             });
@@ -41,7 +41,7 @@ Inovout.Widgets.Form = Class.create(Inovout.View, {
                     content = new MultipartContent("related", boundary);
                     content.add(new JsonContent(data));
                     element.find(".fileInput").each(function (file) {
-                        content.add(new FileContent(Inovout.View.get(file)));
+                        content.add(new FileContent(Inovout.View.get(file.fileInput.files[0])));
                     });
                 }
                 request.content = content;

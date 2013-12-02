@@ -14,11 +14,136 @@
         <input name="file" type="file" />
         <button type="submit">保存</button>
     </form>
-
-    <!--[if lt IE 9]><script src="http://libs.baidu.com/jquery/1.10.2/jquery.js"></script><![endif]-->
-    <!--[if gte IE 9]><script src="http://libs.baidu.com/jquery/2.0.3/jquery.js"></script><![endif]-->
+    <hr />
+    <div>Insert Bucket</div>
+    <input type="text" id="bucket_name" />
+    <button id="insertBucket" type="button">InsertBucket</button>
+    <div>Delete Bucket</div>
+    <select id="bucketList"></select>
+    <button id="deleteBucket" type="button">DeleteBucket</button>
+    <hr />
+    <div>Insert Object</div>
+    <div id="filePicker" class="fileInput" data-multiple="true">
+        <button type="button" class="fileInput_browse_button">
+            浏览</button>
+    </div>
+    <div>Delete Object</div>
+    <select id="objectList"></select>
+    <button id="deleteObject" type="button">DeleteObject</button>
 
     <script src="../../../lib/jquery.js"></script>
     <script data-config="../../config.js" src="../../core/js/core.js"></script>
+    <script type="text/javascript">
+
+        function getScripts(scripts) {
+            var xhrs = scripts.map(function (url) {
+                return $.ajax({
+                    url: url,
+                    dataType: 'text',
+                    cache: true
+                });
+            });
+            return $.when.apply($, xhrs).done(function () {
+                Array.prototype.forEach.call(arguments, function (res) {
+                    debugger;
+                    eval.call(this, res[0]);
+                });
+            });
+        }
+        //getScripts(["../../config.js"]);
+        var rootUri = "http://www.huayong.com:10211/",
+            servicePath = "v1/",
+            appKey = "app635210668568481460",
+            project = "project635210668569061493 "
+
+        //    var rootUri = "http://storage.sumapp.cn/",
+        //servicePath = "v1/",
+        //appKey = "app635212406135884545",
+        //project = "project635212406136084557 "
+
+        var bucketList = $("#bucketList");
+
+
+        $("#insertBucket").click(function () {
+            var httpClient = new HttpClient();
+            httpClient.postJson(rootUri + servicePath + "b?key=" + appKey + "&project=" + project, { "name": $("#bucket_name").val() }).read().done(function (data) {
+                bucketList.append("<option>" + data.name + "</option>");
+                bucketList.find("option:last").prop("selected", true);
+            });
+        });
+
+        $("#deleteBucket").click(function () {
+            var bucketName = bucketList.find("option:selected").text();
+            if (bucketName == "") {
+                return;
+            }
+            var httpRequest = new HttpRequest("delete", rootUri + servicePath + "b/" + bucketName + "?key=" + appKey);
+            httpRequest.execute().read().done(function (data) {
+                bucketList.find("option:selected").remove();
+            });
+        });
+
+        var objectList = $("#objectList");
+
+        iui.load(function () {
+            var httpClient = new HttpClient();
+            httpClient.getJson(rootUri + servicePath + "b?key=" + appKey + "&project=" + project).read().done(function (data) {
+                data.items.each(function (item) {
+                    bucketList.append("<option>" + item.name + "</option>");
+                });
+                bucketList.trigger("change");
+            });
+
+            Inovout.View.get("filePicker").selectedChanged.addListener(insertObject);
+        });
+        bucketList.change(function () {
+            var bucketName = bucketList.find("option:selected").text();
+            if (bucketName == "") {
+                return;
+            }
+            objectList.empty();
+            var httpClient = new HttpClient();
+            httpClient.getJson(rootUri + servicePath + "b/" + bucketName + "/o?key=" + appKey).read().done(function (data) {
+                data.items.each(function (item) {
+                    objectList.append("<option>" + item.name + "</option>");
+                });
+                objectList.find("option:last").prop("selected", true);
+            });
+
+        });
+        function insertObject(fi, files) {
+            var bucketName = bucketList.find("option:selected").text();
+            if (bucketName == "") {
+                alert("必须选择一个Bucket");
+                return;
+            }
+            files.each(function (file) {
+                var httpClient = new HttpClient();
+                httpClient.postFile(rootUri + servicePath + "b/" + bucketName + "/o?key=" + appKey + "&name=" + file.name + "&uploadType=media", file).read().done(function (data) {
+                    objectList.append("<option>" + data.name + "</option>");
+                    objectList.find("option:last").prop("selected", true);
+                });
+            });
+        }
+
+        $("#deleteObject").click(function () {
+            var bucketName = bucketList.find("option:selected").text();
+            if (bucketName == "") {
+                alert("必须选择一个Bucket");
+                return;
+            }
+
+            var objectName = objectList.find("option:selected").text();
+            if (bucketName == "") {
+                alert("必须选择一个Object");
+                return;
+            }
+            var httpRequest = new HttpRequest("delete", rootUri + servicePath + "b/" + bucketName + "/o/" + objectName + "?key=" + appKey);
+            httpRequest.execute().read().done(function (data) {
+                objectList.find("option:selected").remove();
+            });
+        });
+
+    </script>
 </body>
 </html>

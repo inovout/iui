@@ -51,17 +51,42 @@ HttpRequest = Class.create({
             this.uri = this.uri.build();
         }
         this.uri = encodeURI(this.uri);
-        var me = this,
-        response = new HttpResponse(this),
-        options = {
+        var me = this, response = new HttpResponse(this);
+        if (!$.support.cors) {
+            if (this.method == "delete") {
+                this.method = "get";
+                addUrlQuery("http-method=delete");
+            }
+            if (this.method == "put") {
+                this.method = "post";
+                addUrlQuery("http-method=put");
+
+            }
+        }
+        function addHttpMethodQuery(h) {
+            if (me.uri.indexOf("?") > -1) {
+                me.uri = me.uri + "&@" + h;
+            }
+            else {
+                me.uri = me.uri + "?@" + h;
+            }
+        }
+        var options = {
             type: this.method,
             //dataType: "jsonp",
             headers: {}
         };
+
         if (this.content) {
             Object.extend(options.headers, this.content.headers);
             this.content.read().done(function () {
                 options.data = me.content.result;
+                if (!$.support.cors) {
+                    for (h in options.headers) {
+                        addUrlQuery(h + "=" + options.headers[h]);
+                    }
+                }
+
                 response.setXHR($.ajax(me.uri, options));
             });
         } else {
@@ -117,14 +142,14 @@ FileContent = Class.create(HttpContent, {
     initialize: function ($super, file) {
         var base = $super(file);
         base.addHeader("Content-Type", this.data.type || "application/octet-stream");
-        //base.addHeader("Content-Transfer-Encoding", "base64");
+        base.addHeader("Content-Transfer-Encoding", "base64");
     },
     read: function () {
         var me = this,
             deferred = $.Deferred(),
             reader = new o.FileReader();
         reader.onload = function () {
-            me.result = reader.result;
+            me.result = btoa(reader.result);
             //this.result = String.fromCharCode.apply(null, Array.prototype.slice.apply(new Uint8Array(reader.result)));
             deferred.resolve();
 

@@ -21,20 +21,21 @@ Inovout.Widgets.List = Class.create(Inovout.View, {
         var eventArgs = {
             text: selectedItem.text()
         }
-        if (!this.valueKeys) {
-            this.valueKeys = [];
-            var attributes = selectedItem.getAttributes();
-            for (var i = 0; i < attributes.length; i++) {
-                var attrName = attributes[i].name;
-                var dataAttrIndex = attrName.indexOf("data-");
-                if (dataAttrIndex > -1) {
-                    this.valueKeys.push(attrName.substring(5, attrName.length));
-                }
-            }
-        }
-        for (var i = 0; i < this.valueKeys.length; i++) {
-            eventArgs[this.valueKeys[i]] = selectedItem.data(this.valueKeys[i]);
-        }
+        //if (!this.valueKeys) {
+        //    this.valueKeys = [];
+        //    var attributes = selectedItem.getAttributes();
+        //    for (var i = 0; i < attributes.length; i++) {
+        //        var attrName = attributes[i].name;
+        //        var dataAttrIndex = attrName.indexOf("data-");
+        //        if (dataAttrIndex > -1) {
+        //            this.valueKeys.push(attrName.substring(5, attrName.length));
+        //        }
+        //    }
+        //}
+        //for (var i = 0; i < this.valueKeys.length; i++) {
+        //    eventArgs[this.valueKeys[i]] = selectedItem.data(this.valueKeys[i]);
+        //}
+        Object.extend(eventArgs, selectedItem.data());
         eventArgs.value = eventArgs.value || selectedItem.val() || selectedItem.text();
         return eventArgs;
     },

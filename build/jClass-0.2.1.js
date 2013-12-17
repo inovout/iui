@@ -5622,13 +5622,33 @@ HttpRequest = Class.create({
             this.uri = this.uri.build();
         }
         this.uri = encodeURI(this.uri);
-        var me = this,
-        response = new HttpResponse(this),
-        options = {
+        var me = this, response = new HttpResponse(this);
+        if (!$.support.cors) {
+            if (this.method == "delete") {
+                this.method = "get";
+                addHttpMethodQuery("delete");
+            }
+            if (this.method == "put") {
+                this.method = "post";
+                addHttpMethodQuery("put");
+
+            }
+            function addHttpMethodQuery(m) {
+                if (me.uri.indexOf("?") > -1) {
+                    me.uri = me.uri + "&httpmethod=" + m;
+                }
+                else {
+                    me.uri = me.uri + "?httpmethod=" + m;
+                }
+            }
+
+        }
+        var options = {
             type: this.method,
             //dataType: "jsonp",
             headers: {}
         };
+
         if (this.content) {
             Object.extend(options.headers, this.content.headers);
             this.content.read().done(function () {

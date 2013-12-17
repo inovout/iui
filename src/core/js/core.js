@@ -31,7 +31,11 @@ var basePath,
             return $(tag).length > 0;
         }
         function hasAttr(tag, attr, value) {
-            return $(tag + "[" + attr + "=" + value + "]").length > 0;
+            if (arguments.length == 2) {
+                return $("[" + tag + "=" + attr + "]").length > 0;
+            } else {
+                return $(tag + "[" + attr + "=" + value + "]").length > 0;
+            }
         }
         function getUri(url) {
             if (basePath && url.substr(0, 4) != "http") {
@@ -55,7 +59,7 @@ function define(data) {
     data.path = iui.getUri(data.path);
     var component,
         configData = iui.configData;
-    data.depens = [];//设置data.depens为空数组
+    data.depens = data.depens || [];//设置data.depens为空数组
     configData.modules.push(data);//将data数据添加到全局变量configData.modules中。
     //configData.nameModules[data.name] = data;//添加data.name与data对应关系到configData.nameModules对象中
     configData.pathModules[data.path] = data;//添加data.path与data对应关系到configData.pathModules对象中
@@ -118,8 +122,9 @@ function define(data) {
      * 动态加载js的工具
      * status :
      * 0 未加载
-     * 1 加载中
-     * 2 加载完成
+     * 1 需加载
+     * 2 加载中
+     * 3 加载完成
      */
     function injectJs(scripts, done, i) {
         if (!$.isArray(scripts)) {
@@ -128,7 +133,7 @@ function define(data) {
         if (!$.isNumeric(i)) {
             getScripts(scripts).done(function () {
                 $.each(scripts, function (_, script) {
-                    script.status = 2//loaded;
+                    script.status = 3//loaded;
                 });
                 if (done) {
                     done.apply(this, arguments);
@@ -137,7 +142,7 @@ function define(data) {
         } else {
             //setTimeout(function () {
             getScripts(scripts[i]).done(function () {
-                scripts[i].status = 2//loaded;
+                scripts[i].status = 3//loaded;
                 i++;
                 if (scripts.length == i) {
                     done.apply(this.arguments);
@@ -155,7 +160,7 @@ function define(data) {
             scripts = [scripts];
         }
         var xhrs = $.map(scripts, function (script) {
-            script.status = 1//loading;
+            script.status = 2//loading;
             return $.ajax($.extend(script, {
                 url: script.path,
                 components: null,

@@ -16,7 +16,7 @@ var Page = Class.create(Inovout.View, {
                     //获取event
                     var eventExpression = eventAdapterExpression[0].split(".");
                     var event = Inovout.View.get(eventExpression[0])[eventExpression[1]];
-                    var eventAdapter = new EventAdapter(event);
+                    var eventAdapter = new Inovout.XAML.EventAdapter(event);
                     //获取监听对象
                     var view = Inovout.View.get(dedElement);
                     eventAdapter.addListener(eventAdapterExpression[1],view);
@@ -34,6 +34,9 @@ var Page = Class.create(Inovout.View, {
                     //Event.adapte(event, view, view[functionName], functionArgs);
                 //}
             });
+        });
+        selectorElement.find("[data-encrypt]").each(function (dedElement) {
+            new Inovout.XAML.EncryptInput(dedElement);
         });
     }
 });

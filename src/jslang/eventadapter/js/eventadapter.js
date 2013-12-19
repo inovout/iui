@@ -1,4 +1,4 @@
-var EventAdapter = Class.create({
+Inovout.XAML.EventAdapter = Class.create({
     initialize: function (event, buildFunction) {
         this.event = event;
         buildFunction = buildFunction || Function.wrap;

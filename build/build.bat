@@ -6,6 +6,8 @@ set cSun_Version=0.2.1
 set cWidget_Version=0.1.1
 set tWidget_Version=0.1.1
 set cSite_Version=0.1.1
+set rsa_Version=0.0.1
+
 echo css文件开始复制
 copy ..\src\cssreset\css\cssreset.css+..\src\cssfonts\css\cssfonts.css+..\src\csslayout\css\csslayout.css cSun-%cSun_Version%.css /b
 copy ..\src\cssbase\css\cssbase.css+..\src\list\css\list.css+..\src\searcher\css\searcher.css+..\src\nav\css\nav.css+..\src\table\css\table.css+..\src\article\css\article.css+..\src\chart\css\chart.css+..\src\form\css\form.css+..\src\binarypad\css\binarypad.css+..\src\wizard\css\wizard.css cWidget-%cWidget_Version%.css /b
@@ -40,10 +42,13 @@ rem java -jar yuicompressor-2.4.8.jar jClass-%jClass_Version%.js -o jClass-%jCla
 java -jar closure-compiler.jar --js jClass-%jClass_Version%.js --js_output_file jClass-%jClass_Version%.min.js
 
 echo jWidget-%jWidget_Version%.js文件开始复制
-copy ..\src\element\js\element.js+..\src\view\js\view.js+..\src\page\js\page.js+..\src\list\js\list.js+..\src\form\js\form.js+..\src\form\js\fileinput.js+..\src\chart\js\chart.js+..\src\binarypad\js\binarypad.js+..\src\wizard\js\wizard.js jWidget-%jWidget_Version%.js /b
+copy ..\src\element\js\element.js+..\src\view\js\view.js+..\src\page\js\page.js+..\src\list\js\list.js+..\src\form\js\form.js+..\src\form\js\fileinput.js+..\src\chart\js\chart.js+..\src\binarypad\js\binarypad.js+..\src\wizard\js\wizard.js+..\src\encryptInput\js\encryptinput.js  jWidget-%jWidget_Version%.js /b
 rem java -jar yuicompressor-2.4.8.jar jWidget-%jWidget_Version%.js -o jWidget-%jWidget_Version%.min.js
 java -jar closure-compiler.jar --js jWidget-%jWidget_Version%.js --js_output_file jWidget-%jWidget_Version%.min.js
 
+echo iui.rsa-%rsa_Version%.js文件开始复制
+copy ..\lib\rsa\jsbn.js+..\lib\rsa\random.js+..\lib\rsa\hash.js+..\lib\rsa\rsa.js+..\lib\rsa\aes.js+..\lib\rsa\cryptico.js +..\lib\rsa\api.js  iui.rsa-%rsa_Version%.js /b
+java -jar closure-compiler.jar --js iui.rsa-%rsa_Version%.js --js_output_file  iui.rsa-%rsa_Version%.min.js
 
 pause
 

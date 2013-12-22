@@ -1,3 +1,5 @@
+var Inovout = {};
+Inovout.XAML = {};
 Inovout.XAML.EventAdapter = Class.create({
     initialize: function (event, buildFunction) {
         this.event = event;

@@ -6,8 +6,8 @@
     <script src="../../../lib/modernizr/modernizr-2.6.2.js"></script>
 </head>
 <body>
-    <input type="text" class="encrypt" value="23"  data-encrypt=""  id="reg_password" name="reg_password"/>
-     
+    <input type="text" class="encrypt" value="23" data-encrypt="" id="reg_password" name="reg_password" />
+    <input type="button"  value="测试" onclick="test()"/>
     <script src="../../../lib/jquery.js"></script>
     <script src="../../jslang/prototype-lang.js"></script>
     <script src="../../jslang/prototype-lang.js"></script>
@@ -15,8 +15,8 @@
     <script src="../../jslang/event/js/event.js"></script>
     <script src="../../../lib/yepnope.js"></script>
     <script src="../../core/js/core.js"></script>
-    <script src="../../element/js/element.js"></script>
     <script src="../../jslang/eventadapter/js/eventadapter.js"></script>
+    <script src="../../element/js/element.js"></script>
     <script src="../../view/js/view.js"></script>
     <script src="../../page/js/page.js"></script>
     <script language="JavaScript" type="text/javascript" src="../../../lib/rsa/jsbn.js"></script>
@@ -24,8 +24,28 @@
     <script language="JavaScript" type="text/javascript" src="../../../lib/rsa/hash.js"></script>
     <script language="JavaScript" type="text/javascript" src="../../../lib/rsa/rsa.js"></script>
     <script language="JavaScript" type="text/javascript" src="../../../lib/rsa/aes.js"></script>
-    <script language="JavaScript" type="text/javascript" src="../../../lib/rsa/cryptico.js"></script>
     <script language="JavaScript" type="text/javascript" src="../../../lib/rsa/api.js"></script>
     <script language="JavaScript" type="text/javascript" src="../js/encryptinput.js"></script>
 </body>
+<script type="text/javascript">
+    var MattsRSAkey;
+    $(function () {
+        //生成公钥和私钥
+        var PassPhrase = "The Moon is a Harsh Mistress.";
+        var Bits = 512;
+        MattsRSAkey = cryptico.generateRSAKey(PassPhrase, Bits);
+        var MattsPublicKeyString = cryptico.publicKeyString(MattsRSAkey);
+        //修改DOM的data-encrypt属性
+        $("#reg_password").attr("data-encrypt", MattsPublicKeyString);
+        var o = new Inovout.XAML.EncryptInput(Inovout.Element.get("reg_password"));
+    })
+    function test() {
+        //显示被加密后的值
+        alert("被加密后的值:" + $("input[name=reg_password]").val() + "  用私钥解密后的值:" + (cryptico.decrypt($("input[name=reg_password]").val(), MattsRSAkey)).plaintext);
+        //利用私钥解密后的值
+       
+    }
+
+
+</script>
 </html>

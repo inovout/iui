@@ -5553,7 +5553,9 @@ var Event = Class.create({
         }
         return Function(args, fnExpression);
     }
-});var EventAdapter = Class.create({
+});var Inovout = {};
+Inovout.XAML = {};
+Inovout.XAML.EventAdapter = Class.create({
     initialize: function (event, buildFunction) {
         this.event = event;
         buildFunction = buildFunction || Function.wrap;
@@ -5569,7 +5571,21 @@ var Event = Class.create({
         this.event.addListener(this.listen, this, options);
     }
 });
-$.ajaxSetup({
+Inovout.XAML.EncryptInput = Class.create({
+    initialize: function (element) {
+        var name = element.attr("name");
+        var reg_pk = element.data("encrypt");
+        element.removeAttr("name");
+        var hiden = $("<input type='hidden' name=" + name + " />");
+        element.append(hiden);
+        element.change.addListener(function (sender, args) {
+            var inputValue = element.val();
+            var itemEncrypted = cryptico.encrypt(inputValue, reg_pk);
+            hiden.val(itemEncrypted.cipher);
+        });
+        return this;
+    }
+});$.ajaxSetup({
     error: function () {
         alert("出现异常！请联系管理员！");
     }
@@ -5626,22 +5642,21 @@ HttpRequest = Class.create({
         if (!$.support.cors) {
             if (this.method == "delete") {
                 this.method = "get";
-                addHttpMethodQuery("delete");
+                addUrlQuery("http-method=delete");
             }
             if (this.method == "put") {
                 this.method = "post";
-                addHttpMethodQuery("put");
+                addUrlQuery("http-method=put");
 
             }
-            function addHttpMethodQuery(m) {
-                if (me.uri.indexOf("?") > -1) {
-                    me.uri = me.uri + "&httpmethod=" + m;
-                }
-                else {
-                    me.uri = me.uri + "?httpmethod=" + m;
-                }
+        }
+        function addHttpMethodQuery(h) {
+            if (me.uri.indexOf("?") > -1) {
+                me.uri = me.uri + "&@" + h;
             }
-
+            else {
+                me.uri = me.uri + "?@" + h;
+            }
         }
         var options = {
             type: this.method,
@@ -5653,6 +5668,12 @@ HttpRequest = Class.create({
             Object.extend(options.headers, this.content.headers);
             this.content.read().done(function () {
                 options.data = me.content.result;
+                if (!$.support.cors) {
+                    for (h in options.headers) {
+                        addUrlQuery(h + "=" + options.headers[h]);
+                    }
+                }
+
                 response.setXHR($.ajax(me.uri, options));
             });
         } else {
@@ -5708,14 +5729,14 @@ FileContent = Class.create(HttpContent, {
     initialize: function ($super, file) {
         var base = $super(file);
         base.addHeader("Content-Type", this.data.type || "application/octet-stream");
-        //base.addHeader("Content-Transfer-Encoding", "base64");
+        base.addHeader("Content-Transfer-Encoding", "base64");
     },
     read: function () {
         var me = this,
             deferred = $.Deferred(),
             reader = new o.FileReader();
         reader.onload = function () {
-            me.result = reader.result;
+            me.result = btoa(reader.result);
             //this.result = String.fromCharCode.apply(null, Array.prototype.slice.apply(new Uint8Array(reader.result)));
             deferred.resolve();
 

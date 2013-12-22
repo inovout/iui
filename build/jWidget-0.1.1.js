@@ -1,4 +1,3 @@
-var Inovout = {};
 Inovout.Element = Class.create({
     initialize: function (dom) {
         var me = this;
@@ -183,7 +182,7 @@ iui.load(function () {
                     //获取event
                     var eventExpression = eventAdapterExpression[0].split(".");
                     var event = Inovout.View.get(eventExpression[0])[eventExpression[1]];
-                    var eventAdapter = new EventAdapter(event);
+                    var eventAdapter = new Inovout.XAML.EventAdapter(event);
                     //获取监听对象
                     var view = Inovout.View.get(dedElement);
                     eventAdapter.addListener(eventAdapterExpression[1],view);
@@ -201,6 +200,9 @@ iui.load(function () {
                     //Event.adapte(event, view, view[functionName], functionArgs);
                 //}
             });
+        });
+        selectorElement.find("[data-encrypt]").each(function (dedElement) {
+            new Inovout.XAML.EncryptInput(dedElement);
         });
     }
 });
@@ -234,20 +236,21 @@ Inovout.Widgets.List = Class.create(Inovout.View, {
         var eventArgs = {
             text: selectedItem.text()
         }
-        if (!this.valueKeys) {
-            this.valueKeys = [];
-            var attributes = selectedItem.getAttributes();
-            for (var i = 0; i < attributes.length; i++) {
-                var attrName = attributes[i].name;
-                var dataAttrIndex = attrName.indexOf("data-");
-                if (dataAttrIndex > -1) {
-                    this.valueKeys.push(attrName.substring(5, attrName.length));
-                }
-            }
-        }
-        for (var i = 0; i < this.valueKeys.length; i++) {
-            eventArgs[this.valueKeys[i]] = selectedItem.data(this.valueKeys[i]);
-        }
+        //if (!this.valueKeys) {
+        //    this.valueKeys = [];
+        //    var attributes = selectedItem.getAttributes();
+        //    for (var i = 0; i < attributes.length; i++) {
+        //        var attrName = attributes[i].name;
+        //        var dataAttrIndex = attrName.indexOf("data-");
+        //        if (dataAttrIndex > -1) {
+        //            this.valueKeys.push(attrName.substring(5, attrName.length));
+        //        }
+        //    }
+        //}
+        //for (var i = 0; i < this.valueKeys.length; i++) {
+        //    eventArgs[this.valueKeys[i]] = selectedItem.data(this.valueKeys[i]);
+        //}
+        Object.extend(eventArgs, selectedItem.data());
         eventArgs.value = eventArgs.value || selectedItem.val() || selectedItem.text();
         return eventArgs;
     },

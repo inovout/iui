@@ -1,5 +1,3 @@
-var Inovout = {};
-Inovout.XAML = {};
 Inovout.Element = Class.create({
     initialize: function (dom) {
         var me = this;

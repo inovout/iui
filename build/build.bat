@@ -22,13 +22,12 @@ java -jar yuicompressor-2.4.8.jar tWidget-%tWidget_Version%.css -o tWidget-%tWid
 
 rem 处理prototype
 echo prototype-lang文件开始复制
-文件开始复制
 copy ..\src\jslang\prototype\prototype.js+..\src\jslang\prototype\object.js+..\src\jslang\prototype\function.js+..\src\jslang\prototype\enumerable.js+ ..\src\jslang\prototype\array.js+..\src\jslang\prototype\class.js+..\src\jslang\prototype\date.js+..\src\jslang\prototype\regexp.js+..\src\jslang\prototype\periodical_executer.js+..\src\jslang\prototype\string.js+..\src\jslang\prototype\template.js+..\src\jslang\prototype\hash.js+..\src\jslang\prototype\number.js+..\src\jslang\prototype\range.js ..\src\jslang\prototype-lang.js /b
 echo prototype-lang文件复制完成
 
 rem 处理iui-lang
 echo iui-lang文件开始复制
-copy ..\src\jslang\hashmap\js\hashmap.js+..\src\jslang\event\js\event.js+..\src\jslang\extensions\js\extensions.js+..\src\jslang\eventadapter\js\eventadapter.js ..\src\jslang\iui-lang.js /b
+copy ..\src\jslang\hashmap\js\hashmap.js+..\src\jslang\event\js\event.js+..\src\jslang\extensions\js\extensions.js+..\src\jslang\eventadapter\js\eventadapter.js+..\src\encryptInput\js\encryptinput.js  ..\src\jslang\iui-lang.js /b
 echo iui-lang文件复制完成
 
 echo jBrowser-%jBrowser_Version%.js文件开始复制
@@ -37,12 +36,14 @@ rem java -jar yuicompressor-2.4.8.jar jBrowser-%jBrowser_Version%.js -o jBrowser
 java -jar closure-compiler.jar --js jBrowser-%jBrowser_Version%.js --js_output_file jBrowser-%jBrowser_Version%.min.js
  
 echo jClass-%jClass_Version%.js文件开始复制
+
 copy ..\src\jslang\prototype-lang.js+..\src\jslang\iui-lang.js+..\src\http\js\http.js jClass-%jClass_Version%.js /b
 rem java -jar yuicompressor-2.4.8.jar jClass-%jClass_Version%.js -o jClass-%jClass_Version%.min.js
 java -jar closure-compiler.jar --js jClass-%jClass_Version%.js --js_output_file jClass-%jClass_Version%.min.js
 
+
 echo jWidget-%jWidget_Version%.js文件开始复制
-copy ..\src\element\js\element.js+..\src\view\js\view.js+..\src\page\js\page.js+..\src\list\js\list.js+..\src\form\js\form.js+..\src\form\js\fileinput.js+..\src\chart\js\chart.js+..\src\binarypad\js\binarypad.js+..\src\wizard\js\wizard.js+..\src\encryptInput\js\encryptinput.js  jWidget-%jWidget_Version%.js /b
+copy ..\src\element\js\element.js+..\src\view\js\view.js+..\src\page\js\page.js+..\src\list\js\list.js+..\src\form\js\form.js+..\src\form\js\fileinput.js+..\src\chart\js\chart.js+..\src\binarypad\js\binarypad.js+..\src\wizard\js\wizard.js  jWidget-%jWidget_Version%.js /b
 rem java -jar yuicompressor-2.4.8.jar jWidget-%jWidget_Version%.js -o jWidget-%jWidget_Version%.min.js
 java -jar closure-compiler.jar --js jWidget-%jWidget_Version%.js --js_output_file jWidget-%jWidget_Version%.min.js
 

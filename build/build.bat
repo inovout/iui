@@ -47,10 +47,6 @@ copy ..\src\element\js\element.js+..\src\view\js\view.js+..\src\page\js\page.js+
 rem java -jar yuicompressor-2.4.8.jar jWidget-%jWidget_Version%.js -o jWidget-%jWidget_Version%.min.js
 java -jar closure-compiler.jar --js jWidget-%jWidget_Version%.js --js_output_file jWidget-%jWidget_Version%.min.js
 
-echo iui.rsa-%rsa_Version%.js文件开始复制
-copy ..\lib\rsa\jsbn.js+..\lib\rsa\random.js+..\lib\rsa\hash.js+..\lib\rsa\rsa.js+..\lib\rsa\aes.js+..\lib\rsa\cryptico.js +..\lib\rsa\api.js  iui.rsa-%rsa_Version%.js /b
-java -jar closure-compiler.jar --js iui.rsa-%rsa_Version%.js --js_output_file  iui.rsa-%rsa_Version%.min.js
-
 pause
 
 

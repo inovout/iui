@@ -7,7 +7,7 @@
 </head>
 <body>
     <input type="text" class="encrypt" value="23" data-encrypt="" id="reg_password" name="reg_password" />
-    <input type="button"  value="测试" onclick="test()"/>
+    <input type="button" value="测试" onclick="test()" />
     <script src="../../../lib/jquery.js"></script>
     <script src="../../jslang/prototype-lang.js"></script>
     <script src="../../jslang/prototype-lang.js"></script>
@@ -29,21 +29,22 @@
 </body>
 <script type="text/javascript">
     var MattsRSAkey;
+    var MattsPublicKeyString;
     $(function () {
         //生成公钥和私钥
         var PassPhrase = "The Moon is a Harsh Mistress.";
         var Bits = 512;
         MattsRSAkey = cryptico.generateRSAKey(PassPhrase, Bits);
-        var MattsPublicKeyString = cryptico.publicKeyString(MattsRSAkey);
+        MattsPublicKeyString = cryptico.publicKeyString(MattsRSAkey);
+
         //修改DOM的data-encrypt属性
-        $("#reg_password").attr("data-encrypt", MattsPublicKeyString);
+        $("#reg_password").attr("data-encrypt", MattsPublicKeyString+"|03");
         var o = new Inovout.XAML.EncryptInput(Inovout.Element.get("reg_password"));
     })
     function test() {
         //显示被加密后的值
-        alert("被加密后的值:" + $("input[name=reg_password]").val() + "  用私钥解密后的值:" + (cryptico.decrypt($("input[name=reg_password]").val(), MattsRSAkey)).plaintext);
+        alert("被加密后的值:" + $("input[name=reg_password]").val());
         //利用私钥解密后的值
-       
     }
 
 

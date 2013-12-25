@@ -6,7 +6,6 @@ set cSun_Version=0.2.1
 set cWidget_Version=0.1.1
 set tWidget_Version=0.1.1
 set cSite_Version=0.1.1
-set rsa_Version=0.0.1
 
 echo css文件开始复制
 copy ..\src\cssreset\css\cssreset.css+..\src\cssfonts\css\cssfonts.css+..\src\csslayout\css\csslayout.css cSun-%cSun_Version%.css /b

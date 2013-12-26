@@ -5554,8 +5554,8 @@ var Event = Class.create({
         return Function(args, fnExpression);
     }
 });var Inovout = {};
-Inovout.XAML = {};
-Inovout.XAML.EventAdapter = Class.create({
+Inovout.HAML = {};
+Inovout.HAML.EventAdapter = Class.create({
     initialize: function (event, buildFunction) {
         this.event = event;
         buildFunction = buildFunction || Function.wrap;
@@ -5571,9 +5571,8 @@ Inovout.XAML.EventAdapter = Class.create({
         this.event.addListener(this.listen, this, options);
     }
 });
-Inovout.XAML.EncryptInput = Class.create({
+Inovout.HAML.EncryptInput = Class.create({
     initialize: function (element) {
-        debugger;
         var name = element.attr("name");
         var reg_pk = element.data("encrypt").split("|");
         //去除element的name属性 
@@ -5581,10 +5580,8 @@ Inovout.XAML.EncryptInput = Class.create({
         //添加同名隐藏域
         var hiden = $("<input type='hidden' name=" + name + " />");
         element.append(hiden);
-
         //订阅元素的change事件
         element.change.addListener(function (sender, args) {
-            debugger;
             var inputValue = element.val();
             var rsa = new RSAKey();
             rsa.setPublic(reg_pk[0], reg_pk[1]);

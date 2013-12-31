@@ -15,3 +15,7 @@ tr {
     background-color: #1d66e9;
     color: #FFF;
 }
+
+tr.selected {
+    background-color: #0ff;
+}

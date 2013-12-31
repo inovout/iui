@@ -1,9 +1,8 @@
-var Inovout = {};
 Inovout.HAML = {};
 Inovout.HAML.EventAdapter = Class.create({
     initialize: function (event, buildFunction) {
         this.event = event;
-        buildFunction = buildFunction || Function.wrap;
+        buildFunction = buildFunction || Function.build;
         this.buildFunction = buildFunction;
         return this;
     },

@@ -2,6 +2,9 @@ tr {
     height: 2em;
     line-height: 2em;
 }
+    tr.css_tmplate {
+       display: none;
+    }
 
 th, td.date, td.code, td.datetime {
     text-align: center;

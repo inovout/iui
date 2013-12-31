@@ -25,9 +25,10 @@ Object.extend(Inovout.View, {
         element = Inovout.Element.get(element);
         var view = Inovout.View.cache.get(element) || Inovout.View.tryGet(element);
         if (!view) {
+            view = new Inovout.View(element);
+            Inovout.View.cache.add(element, view);
             Object.extend(view, element);
         }
-
         return view;
     },
     buildFunction: function (args, fnExpression) {
@@ -36,12 +37,18 @@ Object.extend(Inovout.View, {
         var owner = fnExpression.substring(0, dot);
         if (owner != "this." && owner != "") {
             //view.bindData(args.value);
-            fnExpression = "Inovout.View.get(" + owner + ")." + fnExpression.substring(dot, fnExpression.length);
+            fnExpression = "Inovout.View.get(" + owner + ")." + fnExpression.substring(dot + 1, fnExpression.length);
             return Function(args, fnExpression);
         }
-        return Function.build(args,fnExpression);
+        return Function.build(args, fnExpression);
     }
 });
+
+if (!iui) {
+    var iui = {};
+    iui.load = iui.load || jQuery(window).ready;
+    iui.context = {};
+}
 
 iui.load(function () {
     var elements, doc = Inovout.Element.get(document);

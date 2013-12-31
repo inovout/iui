@@ -1,0 +1,99 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Table</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="../../cssreset/css/cssreset.css" />
+    <link rel="stylesheet" href="../../cssfonts/css/cssfonts.css" />
+    <link rel="stylesheet" href="../../csslayout/css/csslayout.css" />
+    <link rel="stylesheet" href="../../cssbase/css/cssbase.css" />
+    <link rel="stylesheet" href="../../table/css/table.css" />
+    <link rel="stylesheet" href="../../table/css/table.theme.css" />
+    <script src="../../../lib/moderniz.js"></script>
+</head>
+<body>
+    <div data-event-adapter="tb_project.selectedRowsChanged=alert('订阅成功')">
+       订阅DataTable的selectedRowsChanged事件
+    </div>
+    <div>
+        <input type="button" onclick="create()" value="创建项目" />
+    </div>
+    <div class="w50">
+        <table id="tb_project" class="dataTable">
+            <colgroup>
+                <col class="w4" />
+                <col class="w10" />
+                <col class="w6" />
+            </colgroup>
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>名称</th>
+                    <th>代码</th>
+                    <th>日期</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr id="tr_tmplate" class="css_tmplate">
+                    <td>
+                        <input type="radio" name="radio" value="test" data-click-command="tb_project.selectRow(this)" /></td>
+                    <td>{{:projectname}}</td>
+                    <td class="code">{{:code}}</td>
+                    <td class="code">{{:datatime}}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="radio" name="radio" value="test" data-click-command="tb_project.selectRow(this)" /></td>
+                    <td>云镖局</td>
+                    <td class="code">110</td>
+                    <td class="code">2012-3</td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="radio" name="radio" value="test" data-click-command="tb_project.selectRow(this)" /></td>
+                    <td>城建项目</td>
+                    <td class="code">111</td>
+                    <td class="code">2012-4</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="pager">
+            <span class="current">1</span>
+            <a href="/">2</a>
+            <a href="/">3</a>
+            <a href="/">4</a>
+            <a href="/">5</a>
+            <a href="/">6</a>
+            <a href="/">8</a>
+            <a href="/">9</a>
+            <a href="/">10</a>
+            <a href="/">11</a>
+            <span>···</span>
+            <a href="/">20</a>
+            <a href="/">30</a>
+        </div>
+    </div>
+    <script src="../../../lib/jquery.js"></script>
+    <script src="../../../lib/jsrender.js"></script>
+    <script src="../../../lib/knockout.js"></script>
+    <script src="../../jslang/prototype-lang.js"></script>
+    <script src="../../jslang/hashmap/js/hashmap.js"></script>
+    <script src="../../jslang/extensions/js/extensions.js"></script>
+    <script src="../../jslang/event/js/event.js"></script>
+    <script src="../../element/js/element.js"></script>
+    <script src="../../jslang/eventadapter/js/eventadapter.js"></script>
+    <script src="../../commandbinder/js/commandbinder.js"></script>
+    <script src="../../view/js/view.js"></script>
+    <script src="../../page/js/page.js"></script>
+    <script src="../../table/js/datatable.js"></script>
+
+    <script>
+        var jsonAarry = { "projectname": "实时数据库", "code": "345", "datatime": "2013-5" };
+        function create() {
+            var datatable = Inovout.View.get("tb_project").insertNewRow(jsonAarry, "tr_tmplate");
+        }
+    </script>
+
+
+</body>
+</html>

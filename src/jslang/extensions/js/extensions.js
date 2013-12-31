@@ -1,5 +1,8 @@
 Object.extend(Function, {
-    build: function (args,fnExpression) {
+    build: function (args, fnExpression) {
+        if (typeof fnExpression == "object") {
+            return Function(args, fnExpression);
+        }
         fnExpression = fnExpression.trim();
         var dot = fnExpression.indexOf("."),
             bracket = fnExpression.indexOf("(");

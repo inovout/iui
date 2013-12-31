@@ -50,6 +50,10 @@ tr {
     background-color: #1d66e9;
     color: #FFF;
 }
+
+tr.selected {
+    background-color: #0ff;
+}
 /* styles for validation helpers */
 .field-validation-error {
     color: #e80c4d;

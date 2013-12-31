@@ -1,3 +1,4 @@
+var Inovout = {};
 Inovout.Element = Class.create({
     initialize: function (dom) {
         var me = this;
@@ -111,6 +112,48 @@ Inovout.Element.prototype.initialize = function (dom) {
     Inovout.Element.prototype._initialize.call(this, dom);
 
 };
+Inovout.HAML = {};
+Inovout.HAML.EventAdapter = Class.create({
+    initialize: function (event, buildFunction) {
+        this.event = event;
+        buildFunction = buildFunction || Function.build;
+        this.buildFunction = buildFunction;
+        return this;
+    },
+    listen: function (sender, args) {
+        this.buildFunction("sender,args", this.fnExpression).call(this.scope, sender, args);
+     },
+    addListener: function (fnExpression, scope, options) {
+        this.fnExpression = fnExpression;
+        this.scope = scope;
+        this.event.addListener(this.listen, this, options);
+    }
+});
+Inovout.HAML.EncryptInput = Class.create({
+    initialize: function (element) {
+        var name = element.attr("name");
+        var reg_pk = element.data("encrypt").split("|");
+        //去除element的name属性 
+        element.removeAttr("name");
+        //添加同名隐藏域
+        var hiden = $("<input type='hidden' name=" + name + " />");
+        element.append(hiden);
+        //订阅元素的change事件
+        element.change.addListener(function (sender, args) {
+            var inputValue = element.val();
+            var rsa = new RSAKey();
+            rsa.setPublic(reg_pk[0], reg_pk[1]);
+            hiden.val(rsa.encrypt(inputValue));
+        });
+        return this;
+    }
+})
+Inovout.HAML.CommandBinder = Class.create(Inovout.HAML.EventAdapter, {
+    initialize: function ($super, event, buildFunction) {
+        $super(event, buildFunction);
+        return this;
+    }
+});
 Inovout.Widgets = {};
 
 Inovout.View = Class.create({
@@ -138,9 +181,10 @@ Object.extend(Inovout.View, {
         element = Inovout.Element.get(element);
         var view = Inovout.View.cache.get(element) || Inovout.View.tryGet(element);
         if (!view) {
+            view = new Inovout.View(element);
+            Inovout.View.cache.add(element, view);
             Object.extend(view, element);
         }
-
         return view;
     },
     buildFunction: function (args, fnExpression) {
@@ -149,12 +193,18 @@ Object.extend(Inovout.View, {
         var owner = fnExpression.substring(0, dot);
         if (owner != "this." && owner != "") {
             //view.bindData(args.value);
-            fnExpression = "Inovout.View.get(" + owner + ")." + fnExpression.substring(dot, fnExpression.length);
+            fnExpression = "Inovout.View.get(" + owner + ")." + fnExpression.substring(dot + 1, fnExpression.length);
             return Function(args, fnExpression);
         }
-        return Function.build(args,fnExpression);
+        return Function.build(args, fnExpression);
     }
 });
+
+if (!iui) {
+    var iui = {};
+    iui.load = iui.load || jQuery(window).ready;
+    iui.context = {};
+}
 
 iui.load(function () {
     var elements, doc = Inovout.Element.get(document);
@@ -185,30 +235,34 @@ iui.load(function () {
                     var eventAdapter = new Inovout.HAML.EventAdapter(event);
                     //获取监听对象
                     var view = Inovout.View.get(dedElement);
-                    eventAdapter.addListener(eventAdapterExpression[1],view);
-                    //var listenerExpression = eventAdapterExpression[1];
-                    //var lBracketIndex = listenerExpression.indexOf("(");
-                    //var functionName = listenerExpression.substring(0, lBracketIndex);
-                    //var functionArgs = listenerExpression.substring((lBracketIndex + 1), (listenerExpression.length - 1));
-                  
-                    //if (view) {
-                     
-                    //    var ela = new EventAdapter(view[functionName], functionArgs, view);
-                    //    event.addListener(ela.inovke, ela);
-                    }
-                    //searcherList.selectedChanged=update(args.tip)
-                    //Event.adapte(event, view, view[functionName], functionArgs);
-                //}
+                    eventAdapter.addListener(eventAdapterExpression[1], view);
+                }
             });
         });
         selectorElement.find("[data-encrypt]").each(function (dedElement) {
             new Inovout.HAML.EncryptInput(dedElement);
+        });
+
+        selectorElement.find("input[data-click-command]").each(function (dedElement) {
+            //解析data-*-command标识
+            var eventAdapterExpression = dedElement.attr("data-click-command");
+            //获取event
+            var event = dedElement["click"];
+            var eventAdapter = new Inovout.HAML.CommandBinder(event, Inovout.View.buildFunction);
+            //获取监听对象
+            eventAdapter.addListener(eventAdapterExpression, dedElement);
         });
     }
 });
 //应由专门的main来处理，以后再来重构
 //(function (window, document, undefined) {
 //iui.main(function () {
+if (!iui) {
+    var iui = {};
+    iui.load = iui.load || jQuery(window).ready;
+    iui.context = {};
+}
+
 iui.context.page = new Page(document);
 iui.load(function () {
     iui.context.page.init();
@@ -460,5 +514,46 @@ Inovout.Widgets.Wizard = Class.create(Inovout.View, {
     show: function (i) {
         this.articles.each(function (item) { item.hide(); });
         this.articles[i].show();
+    }
+});
+Inovout.Widgets.DataTable = Class.create(Inovout.View, {
+    initialize: function ($super, element) {
+        $super(element);
+        this.selectedRowsChanged = new Event("selectedRowsChanged", this);
+        return this;
+    },
+    selectRow: function (control) {
+        //改变背景色
+        var _row = control.parent().parent();
+        this.element.find(".selected").each(function (row) {
+            row.removeClass("selected")
+        })
+        _row.toggleClass("selected");
+        //触发selectedRowsChanged事件
+        var me = this;
+        this.selectedRowsChanged.fire(me, me.wrapEventArgs(control))
+    },
+    insertNewRow: function (data, id) {
+
+        //克隆一份行的模版
+        var template = $.templates("#" + id);
+        //利用Jsview控件进行替换
+        var htmlOutput = template.render(data);
+        //将内容追加到Table中
+        this.element.append("<tr>" + htmlOutput + "</tr>");
+    },
+    wrapEventArgs: function (control) {
+        var hasSelected = false;
+        var count = 0;
+        this.element.find(".selected").each(function (row) {
+            count++;
+        })
+        if (count > 0) {
+            hasSelected = true;
+        }
+        var eventArgs = {
+            "hasSelected": hasSelected
+        }
+        return eventArgs;
     }
 });

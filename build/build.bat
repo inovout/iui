@@ -26,7 +26,7 @@ echo prototype-lang文件复制完成
 
 rem 处理iui-lang
 echo iui-lang文件开始复制
-copy ..\src\jslang\hashmap\js\hashmap.js+..\src\jslang\event\js\event.js+..\src\jslang\extensions\js\extensions.js+..\src\jslang\eventadapter\js\eventadapter.js+..\src\encryptInput\js\encryptinput.js  ..\src\jslang\iui-lang.js /b
+copy ..\src\jslang\hashmap\js\hashmap.js+..\src\jslang\event\js\event.js+..\src\jslang\extensions\js\extensions.js  ..\src\jslang\iui-lang.js /b
 echo iui-lang文件复制完成
 
 echo jBrowser-%jBrowser_Version%.js文件开始复制
@@ -42,7 +42,7 @@ java -jar closure-compiler.jar --js jClass-%jClass_Version%.js --js_output_file 
 
 
 echo jWidget-%jWidget_Version%.js文件开始复制
-copy ..\src\element\js\element.js+..\src\view\js\view.js+..\src\page\js\page.js+..\src\list\js\list.js+..\src\form\js\form.js+..\src\form\js\fileinput.js+..\src\chart\js\chart.js+..\src\binarypad\js\binarypad.js+..\src\wizard\js\wizard.js  jWidget-%jWidget_Version%.js /b
+copy ..\src\element\js\element.js+..\src\jslang\eventadapter\js\eventadapter.js+..\src\encryptInput\js\encryptinput.js+..\src\commandbinder\js\commandbinder.js+..\src\view\js\view.js+..\src\page\js\page.js+..\src\list\js\list.js+..\src\form\js\form.js+..\src\form\js\fileinput.js+..\src\chart\js\chart.js+..\src\binarypad\js\binarypad.js+..\src\wizard\js\wizard.js+..\src\table\js\datatable.js  jWidget-%jWidget_Version%.js /b
 rem java -jar yuicompressor-2.4.8.jar jWidget-%jWidget_Version%.js -o jWidget-%jWidget_Version%.min.js
 java -jar closure-compiler.jar --js jWidget-%jWidget_Version%.js --js_output_file jWidget-%jWidget_Version%.min.js
 

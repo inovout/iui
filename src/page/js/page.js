@@ -1,10 +1,21 @@
 var Page = Class.create(Inovout.View, {
     initialize: function ($super, element) {
         $super(element);
+        this.init = new Event("init", this);
+        this.load = new Event("load", this);
         return this;
     },
-    init: function () {
-        this.parseEventAdapter(this.element);
+    run: function () {
+        var me = this;
+        this.init.fire(me, me.wrapEventArgs(me))
+        this.load.fire(me, me.wrapEventArgs(me))
+        this.parseEventAdapter(me.element);
+    },
+    wrapEventArgs: function (control) {
+        var eventArgs = {
+            text: ""
+        }
+        return eventArgs;
     },
     parseEventAdapter: function (selector) {
         var selectorElement = Inovout.Element.get(selector);
@@ -27,27 +38,43 @@ var Page = Class.create(Inovout.View, {
             new Inovout.HAML.EncryptInput(dedElement);
         });
 
-        selectorElement.find("input[data-click-command]").each(function (dedElement) {
-            //解析data-*-command标识
-            var eventAdapterExpression = dedElement.attr("data-click-command");
-            //获取event
-            var event = dedElement["click"];
-            var eventAdapter = new Inovout.HAML.CommandBinder(event, Inovout.View.buildFunction);
-            //获取监听对象
-            eventAdapter.addListener(eventAdapterExpression, dedElement);
-        });
+        Inovout.Element.eventNames.each(function (eventName) {
+            selectorElement.find("input[data-" + eventName + "-command]").each(function (dedElement) {
+                //解析data-*-command标识
+                var eventAdapterExpression = dedElement.attr("data-" + eventName + "-command");
+                //获取event
+                var event = dedElement[eventName];
+                var eventAdapter = new Inovout.HAML.CommandBinder(event, Inovout.View.buildFunction);
+                //获取监听对象
+                eventAdapter.addListener(eventAdapterExpression, dedElement);
+            });
+        })
+    },
+    showDialog: function (url, width, height) {
+
+        //弹出对话框，并且生成dialog对象
     }
+
 });
 //应由专门的main来处理，以后再来重构
 //(function (window, document, undefined) {
 //iui.main(function () {
 if (!iui) {
     var iui = {};
-    iui.load = iui.load || jQuery(window).ready;
+    iui.ready = iui.ready || jQuery(window).ready;
     iui.context = {};
 }
 
 iui.context.page = new Page(document);
-iui.load(function () {
-    iui.context.page.init();
+iui.context.page.init.addListener(function () {
+    var elements, doc = Inovout.Element.get(document);
+    for (var widget in Inovout.Widgets) {
+        var wc = widget.substring(0, 1).toLowerCase() + widget.substring(1, widget.length);
+        doc.find("." + wc + "," + widget).each(function (element) {
+            Inovout.View.get(element);
+        });
+    }
+})
+iui.ready(function () {
+    iui.context.page.run();
 });

@@ -6,21 +6,18 @@ Inovout.Element = Class.create({
         this.dom.uid = new Date().getTime() + "" + parseInt(Math.random() * 100000, 10);
         this.eventHnadles = {};
         this.eventCallbacks = {};
-        ("blur focus focusin focusout load resize scroll unload click dblclick " +
-	    "mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave " +
-	    "change select submit keydown keypress keyup error contextmenu").split(" ").each(function (name) {
-	        var evt = me[name] = new Event(name, me);
-	        evt._addListener = evt.addListener;
-	        evt.addListener = function (fn, scope, options) {
-	            if (!evt.hasListeners()) {
-	                me.bind(name, function (event) {
-	                    evt.fire(me, { target: Inovout.Element.get(event.target) });
-	                });
-	            }
-	            evt._addListener(fn, scope, options);
-
-	        };
-	    });
+        Inovout.Element.eventNames.each(function (name) {
+            var evt = me[name] = new Event(name, me);
+            evt._addListener = evt.addListener;
+            evt.addListener = function (fn, scope, options) {
+                if (!evt.hasListeners()) {
+                    me.bind(name, function (event) {
+                        evt.fire(me, { target: Inovout.Element.get(event.target) });
+                    });
+                }
+                evt._addListener(fn, scope, options);
+            };
+        });
     },
     complete: function (event, callback) {
         var name = Object.isString(event) ? event : event.name,
@@ -92,7 +89,10 @@ Object.extend(Inovout.Element, {
             Inovout.Element.cache.add(dom, element);
         }
         return element;
-    }
+    },
+    eventNames: ("blur focus focusin focusout load resize scroll unload click dblclick " +
+	    "mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave " +
+	    "change select submit keydown keypress keyup error contextmenu").split(" ")
 });
 
 Inovout.Element.prototype._initialize = Inovout.Element.prototype.initialize;

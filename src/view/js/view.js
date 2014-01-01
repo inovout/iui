@@ -43,19 +43,3 @@ Object.extend(Inovout.View, {
         return Function.build(args, fnExpression);
     }
 });
-
-if (!iui) {
-    var iui = {};
-    iui.load = iui.load || jQuery(window).ready;
-    iui.context = {};
-}
-
-iui.load(function () {
-    var elements, doc = Inovout.Element.get(document);
-    for (var widget in Inovout.Widgets) {
-        var wc = widget.substring(0, 1).toLowerCase() + widget.substring(1, widget.length);
-        doc.find("." + wc + "," + widget).each(function (element) {
-            Inovout.View.get(element);
-        });
-    }
-});

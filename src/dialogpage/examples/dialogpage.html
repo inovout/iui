@@ -3,19 +3,15 @@
 <head>
     <title>Layout</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <link rel="stylesheet" href="../../cssreset/css/cssreset.css" />
-    <link rel="stylesheet" href="../../cssfonts/css/cssfonts.css" />
-    <link rel="stylesheet" href="../../csslayout/css/csslayout.css" />
-    <link rel="stylesheet" href="../../cssbase/css/cssbase.css" />
-    <link rel="stylesheet" href="../css/jquery-ui.css" />
     <script src="../../../lib/modernizr/modernizr-2.6.2.js"></script>
-
 </head>
 <body>
-    <input type="button" value="测试Dialog" id="opener" data-click-command="page.showDialog('conentPage','../../dialogpage/examples/dialogpage.html',700,700).done('testCallback(me)')" />
-    <div>
-        <iframe title="内容页" id="conentPage" src=""></iframe>
-    </div>
+    
+    <form>
+         <div>contentpage</div>
+    </form>
+
+    <input type="text" class="encrypt" value="23"  onclick="parent1()" />
     <script src="../../../lib/jquery.js"></script>
     <script src="../../../lib/jquery-ui.js"></script>
     <script src="../../jslang/prototype-lang.js"></script>
@@ -27,12 +23,7 @@
     <script src="../../commandbinder/js/commandbinder.js"></script>
     <script src="../../view/js/view.js"></script>
     <script src="../../page/js/page.js"></script>
-    <script src="../../dialog/js/dialog.js"></script>
-    <script src="../../dialogpage/js/dialogpage.js"></script> 
-    <script>
-        function testCallback(me) {
-            alert(me);
-        }
-    </script>
+    <script src="../../dialogpage/js/dialogpage.js"></script>
+   
 </body>
 </html>

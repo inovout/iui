@@ -32,10 +32,11 @@ Object.extend(Inovout.View, {
         return view;
     },
     buildFunction: function (args, fnExpression) {
+        debugger;
         fnExpression = fnExpression.trim();
         var dot = fnExpression.indexOf(".");
         var owner = fnExpression.substring(0, dot);
-        if (owner != "this." && owner != "") {
+        if (owner != "this" && owner != "" && owner != "page") {
             //view.bindData(args.value);
             fnExpression = "Inovout.View.get(" + owner + ")." + fnExpression.substring(dot + 1, fnExpression.length);
             return Function(args, fnExpression);

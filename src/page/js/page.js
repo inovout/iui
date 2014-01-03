@@ -40,6 +40,7 @@ var Page = Class.create(Inovout.View, {
 
         Inovout.Element.eventNames.each(function (eventName) {
             selectorElement.find("input[data-" + eventName + "-command]").each(function (dedElement) {
+                debugger;
                 //解析data-*-command标识
                 var eventAdapterExpression = dedElement.attr("data-" + eventName + "-command");
                 //获取event
@@ -50,31 +51,58 @@ var Page = Class.create(Inovout.View, {
             });
         })
     },
-    showDialog: function (url, width, height) {
-
+    showDialog: function (iframeid, url, width, height) {
+        debugger;
         //弹出对话框，并且生成dialog对象
+        return new Inovout.Widgets.Dialog(iframeid, url, width, height);
     }
 
 });
+
+var DialogPage = Class.create(Page, {
+    initialize: function ($super, element) {
+        $super(element);
+        return this;
+    },
+    run: function ($super) {
+        this.element.find("form").each(function (formElement) {
+            //为form表单添加data-async属性
+            formElement.attr("data-async", "true");
+            //为form表单添加data-submit-command属性
+            formElement.attr("data-submit-command", "page.submitCallBack()");
+        })
+        //执行父类中的方法
+        $super();
+    },
+    submitCallBack: function () {
+        //将需要返回的值发送给Dialog
+    }
+});
+
 //应由专门的main来处理，以后再来重构
 //(function (window, document, undefined) {
 //iui.main(function () {
 if (!iui) {
     var iui = {};
     iui.ready = iui.ready || jQuery(window).ready;
-    iui.context = {};
 }
-
-iui.context.page = new Page(document);
-iui.context.page.init.addListener(function () {
-    var elements, doc = Inovout.Element.get(document);
-    for (var widget in Inovout.Widgets) {
-        var wc = widget.substring(0, 1).toLowerCase() + widget.substring(1, widget.length);
-        doc.find("." + wc + "," + widget).each(function (element) {
-            Inovout.View.get(element);
-        });
-    }
-})
+var page;
 iui.ready(function () {
-    iui.context.page.run();
+    if (window === window.parent) {
+        page = new Page(document);
+    } else {
+        debugger;
+        page = new DialogPage(document);
+    }
+    page.init.addListener(function () {
+        var elements, doc = Inovout.Element.get(document);
+        for (var widget in Inovout.Widgets) {
+            var wc = widget.substring(0, 1).toLowerCase() + widget.substring(1, widget.length);
+            doc.find("." + wc + "," + widget).each(function (element) {
+                Inovout.View.get(element);
+            });
+        }
+    })
+    //iui.context.page.run();
+    page.run();
 });

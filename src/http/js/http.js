@@ -13,6 +13,19 @@ Uri = Class.create({
         this.paras.pash(para);
     },
     build: function () {
+        var paramStr = this.uri;
+        var index = this.uri.indexOf('?');
+        for (var i = 0; i < this.paras.length; i++) {
+            var tmpStr = null;
+            for (prop in this.paras[i]) {
+                tmpStr = prop + "=" + this.paras[i][prop];
+            }
+            if (i = 0 && index == -1) {
+                paramStr += "?" + tmpStr;
+            } else {
+                paramStr += "&" + tmpStr;
+            }
+        }
         return this.uri;
     }
 });

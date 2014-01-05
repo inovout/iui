@@ -10,22 +10,23 @@ Uri = Class.create({
     },
     paras: [],
     add: function (para) {
-        this.paras.pash(para);
+        this.paras.push(para);
     },
     build: function () {
-        var paramStr = this.uri;
+        var paramStr="";
         var index = this.uri.indexOf('?');
         for (var i = 0; i < this.paras.length; i++) {
             var tmpStr = null;
             for (prop in this.paras[i]) {
                 tmpStr = prop + "=" + this.paras[i][prop];
             }
-            if (i = 0 && index == -1) {
+            if (i == 0 && index == -1) {
                 paramStr += "?" + tmpStr;
             } else {
                 paramStr += "&" + tmpStr;
-            }
+            }     
         }
+        this.uri += paramStr;
         return this.uri;
     }
 });

@@ -32,7 +32,6 @@ Object.extend(Inovout.View, {
         return view;
     },
     buildFunction: function (args, fnExpression) {
-        debugger;
         fnExpression = fnExpression.trim();
         var dot = fnExpression.indexOf(".");
         var owner = fnExpression.substring(0, dot);

@@ -11,9 +11,6 @@ Inovout.Widgets.Dialog = Class.create(Inovout.View, {
                 $("#" + iframeid).attr('width', iframewidth)
             }
         })
-        //监听windows 的onmessage事件
-        
-        this.addEventListener('message', execueDone);
         return this;
     },
     addEventListener: function (type, eventHandle) {
@@ -32,6 +29,7 @@ Inovout.Widgets.Dialog = Class.create(Inovout.View, {
     },
     execueDone: function (args) {
         //执行回调方法
+        debugger;
         callBackMethod = Inovout.View.buildFunction(arguments[0])
         callBackMethod.call(this, args);
     }

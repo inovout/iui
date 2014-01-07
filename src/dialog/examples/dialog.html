@@ -12,10 +12,7 @@
 
 </head>
 <body>
-    <input type="button" value="测试Dialog" id="opener" data-click-command="page.showDialog('conentPage','../../dialogpage/examples/dialogpage.html',700,700).done('testCallback(me)')" />
-    <div>
-        <iframe title="内容页" id="conentPage" src=""></iframe>
-    </div>
+    <input type="button" value="测试Dialog" id="opener" data-click-command="page.showDialog('../../dialogpage/examples/dialogpage.html',700,700).done('testCallback(me)')" />
     <script src="../../../lib/jquery.js"></script>
     <script src="../../../lib/jquery-ui.js"></script>
     <script src="../../jslang/prototype-lang.js"></script>
@@ -24,14 +21,12 @@
     <script src="../../jslang/event/js/event.js"></script>
     <script src="../../element/js/element.js"></script>
     <script src="../../http/js/http.js"></script>
-<!--    <script src="../../jslang/eventadapter/js/eventadapter.js"></script>
-    <script src="../../commandbinder/js/commandbinder.js"></script>-->
      <script src="../../haml/js/haml.js"></script>
-     <script src="../../haml/js/hamlparse.js"></script>
+     <script src="../../haml/js/hamlparser.js"></script>
     <script src="../../view/js/view.js"></script>
     <script src="../../page/js/page.js"></script>
     <script src="../../dialog/js/dialog.js"></script>
-    <script src="../../dialogpage/js/dialogpage.js"></script> 
+    <script src="../../form/js/form.js"></script>
     <script>
         function testCallback(me) {
             alert(me);

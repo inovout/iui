@@ -6,23 +6,25 @@
     <script src="../../../lib/modernizr/modernizr-2.6.2.js"></script>
 </head>
 <body>
-    
-    <form>
-         <div>contentpage</div>
+    <form action="http://localhost/testData/src/dialogpage/js/form-data.json" method="get" enctype="application/x-www-form-urlencoded">
+        <div>contentpage</div>
+        <input type="text"  value="23" name="test"/>
         <input type="submit" value="submit" />
     </form>
-    <input type="text" class="encrypt" value="23" />
     <script src="../../../lib/jquery.js"></script>
     <script src="../../../lib/jquery-ui.js"></script>
+    <script src="../../../lib/jquery.serializeJSON.js"></script>
     <script src="../../jslang/prototype-lang.js"></script>
     <script src="../../jslang/hashmap/js/hashmap.js"></script>
+    <script src="../../http/js/http.js"></script>
     <script src="../../jslang/extensions/js/extensions.js"></script>
     <script src="../../jslang/event/js/event.js"></script>
     <script src="../../element/js/element.js"></script>
-    <script src="../../jslang/eventadapter/js/eventadapter.js"></script>
-    <script src="../../commandbinder/js/commandbinder.js"></script>
+    <script src="../../haml/js/haml.js"></script>
+    <script src="../../haml/js/hamlparser.js"></script>
     <script src="../../view/js/view.js"></script>
     <script src="../../page/js/page.js"></script>
+    <script src="../../form/js/form.js"></script>
 </body>
 
 </html>

@@ -386,7 +386,7 @@ Inovout.Widgets.Form = Class.create(Inovout.View, {
             });
         }
         function _submit(callback) {
-            debugger;
+            
             var uri = new Uri(element.prop("action")),
                 data = element.serializeJSON(),
                 request = new HttpRequest(element.prop("method"), uri),
@@ -413,7 +413,7 @@ Inovout.Widgets.Form = Class.create(Inovout.View, {
                 request.content = content;
             }
             client.send(request).read().done(function (data) {
-                debugger;
+                
                 Inovout.View.buildFunction("data", callback).call(me, data);
                 //me.submit.fire(me, data);
             });

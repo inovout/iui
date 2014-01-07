@@ -20,9 +20,11 @@ Inovout.Widgets.DataTable = Class.create(Inovout.View, {
         //克隆一份行的模版
         var template = $.templates("#" + id);
         //利用Jsview控件进行替换
-        var htmlOutput = template.render(data);
+        var htmlOutput = template.render(data); 
         //将内容追加到Table中
-        this.element.append("<tr>" + htmlOutput + "</tr>");
+        var newtr= new Inovout.Element("<tr>" + htmlOutput + "</tr>");
+        this.element.append(newtr);
+        Inovout.HAML.Parser.parse(this.element.find("tr:last")[0]);
     },
     wrapEventArgs: function (control) {
         var hasSelected = false;

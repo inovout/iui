@@ -1,5 +1,6 @@
 $.ajaxSetup({
     error: function () {
+
         alert("出现异常！请联系管理员！");
     }
 });
@@ -61,6 +62,7 @@ HttpRequest = Class.create({
         return this;
     },
     execute: function () {
+        
         if (!Object.isString(this.uri)) {
             this.uri = this.uri.build();
         }
@@ -122,10 +124,12 @@ HttpResponse = Class.create({
         var me = this;
         this.xhr = xhr;
         this.xhr.done(function (data) {
+            
             me.deferred.resolveWith(xhr, [data]);
         });
     },
     read: function () {
+        
         this.deferred = $.Deferred();
         return this.deferred.promise();
 

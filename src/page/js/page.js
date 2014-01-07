@@ -3,21 +3,13 @@ var Page = Class.create(Inovout.View, {
         $super(element);
         this.init = new Event("init", this);
         this.load = new Event("load", this);
-        //监听windows 的onmessage事件 
-        //window.onmessage = function (event) {
-        //    alert(event.data);
-        //}
-        window.addEventListener("message", function (event) {
-            // 把父窗口发送过来的数据显示在子窗口中
-            alert(event.data);
-        }, false);
         return this;
     },
     run: function () {
         var me = this;
         this.init.fire(me, me.wrapEventArgs(me))
         this.load.fire(me, me.wrapEventArgs(me))
-        this.parseEventAdapter(me.element);
+        this.parseHAML(me.element);
     },
     wrapEventArgs: function (control) {
         var eventArgs = {
@@ -25,59 +17,20 @@ var Page = Class.create(Inovout.View, {
         }
         return eventArgs;
     },
-    parseEventAdapter: function (selector) {
+    parseHAML: function (selector) {
         var selectorElement = Inovout.Element.get(selector);
-        //for (var parse in Inovout.HAML.Parses) {
-        //    new Inovout.HAML.Parses[0](selectorElement);
-        //    new parse(selectorElement);
-        //}
-        selectorElement.find("[ data-event-adapter]").each(function (dedElement) {
-            var eventAdapters = dedElement.attr("data-event-adapter").split(";");
-            eventAdapters.each(function (eventAdapterStatement) {
-                if (eventAdapterStatement != "") {
-                    var eventAdapterExpression = eventAdapterStatement.split("=");
-                    //获取event
-                    var eventExpression = eventAdapterExpression[0].split(".");
-                    var event = Inovout.View.get(eventExpression[0])[eventExpression[1]];
-                    var eventAdapter = new Inovout.HAML.EventAdapter(event);
-                    //获取监听对象
-                    var view = Inovout.View.get(dedElement);
-                    eventAdapter.addListener(eventAdapterExpression[1], view);
-                }
-            });
-        });
-        selectorElement.find("[data-encrypt]").each(function (dedElement) {
-            new Inovout.HAML.EncryptInput(dedElement);
-        });
-
-        Inovout.Element.eventNames.each(function (eventName) {
-            selectorElement.find("input[data-" + eventName + "-command]").each(function (dedElement) {
-                //解析data-*-command标识
-                var eventAdapterExpression = dedElement.attr("data-" + eventName + "-command");
-                //获取event
-                var event = dedElement[eventName];
-                var eventAdapter = new Inovout.HAML.CommandBinder(event, Inovout.View.buildFunction);
-                //获取监听对象
-                eventAdapter.addListener(eventAdapterExpression, dedElement);
-            });
-
-            selectorElement.find("form[data-" + eventName + "-command]").each(function (dedElement) {
-                //解析data-*-command标识
-                var eventAdapterExpression = dedElement.attr("data-" + eventName + "-command");
-                //获取event
-                var event = dedElement[eventName];
-                var eventAdapter = new Inovout.HAML.CommandBinder(event, Inovout.View.buildFunction);
-                //获取监听对象
-                eventAdapter.addListener(eventAdapterExpression, dedElement);
-            });
-        })
+        Inovout.HAML.Parser.parse(selectorElement);
     },
-    showDialog: function (iframeid, url, width, height) {
+    showDialog: function (url, width, height) {
         var httpurl = new Uri(url);
         httpurl.add({ "_model": "dialog" });
         httpurl.add({ "id": 1 });
         //弹出对话框，并且生成dialog对象
-        return new Inovout.Widgets.Dialog(iframeid, httpurl.build(), width, height);
+        this.frameDialog = new Inovout.Widgets.Dialog(httpurl.build(), width, height);
+        return this.frameDialog;
+    },
+    postMessage: function (data) {
+        this.frameDialog.receiveMess(data);
     }
 
 });
@@ -90,34 +43,16 @@ var DialogPage = Class.create(Page, {
     run: function ($super) {
         this.element.find("form").each(function (formElement) {
             //为form表单添加data-async属性
-            formElement.attr("data-async", "true");
-            //为form表单添加data-submit-command属性
-            formElement.attr("data-submit-command", "page.submitCallBack()");
+            formElement.attr("data-async", "page.submitCallBack(data)");
         })
         //执行父类中的方法
         $super();
     },
-    submitCallBack: function () {
-        //将需要返回的值发送给Dialog
-        //document.getElementById("otherPage").contentWindow
-		//	 .postMessage(
-		//		 document.getElementById("message").value,
-		//		"http://child.com:8080"
-        //	 );
-        if (window.postMessage) {
-            window.postMessage("12", "*");
-        }
-
+    submitCallBack: function (data) {
+        //向父窗体发送消息
+        window.parent.page.postMessage(data);
     }
 });
-
-//DialogPage.addMethods({
-//    run: function ($super) {
-        
-//        debugger;
-//        $super();
-//    }
-//});
 
 //应由专门的main来处理，以后再来重构
 //(function (window, document, undefined) {
@@ -130,7 +65,7 @@ var page;
 iui.ready(function () {
     if (window === window.parent) {
         page = new Page(document);
-      
+
     } else {
         page = new DialogPage(document);
     }
@@ -143,6 +78,5 @@ iui.ready(function () {
             });
         }
     })
-    //iui.context.page.run();
     page.run();
 });

@@ -5558,6 +5558,7 @@ var Event = Class.create({
     }
 });$.ajaxSetup({
     error: function () {
+
         alert("出现异常！请联系管理员！");
     }
 });
@@ -5568,9 +5569,23 @@ Uri = Class.create({
     },
     paras: [],
     add: function (para) {
-        this.paras.pash(para);
+        this.paras.push(para);
     },
     build: function () {
+        var paramStr="";
+        var index = this.uri.indexOf('?');
+        for (var i = 0; i < this.paras.length; i++) {
+            var tmpStr = null;
+            for (prop in this.paras[i]) {
+                tmpStr = prop + "=" + this.paras[i][prop];
+            }
+            if (i == 0 && index == -1) {
+                paramStr += "?" + tmpStr;
+            } else {
+                paramStr += "&" + tmpStr;
+            }     
+        }
+        this.uri += paramStr;
         return this.uri;
     }
 });
@@ -5605,6 +5620,7 @@ HttpRequest = Class.create({
         return this;
     },
     execute: function () {
+        
         if (!Object.isString(this.uri)) {
             this.uri = this.uri.build();
         }
@@ -5666,10 +5682,12 @@ HttpResponse = Class.create({
         var me = this;
         this.xhr = xhr;
         this.xhr.done(function (data) {
+            
             me.deferred.resolveWith(xhr, [data]);
         });
     },
     read: function () {
+        
         this.deferred = $.Deferred();
         return this.deferred.promise();
 

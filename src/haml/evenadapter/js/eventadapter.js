@@ -24,11 +24,11 @@ Inovout.HAML.Parsers.EventAdapterParser = {
             eventAdapters.each(function (eventAdapterStatement) {
                 if (eventAdapterStatement != "") {
                     var eventAdapterExpression = eventAdapterStatement.split("=");
-                    //获取event
+                    //鑾峰彇event
                     var eventExpression = eventAdapterExpression[0].split(".");
                     var event = Inovout.View.get(eventExpression[0])[eventExpression[1]];
                     var eventAdapter = new Inovout.HAML.EventAdapter(event);
-                    //获取监听对象
+                    //鑾峰彇鐩戝惉瀵硅薄
                     var view = Inovout.View.get(seletedElement);
                     eventAdapter.addListener(eventAdapterExpression[1], view);
                 }

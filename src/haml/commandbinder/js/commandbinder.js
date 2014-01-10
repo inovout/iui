@@ -4,17 +4,16 @@ Inovout.HAML.CommandBinder = Class.create(Inovout.HAML.EventAdapter, {
         return this;
     }
 });
-
 Inovout.HAML.Parsers.CommandBinderParser = {
     parse: function (scopeElement) {
         Inovout.Element.eventNames.each(function (eventName) {
             scopeElement.find("[data-" + eventName + "-command]").each(function (seletedElement) {
-                //解析data-*-command标识
+                //瑙ｆ瀽data-*-command鏍囪瘑
                 var eventAdapterExpression = seletedElement.attr("data-" + eventName + "-command");
-                //获取event
+                //鑾峰彇event
                 var event = seletedElement[eventName];
+                //鑾峰彇鐩戝惉瀵硅薄
                 var eventAdapter = new Inovout.HAML.CommandBinder(event, Inovout.View.buildFunction);
-                //获取监听对象
                 eventAdapter.addListener(eventAdapterExpression, seletedElement);
             });
         })

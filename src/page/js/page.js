@@ -29,10 +29,12 @@ var Page = Class.create(Inovout.View, {
         this.frameDialog = new Inovout.Widgets.Dialog(httpurl.build(), width, height);
         return this.frameDialog;
     },
+    closeDialog: function () {
+        return this.frameDialog.close();
+    },
     postMessage: function (data) {
         this.frameDialog.receiveMess(data);
     }
-
 });
 
 var DialogPage = Class.create(Page, {
@@ -51,6 +53,9 @@ var DialogPage = Class.create(Page, {
     submitCallBack: function (data) {
         //向父窗体发送消息
         window.parent.page.postMessage(data);
+    },
+    closeDialog: function () {
+        window.parent.page.closeDialog();
     }
 });
 

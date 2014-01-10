@@ -6,21 +6,18 @@ Inovout.Element = Class.create({
         this.dom.uid = new Date().getTime() + "" + parseInt(Math.random() * 100000, 10);
         this.eventHnadles = {};
         this.eventCallbacks = {};
-        ("blur focus focusin focusout load resize scroll unload click dblclick " +
-	    "mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave " +
-	    "change select submit keydown keypress keyup error contextmenu").split(" ").each(function (name) {
-	        var evt = me[name] = new Event(name, me);
-	        evt._addListener = evt.addListener;
-	        evt.addListener = function (fn, scope, options) {
-	            if (!evt.hasListeners()) {
-	                me.bind(name, function (event) {
-	                    evt.fire(me, { target: Inovout.Element.get(event.target) });
-	                });
-	            }
-	            evt._addListener(fn, scope, options);
-
-	        };
-	    });
+        Inovout.Element.eventNames.each(function (name) {
+            var evt = me[name] = new Event(name, me);
+            evt._addListener = evt.addListener;
+            evt.addListener = function (fn, scope, options) {
+                if (!evt.hasListeners()) {
+                    me.bind(name, function (event) {
+                        evt.fire(me, { target: Inovout.Element.get(event.target) });
+                    });
+                }
+                evt._addListener(fn, scope, options);
+            };
+        });
     },
     complete: function (event, callback) {
         var name = Object.isString(event) ? event : event.name,
@@ -92,7 +89,10 @@ Object.extend(Inovout.Element, {
             Inovout.Element.cache.add(dom, element);
         }
         return element;
-    }
+    },
+    eventNames: ("blur focus focusin focusout load resize scroll unload click dblclick " +
+	    "mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave " +
+	    "change select submit keydown keypress keyup error contextmenu").split(" ")
 });
 
 Inovout.Element.prototype._initialize = Inovout.Element.prototype.initialize;
@@ -129,6 +129,55 @@ Inovout.HAML.EventAdapter = Class.create({
         this.event.addListener(this.listen, this, options);
     }
 });
+
+Inovout.HAML.Parsers = {};
+Inovout.HAML.Parsers.EventAdapterParser = {
+    parse: function (scopeElement) {
+        scopeElement.find("[data-event-adapter]").each(function (seletedElement) {
+            var eventAdapters = seletedElement.attr("data-event-adapter").split(";");
+            eventAdapters.each(function (eventAdapterStatement) {
+                if (eventAdapterStatement != "") {
+                    var eventAdapterExpression = eventAdapterStatement.split("=");
+                    //获取event
+                    var eventExpression = eventAdapterExpression[0].split(".");
+                    var event = Inovout.View.get(eventExpression[0])[eventExpression[1]];
+                    var eventAdapter = new Inovout.HAML.EventAdapter(event);
+                    //获取监听对象
+                    var view = Inovout.View.get(seletedElement);
+                    eventAdapter.addListener(eventAdapterExpression[1], view);
+                }
+            });
+        })
+    }
+}
+
+Inovout.HAML.Parser = {
+    parse: function (scopeElement) {
+        for (var parser in Inovout.HAML.Parsers) {
+            Inovout.HAML.Parsers[parser].parse(scopeElement);
+        }
+    }
+};Inovout.HAML.CommandBinder = Class.create(Inovout.HAML.EventAdapter, {
+    initialize: function ($super, event, buildFunction) {
+        $super(event, buildFunction);
+        return this;
+    }
+});
+Inovout.HAML.Parsers.CommandBinderParser = {
+    parse: function (scopeElement) {
+        Inovout.Element.eventNames.each(function (eventName) {
+            scopeElement.find("[data-" + eventName + "-command]").each(function (seletedElement) {
+                //解析data-*-command标识
+                var eventAdapterExpression = seletedElement.attr("data-" + eventName + "-command");
+                //获取event
+                var event = seletedElement[eventName];
+                //获取监听对象
+                var eventAdapter = new Inovout.HAML.CommandBinder(event, Inovout.View.buildFunction);
+                eventAdapter.addListener(eventAdapterExpression, seletedElement);
+            });
+        })
+    }
+}
 Inovout.HAML.EncryptInput = Class.create({
     initialize: function (element) {
         var name = element.attr("name");
@@ -148,12 +197,14 @@ Inovout.HAML.EncryptInput = Class.create({
         return this;
     }
 })
-Inovout.HAML.CommandBinder = Class.create(Inovout.HAML.EventAdapter, {
-    initialize: function ($super, event, buildFunction) {
-        $super(event, buildFunction);
-        return this;
+
+Inovout.HAML.Parsers.EncryptInputParser = {
+    parse: function (scopeElement) {
+        scopeElement.find("[data-encrypt]").each(function (dedElement) {
+            new Inovout.HAML.EncryptInput(dedElement);
+        });
     }
-});
+}
 Inovout.Widgets = {};
 
 Inovout.View = Class.create({
@@ -191,7 +242,7 @@ Object.extend(Inovout.View, {
         fnExpression = fnExpression.trim();
         var dot = fnExpression.indexOf(".");
         var owner = fnExpression.substring(0, dot);
-        if (owner != "this." && owner != "") {
+        if (owner != "this" && owner != "" && owner != "page") {
             //view.bindData(args.value);
             fnExpression = "Inovout.View.get(" + owner + ")." + fnExpression.substring(dot + 1, fnExpression.length);
             return Function(args, fnExpression);
@@ -199,73 +250,92 @@ Object.extend(Inovout.View, {
         return Function.build(args, fnExpression);
     }
 });
-
-if (!iui) {
-    var iui = {};
-    iui.load = iui.load || jQuery(window).ready;
-    iui.context = {};
-}
-
-iui.load(function () {
-    var elements, doc = Inovout.Element.get(document);
-    for (var widget in Inovout.Widgets) {
-        var wc = widget.substring(0, 1).toLowerCase() + widget.substring(1, widget.length);
-        doc.find("." + wc + "," + widget).each(function (element) {
-            Inovout.View.get(element);
-        });
+var Page = Class.create(Inovout.View, {
+    initialize: function ($super, element) {
+        $super(element);
+        this.init = new Event("init", this);
+        this.load = new Event("load", this);
+        return this;
+    },
+    run: function () {
+        var me = this;
+        this.init.fire(me, me.wrapEventArgs(me))
+        this.load.fire(me, me.wrapEventArgs(me))
+        this.parseHAML(me.element);
+    },
+    wrapEventArgs: function (control) {
+        var eventArgs = {
+            text: ""
+        }
+        return eventArgs;
+    },
+    parseHAML: function (selector) {
+        var selectorElement = Inovout.Element.get(selector);
+        Inovout.HAML.Parser.parse(selectorElement);
+    },
+    showDialog: function (url, width, height) {
+        var httpurl = new Uri(url);
+        httpurl.add({ "_model": "dialog" });
+        httpurl.add({ "id": 1 });
+        //弹出对话框，并且生成dialog对象
+        this.frameDialog = new Inovout.Widgets.Dialog(httpurl.build(), width, height);
+        return this.frameDialog;
+    },
+    closeDialog: function () {
+        return this.frameDialog.close();
+    },
+    postMessage: function (data) {
+        this.frameDialog.receiveMess(data);
     }
-});var Page = Class.create(Inovout.View, {
+});
+
+var DialogPage = Class.create(Page, {
     initialize: function ($super, element) {
         $super(element);
         return this;
     },
-    init: function () {
-        this.parseEventAdapter(this.element);
+    run: function ($super) {
+        this.element.find("form").each(function (formElement) {
+            //为form表单添加data-async属性
+            formElement.attr("data-async", "page.submitCallBack(data)");
+        })
+        //执行父类中的方法
+        $super();
     },
-    parseEventAdapter: function (selector) {
-        var selectorElement = Inovout.Element.get(selector);
-        selectorElement.find("[ data-event-adapter]").each(function (dedElement) {
-            var eventAdapters = dedElement.attr("data-event-adapter").split(";");
-            eventAdapters.each(function (eventAdapterStatement) {
-                if (eventAdapterStatement != "") {
-                    var eventAdapterExpression = eventAdapterStatement.split("=");
-                    //获取event
-                    var eventExpression = eventAdapterExpression[0].split(".");
-                    var event = Inovout.View.get(eventExpression[0])[eventExpression[1]];
-                    var eventAdapter = new Inovout.HAML.EventAdapter(event);
-                    //获取监听对象
-                    var view = Inovout.View.get(dedElement);
-                    eventAdapter.addListener(eventAdapterExpression[1], view);
-                }
-            });
-        });
-        selectorElement.find("[data-encrypt]").each(function (dedElement) {
-            new Inovout.HAML.EncryptInput(dedElement);
-        });
-
-        selectorElement.find("input[data-click-command]").each(function (dedElement) {
-            //解析data-*-command标识
-            var eventAdapterExpression = dedElement.attr("data-click-command");
-            //获取event
-            var event = dedElement["click"];
-            var eventAdapter = new Inovout.HAML.CommandBinder(event, Inovout.View.buildFunction);
-            //获取监听对象
-            eventAdapter.addListener(eventAdapterExpression, dedElement);
-        });
+    submitCallBack: function (data) {
+        //向父窗体发送消息
+        window.parent.page.postMessage(data);
+    },
+    closeDialog: function () {
+        window.parent.page.closeDialog();
     }
 });
+
 //应由专门的main来处理，以后再来重构
 //(function (window, document, undefined) {
 //iui.main(function () {
 if (!iui) {
     var iui = {};
-    iui.load = iui.load || jQuery(window).ready;
-    iui.context = {};
+    iui.ready = iui.ready || jQuery(window).ready;
 }
+var page;
+iui.ready(function () {
+    if (window === window.parent) {
+        page = new Page(document);
 
-iui.context.page = new Page(document);
-iui.load(function () {
-    iui.context.page.init();
+    } else {
+        page = new DialogPage(document);
+    }
+    page.init.addListener(function () {
+        var elements, doc = Inovout.Element.get(document);
+        for (var widget in Inovout.Widgets) {
+            var wc = widget.substring(0, 1).toLowerCase() + widget.substring(1, widget.length);
+            doc.find("." + wc + "," + widget).each(function (element) {
+                Inovout.View.get(element);
+            });
+        }
+    })
+    page.run();
 });
 Inovout.Widgets.List = Class.create(Inovout.View, {
     initialize: function ($super, element) {
@@ -386,7 +456,6 @@ Inovout.Widgets.Form = Class.create(Inovout.View, {
             });
         }
         function _submit(callback) {
-            
             var uri = new Uri(element.prop("action")),
                 data = element.serializeJSON(),
                 request = new HttpRequest(element.prop("method"), uri),
@@ -413,7 +482,6 @@ Inovout.Widgets.Form = Class.create(Inovout.View, {
                 request.content = content;
             }
             client.send(request).read().done(function (data) {
-                
                 Inovout.View.buildFunction("data", callback).call(me, data);
                 //me.submit.fire(me, data);
             });
@@ -533,14 +601,15 @@ Inovout.Widgets.DataTable = Class.create(Inovout.View, {
         var me = this;
         this.selectedRowsChanged.fire(me, me.wrapEventArgs(control))
     },
-    insertNewRow: function (data, id) {
-
+    insertNewRow: function (data) {
         //克隆一份行的模版
-        var template = $.templates("#" + id);
+        var template = $.templates("#tr_tmplate");
         //利用Jsview控件进行替换
-        var htmlOutput = template.render(data);
+        var htmlOutput = template.render(data); 
         //将内容追加到Table中
-        this.element.append("<tr>" + htmlOutput + "</tr>");
+        var newtr= new Inovout.Element("<tr>" + htmlOutput + "</tr>");
+        this.element.append(newtr);
+        Inovout.HAML.Parser.parse(this.element.find("tr:last")[0]);
     },
     wrapEventArgs: function (control) {
         var hasSelected = false;
@@ -555,5 +624,63 @@ Inovout.Widgets.DataTable = Class.create(Inovout.View, {
             "hasSelected": hasSelected
         }
         return eventArgs;
+    }
+});Inovout.Widgets.Dialog = Class.create(Inovout.View, {
+    initialize: function (url, iframewidth, iframeheight) {
+        //打开对话框
+        var html = "<iframe title=\"内容页\"  src=" + url + "></iframe>";
+        this.widgetDialog = $(html).dialog({
+            autoOpen: true,
+            model: true,
+            height: iframeheight,
+            width: iframewidth
+            //open: function () {
+            //    $("#" + iframeid).attr('src', url)
+            //}
+        })
+        //  this.addEventLister("message", this.messageHandle);
+        return this;
+    },
+    messageHandle: function (event) {
+        execueDone(event.data);
+    },
+    addEventLister: function (type, eventHandle) {
+        var dom = this.dom;
+        if (dom.addEventListener) {
+            dom.addEventListener(type, eventHandle, false);
+
+        } else if (dom.attachEvent) {
+            dom.attachEvent("on" + type, eventHandle);
+        }
+    },
+    removeEventtLister: function (type, handle) {
+        var elem = this.dom;
+        if (elem.removeEventListener) {
+            elem.removeEventListener(type, handle, false);
+        }
+        else if (elem.detachEvent) {
+            var name = "on" + type;
+            if (typeof elem[name] === core_strundefined) {
+                elem[name] = null;
+            }
+            elem.detachEvent(name, handle);
+        }
+    },
+    done: function (fnexpression) {
+        //保存回调方法名
+        this.fnexpression = fnexpression;
+    },
+    execueDone: function (args) {
+        //执行回调方法
+        Inovout.View.buildFunction("me", this.fnexpression).call(this, args);
+        //关闭dialog
+        //this.removeEventtLister("message", this.messageHandle);
+        this.widgetDialog.dialog("close");
+    },
+    close: function () {
+        this.widgetDialog.dialog("close");
+    },
+    receiveMess: function (data) {
+        this.execueDone(data);
     }
 });

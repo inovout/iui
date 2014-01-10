@@ -110,7 +110,7 @@ function define(data) {
     if (basePath = dataConfig.match(/https?:\/\/[a-z0-9\-._~%]+:?[0-9]*/)) {
         basePath = basePath[0];
     }
-    iui.load = function (fn) {
+    iui.ready = function (fn) {
         loadList.push(fn);
     };
 
@@ -191,7 +191,7 @@ function define(data) {
         });
         injectJs(modules, function () {
             $(document).ready(loadList);
-            iui.load = $(document).ready;
+            iui.ready = $(document).ready;
             //预加载所有未加载的module
             $(window).ready(function () {
                 loadPreloadModule();

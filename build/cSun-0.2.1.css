@@ -126,7 +126,7 @@ legend {
 
 /* YUI CSS Detection Stamp */
 #yui3-css-stamp.cssreset { display: none; }
-body, section, input, select, button, label, article, span, table, img, .wgt > div {
+body, section, input, select, button, label, article, span, table, img, nav, .wgt > div {
     font: 14px/1.5 tahoma,​arial,helvetica,sans-seri;
 }
 
@@ -154,7 +154,7 @@ header {
         vertical-align: bottom;
     }
 
-#content, .content,footer {
+#content, .content, footer {
     margin-top: .8em;
 }
 /*--------- Workpart ---------*/
@@ -169,7 +169,7 @@ header {
     }
 }
 
-section, input, select, button, label, span, table,article, img, .wgt > div {
+section, input, select, button, label, span, table, article, img, nav, .wgt > div {
     letter-spacing: normal;
     word-spacing: normal;
     vertical-align: top;

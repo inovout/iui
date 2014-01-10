@@ -15,10 +15,9 @@ Inovout.Widgets.DataTable = Class.create(Inovout.View, {
         var me = this;
         this.selectedRowsChanged.fire(me, me.wrapEventArgs(control))
     },
-    insertNewRow: function (data, id) {
-
+    insertNewRow: function (data) {
         //克隆一份行的模版
-        var template = $.templates("#" + id);
+        var template = $.templates("#tr_tmplate");
         //利用Jsview控件进行替换
         var htmlOutput = template.render(data); 
         //将内容追加到Table中

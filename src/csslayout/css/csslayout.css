@@ -11,7 +11,7 @@ header {
         vertical-align: bottom;
     }
 
-#content, .content,footer {
+#content, .content, footer {
     margin-top: .8em;
 }
 /*--------- Workpart ---------*/
@@ -26,7 +26,7 @@ header {
     }
 }
 
-section, input, select, button, label, span, table,article, img, .wgt > div {
+section, input, select, button, label, span, table, article, img, nav, .wgt > div {
     letter-spacing: normal;
     word-spacing: normal;
     vertical-align: top;

@@ -50,6 +50,9 @@ Inovout.Widgets.Dialog = Class.create(Inovout.View, {
         //this.removeEventtLister("message", this.messageHandle);
         this.widgetDialog.dialog("close");
     },
+    close: function () {
+        this.widgetDialog.dialog("close");
+    },
     receiveMess: function (data) {
         this.execueDone(data);
     }

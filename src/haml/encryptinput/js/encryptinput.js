@@ -21,7 +21,11 @@ Inovout.HAML.EncryptInput = Class.create({
 Inovout.HAML.Parsers.EncryptInputParser = {
     parse: function (scopeElement) {
         scopeElement.find("[data-encrypt]").each(function (dedElement) {
+            var name = dedElement.attr("name");
             new Inovout.HAML.EncryptInput(dedElement);
+            if (dedElement.val() != "" && $("input[name='" + name + "']").val() == "") {
+                dedElement.trigger("change");
+            }
         });
     }
 }

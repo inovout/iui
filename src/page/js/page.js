@@ -23,6 +23,7 @@ var Page = Class.create(Inovout.View, {
     },
     showDialog: function (url, width, height) {
         var httpurl = new Uri(url);
+        httpurl.paras = [];
         httpurl.add({ "_model": "dialog" });
         httpurl.add({ "id": 1 });
         //弹出对话框，并且生成dialog对象

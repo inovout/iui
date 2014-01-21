@@ -201,7 +201,11 @@ Inovout.HAML.EncryptInput = Class.create({
 Inovout.HAML.Parsers.EncryptInputParser = {
     parse: function (scopeElement) {
         scopeElement.find("[data-encrypt]").each(function (dedElement) {
+            var name = dedElement.attr("name");
             new Inovout.HAML.EncryptInput(dedElement);
+            if (dedElement.val() != "" && $("input[name='" + name + "']").val() == "") {
+                dedElement.trigger("change");
+            }
         });
     }
 }
@@ -275,6 +279,7 @@ var Page = Class.create(Inovout.View, {
     },
     showDialog: function (url, width, height) {
         var httpurl = new Uri(url);
+        httpurl.paras = [];
         httpurl.add({ "_model": "dialog" });
         httpurl.add({ "id": 1 });
         //弹出对话框，并且生成dialog对象
@@ -588,6 +593,7 @@ Inovout.Widgets.DataTable = Class.create(Inovout.View, {
     initialize: function ($super, element) {
         $super(element);
         this.selectedRowsChanged = new Event("selectedRowsChanged", this);
+        this.template = this.element.find(".template")[0];
         return this;
     },
     selectRow: function (control) {
@@ -602,12 +608,13 @@ Inovout.Widgets.DataTable = Class.create(Inovout.View, {
         this.selectedRowsChanged.fire(me, me.wrapEventArgs(control))
     },
     insertNewRow: function (data) {
+        debugger;
         //克隆一份行的模版
-        var template = $.templates("#tr_tmplate");
+        var template = $.templates("#" + this.template.attr("id"));
         //利用Jsview控件进行替换
-        var htmlOutput = template.render(data); 
+        var htmlOutput = template.render(data);
         //将内容追加到Table中
-        var newtr= new Inovout.Element("<tr>" + htmlOutput + "</tr>");
+        var newtr = new Inovout.Element("<tr>" + htmlOutput + "</tr>");
         this.element.append(newtr);
         Inovout.HAML.Parser.parse(this.element.find("tr:last")[0]);
     },
@@ -628,7 +635,7 @@ Inovout.Widgets.DataTable = Class.create(Inovout.View, {
 });Inovout.Widgets.Dialog = Class.create(Inovout.View, {
     initialize: function (url, iframewidth, iframeheight) {
         //打开对话框
-        var html = "<iframe title=\"内容页\"  src=" + url + "></iframe>";
+        var html = "<iframe title=\"内容页\"  frameborder=\"0\" scrolling=\"no\" style=\"width:100%;min-width: 95%;height:auto;\"   src=" + url + "></iframe>";
         this.widgetDialog = $(html).dialog({
             autoOpen: true,
             model: true,

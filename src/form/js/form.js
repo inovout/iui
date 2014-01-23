@@ -24,7 +24,7 @@ Inovout.Widgets.Form = Class.create(Inovout.View, {
                 data = element.serializeJSON(),
                 request = new HttpRequest(element.prop("method"), uri),
                 content, client = new HttpClient();
-            enctype = element.attr("enctype");
+            enctype = element.attr("enctype") || "application/x-www-form-urlencoded";
 
             if (uri.uri.indexOf("[") > 0) {
                 for (name in data) {

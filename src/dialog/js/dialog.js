@@ -45,7 +45,7 @@ Inovout.Widgets.Dialog = Class.create(Inovout.View, {
     },
     execueDone: function (args) {
         //执行回调方法
-        Inovout.View.buildFunction("me", this.fnexpression).call(this, args);
+        Inovout.View.buildFunction("data", this.fnexpression).call(this, args);
         //关闭dialog
         //this.removeEventtLister("message", this.messageHandle);
         this.widgetDialog.dialog("close");

@@ -465,7 +465,7 @@ Inovout.Widgets.Form = Class.create(Inovout.View, {
                 data = element.serializeJSON(),
                 request = new HttpRequest(element.prop("method"), uri),
                 content, client = new HttpClient();
-            enctype = element.attr("enctype");
+            enctype = element.attr("enctype") || "application/x-www-form-urlencoded";
 
             if (uri.uri.indexOf("[") > 0) {
                 for (name in data) {
@@ -679,7 +679,7 @@ Inovout.Widgets.DataTable = Class.create(Inovout.View, {
     },
     execueDone: function (args) {
         //执行回调方法
-        Inovout.View.buildFunction("me", this.fnexpression).call(this, args);
+        Inovout.View.buildFunction("data", this.fnexpression).call(this, args);
         //关闭dialog
         //this.removeEventtLister("message", this.messageHandle);
         this.widgetDialog.dialog("close");

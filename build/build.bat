@@ -42,7 +42,7 @@ java -jar closure-compiler.jar --js jClass-%jClass_Version%.js --js_output_file 
 
 
 echo jWidget-%jWidget_Version%.js文件开始复制
-copy ..\src\element\js\element.js+..\src\haml\evenadapter\js\eventadapter.js+..\src\haml\commandbinder\js\commandbinder.js+..\src\haml\encryptinput\js\encryptinput.js+..\src\view\js\view.js+..\src\page\js\page.js+..\src\list\js\list.js+..\src\form\js\form.js+..\src\form\js\fileinput.js+..\src\chart\js\chart.js+..\src\binarypad\js\binarypad.js+..\src\wizard\js\wizard.js+..\src\table\js\datatable.js+..\src\dialog\js\dialog.js+..\src\datalist\js\datalist.js  jWidget-%jWidget_Version%.js /b
+copy ..\src\element\js\element.js+..\src\haml\eventadapter\js\eventadapter.js+..\src\haml\commandbinder\js\commandbinder.js+..\src\haml\encryptinput\js\encryptinput.js+..\src\view\js\view.js+..\src\page\js\page.js+..\src\list\js\list.js+..\src\form\js\form.js+..\src\form\js\fileinput.js+..\src\chart\js\chart.js+..\src\binarypad\js\binarypad.js+..\src\wizard\js\wizard.js+..\src\table\js\datatable.js+..\src\dialog\js\dialog.js+..\src\datalist\js\datalist.js  jWidget-%jWidget_Version%.js /b
 rem java -jar yuicompressor-2.4.8.jar jWidget-%jWidget_Version%.js -o jWidget-%jWidget_Version%.min.js
 java -jar closure-compiler.jar --js jWidget-%jWidget_Version%.js --js_output_file jWidget-%jWidget_Version%.min.js
 

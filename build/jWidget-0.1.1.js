@@ -112,52 +112,7 @@ Inovout.Element.prototype.initialize = function (dom) {
     Inovout.Element.prototype._initialize.call(this, dom);
 
 };
-Inovout.HAML = {};
-Inovout.HAML.EventAdapter = Class.create({
-    initialize: function (event, buildFunction) {
-        this.event = event;
-        buildFunction = buildFunction || Function.build;
-        this.buildFunction = buildFunction;
-        return this;
-    },
-    listen: function (sender, args) {
-        this.buildFunction("sender,args", this.fnExpression).call(this.scope, sender, args);
-     },
-    addListener: function (fnExpression, scope, options) {
-        this.fnExpression = fnExpression;
-        this.scope = scope;
-        this.event.addListener(this.listen, this, options);
-    }
-});
-
-Inovout.HAML.Parsers = {};
-Inovout.HAML.Parsers.EventAdapterParser = {
-    parse: function (scopeElement) {
-        scopeElement.find("[data-event-adapter]").each(function (seletedElement) {
-            var eventAdapters = seletedElement.attr("data-event-adapter").split(";");
-            eventAdapters.each(function (eventAdapterStatement) {
-                if (eventAdapterStatement != "") {
-                    var eventAdapterExpression = eventAdapterStatement.split("=");
-                    //获取event
-                    var eventExpression = eventAdapterExpression[0].split(".");
-                    var event = Inovout.View.get(eventExpression[0])[eventExpression[1]];
-                    var eventAdapter = new Inovout.HAML.EventAdapter(event);
-                    //获取监听对象
-                    var view = Inovout.View.get(seletedElement);
-                    eventAdapter.addListener(eventAdapterExpression[1], view);
-                }
-            });
-        })
-    }
-}
-
-Inovout.HAML.Parser = {
-    parse: function (scopeElement) {
-        for (var parser in Inovout.HAML.Parsers) {
-            Inovout.HAML.Parsers[parser].parse(scopeElement);
-        }
-    }
-};Inovout.HAML.CommandBinder = Class.create(Inovout.HAML.EventAdapter, {
+Inovout.HAML.CommandBinder = Class.create(Inovout.HAML.EventAdapter, {
     initialize: function ($super, event, buildFunction) {
         $super(event, buildFunction);
         return this;
@@ -201,11 +156,7 @@ Inovout.HAML.EncryptInput = Class.create({
 Inovout.HAML.Parsers.EncryptInputParser = {
     parse: function (scopeElement) {
         scopeElement.find("[data-encrypt]").each(function (dedElement) {
-            var name = dedElement.attr("name");
             new Inovout.HAML.EncryptInput(dedElement);
-            if (dedElement.val() != "" && $("input[name='" + name + "']").val() == "") {
-                dedElement.trigger("change");
-            }
         });
     }
 }
@@ -689,5 +640,28 @@ Inovout.Widgets.DataTable = Class.create(Inovout.View, {
     },
     receiveMess: function (data) {
         this.execueDone(data);
+    }
+});Inovout.Widgets.DataList = Class.create(Inovout.View, {
+    initialize: function ($super, element) {
+        $super(element);
+        me = this;
+        me.discriminator = me.element.attr("data-discriminator");
+        me.templates = new Array();
+        me.element.find(".template").each(function (seletedElement) {
+            var elementId = seletedElement.attr("data-template_id");
+            seletedElement.attr("id", elementId)
+            me.templates[elementId] = seletedElement;
+        })
+        return this;
+    },
+    insertNewRow: function (data) {
+        var seletedElement = this.templates[data[this.discriminator]];
+        //克隆一份行的模版
+        var template = $.templates("#" + seletedElement.attr("id"));
+        //利用Jsview控件进行替换
+        var htmlOutput = template.render(data);
+        //将内容追加到Div中
+        var newtr = new Inovout.Element("<div class='wgt'>" + htmlOutput + "</div>");
+        this.element.append(newtr);
     }
 });

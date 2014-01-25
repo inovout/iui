@@ -8,7 +8,8 @@ Inovout.HAML.EncryptInput = Class.create({
         var hiden = $("<input type='hidden' name=" + name + " />");
         element.append(hiden);
         //订阅元素的change事件
-        element.change.addListener(function (sender, args) {
+        var formElement = Inovout.Element.get(element.parents("form"));
+        formElement.submit.addListener(function (sender, args) {
             var inputValue = element.val();
             var rsa = new RSAKey();
             rsa.setPublic(reg_pk[0], reg_pk[1]);

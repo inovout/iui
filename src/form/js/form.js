@@ -1,6 +1,7 @@
 Inovout.Widgets.Form = Class.create(Inovout.View, {
     initialize: function ($super, element) {
         $super(element);
+        Object.extend(this, element);
         var me = this,
             asyncSubmit = element.data("async");
         if (asyncSubmit) {

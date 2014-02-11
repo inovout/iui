@@ -439,6 +439,7 @@ Inovout.Widgets.TabList = Class.create(Inovout.Widgets.List, {
 Inovout.Widgets.Form = Class.create(Inovout.View, {
     initialize: function ($super, element) {
         $super(element);
+        Object.extend(this, element);
         var me = this,
             asyncSubmit = element.data("async");
         if (asyncSubmit) {
@@ -709,5 +710,36 @@ Inovout.Widgets.DataTable = Class.create(Inovout.View, {
         //将内容追加到Div中
         var newtr = new Inovout.Element("<div class='wgt'>" + htmlOutput + "</div>");
         this.element.append(newtr);
+    }
+});Inovout.Widgets.RadioList = Class.create(Inovout.Widgets.List, {
+    initialize: function ($super, element) {
+        $super(element);
+        this.selectedChanged = new Event("selectedChanged", this);
+        var me = this;
+        element.find("input[type=radio]").each(function (selectdElement) {
+            selectdElement.click.addListener(function (sender, args) {
+                var clickItem = sender;
+                var eventArgs = {
+                    text: clickItem.value
+                }
+                if (!me.valueKeys) {
+                    me.valueKeys = [];
+                    var attributes = clickItem.getAttributes();
+                    for (var i = 0; i < attributes.length; i++) {
+                        var attrName = attributes[i].name;
+                        var dataAttrIndex = attrName.indexOf("data-");
+                        if (dataAttrIndex > -1) {
+                            me.valueKeys.push(attrName.substring(5, attrName.length));
+                        }
+                    }
+                }
+                for (var i = 0; i < me.valueKeys.length; i++) {
+                    eventArgs[me.valueKeys[i]] = clickItem.attr("data-" + me.valueKeys[i]);
+                }
+                eventArgs.value = eventArgs.value || clickItem.text();
+                me.selectedChanged.fire(me, eventArgs);
+            })
+        });
+        return this;
     }
 });

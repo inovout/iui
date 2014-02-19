@@ -21,13 +21,12 @@ var Page = Class.create(Inovout.View, {
         var selectorElement = Inovout.Element.get(selector);
         Inovout.HAML.Parser.parse(selectorElement);
     },
-    showDialog: function (url, width, height) {
+    showDialog: function (url, width, height, title) {
         var httpurl = new Uri(url);
         httpurl.paras = [];
         httpurl.add({ "_model": "dialog" });
-        httpurl.add({ "id": 1 });
         //弹出对话框，并且生成dialog对象
-        this.frameDialog = new Inovout.Widgets.Dialog(httpurl.build(), width, height);
+        this.frameDialog = new Inovout.Widgets.Dialog(httpurl.build(), width, height, title);
         return this.frameDialog;
     },
     closeDialog: function () {

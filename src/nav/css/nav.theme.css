@@ -12,11 +12,13 @@ header > nav > a {
 }
 
 /*--------- Side Nav ---------*/
-
+nav .selected {
+    background-color: rgba(0, 0, 0, 0.08);
+}
 /*--------- Nav Template ---------*/
 nav.t-b-b {
     border-bottom: .2em solid #DB4701;
 }
-nav.t-b-c {
 
+nav.t-b-c {
 }

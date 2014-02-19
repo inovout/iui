@@ -1,7 +1,11 @@
 Inovout.Widgets.Dialog = Class.create(Inovout.View, {
-    initialize: function (url, iframewidth, iframeheight) {
+    initialize: function (url, iframewidth, iframeheight, title) {
         //打开对话框
-        var html = "<iframe title=\"内容页\"  frameborder=\"0\" scrolling=\"no\" style=\"width:100%;min-width: 95%;height:auto;\"   src=" + url + "></iframe>";
+        var dialogTitle = "内容页";
+        if (title) {
+            dialogTitle = title;
+        }
+        var html = "<iframe title=\"" + dialogTitle + "\"  frameborder=\"0\" scrolling=\"no\" style=\"width:100%;min-width: 95%;height:auto;\"   src=" + url + "></iframe>";
         this.widgetDialog = $(html).dialog({
             autoOpen: true,
             model: true,

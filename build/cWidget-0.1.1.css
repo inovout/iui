@@ -63,6 +63,10 @@ header > nav {
     display: block;
 }
 
+nav .selected {
+    font-weight:bold;
+}
+
 #site-nav, #side-nav {
     height: 2.2em;
 }

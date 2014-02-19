@@ -274,13 +274,12 @@ var Page = Class.create(Inovout.View, {
         var selectorElement = Inovout.Element.get(selector);
         Inovout.HAML.Parser.parse(selectorElement);
     },
-    showDialog: function (url, width, height) {
+    showDialog: function (url, width, height, title) {
         var httpurl = new Uri(url);
         httpurl.paras = [];
         httpurl.add({ "_model": "dialog" });
-        httpurl.add({ "id": 1 });
         //弹出对话框，并且生成dialog对象
-        this.frameDialog = new Inovout.Widgets.Dialog(httpurl.build(), width, height);
+        this.frameDialog = new Inovout.Widgets.Dialog(httpurl.build(), width, height, title);
         return this.frameDialog;
     },
     closeDialog: function () {
@@ -631,9 +630,13 @@ Inovout.Widgets.DataTable = Class.create(Inovout.View, {
         return eventArgs;
     }
 });Inovout.Widgets.Dialog = Class.create(Inovout.View, {
-    initialize: function (url, iframewidth, iframeheight) {
+    initialize: function (url, iframewidth, iframeheight, title) {
         //打开对话框
-        var html = "<iframe title=\"内容页\"  frameborder=\"0\" scrolling=\"no\" style=\"width:100%;min-width: 95%;height:auto;\"   src=" + url + "></iframe>";
+        var dialogTitle = "内容页";
+        if (title) {
+            dialogTitle = title;
+        }
+        var html = "<iframe title=\"" + dialogTitle + "\"  frameborder=\"0\" scrolling=\"no\" style=\"width:100%;min-width: 95%;height:auto;\"   src=" + url + "></iframe>";
         this.widgetDialog = $(html).dialog({
             autoOpen: true,
             model: true,

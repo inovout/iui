@@ -1,0 +1,40 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+    <title>HtmlEditor</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="../../cssreset/css/cssreset.css" />
+    <link rel="stylesheet" href="../../cssfonts/css/cssfonts.css" />
+    <link rel="stylesheet" href="../../csslayout/css/csslayout.css" />
+    <link rel="stylesheet" href="../../cssbase/css/cssbase.css" />
+    <link rel="stylesheet" href="../css/htmleditor.css" />
+    <link rel="stylesheet" href="../css/htmleditor.theme.css" />
+    <script src="../../../lib/modernizr/modernizr-2.6.2.js"></script>
+
+</head>
+<body>
+    <textarea name="editor" id="editor" rows="10" cols="80" ></textarea>
+    <button value="TEST" type="button" onclick="test()"></button>
+    <script src="../../../lib/jquery.js"></script>
+    <script src="../../../lib/knockout.js"></script>
+    <script src="../../jslang/prototype-lang.js"></script>
+    <script src="../../jslang/hashmap/js/hashmap.js"></script>
+    <script src="../../jslang/extensions/js/extensions.js"></script>
+    <script src="../../jslang/event/js/event.js"></script>
+    <script src="../../element/js/element.js"></script>
+    <script src="../../haml/eventadapter/js/eventadapter.js"></script>
+    <script src="../../haml/commandbinder/js/commandbinder.js"></script>
+    <script src="../../haml/encryptinput/js/encryptinput.js"></script>
+    <script src="../../view/js/view.js"></script>
+    <script src="../../page/js/page.js"></script>
+    <script src="../../../lib/ckeditor/ckeditor.js"></script>
+    <script src="../js/htmleditor.js"></script>
+    <script>
+        debugger;
+        var a = new Inovout.Widgets.HtmlEditor(Inovout.Element.get('editor'));
+        function test() {
+            alert(CKEDITOR.instances.editor.getData())
+        }
+    </script>
+</body>
+</html>

@@ -186,7 +186,7 @@ Inovout.HAML.EncryptInput = Class.create({
         element.removeAttr("name");
         //添加同名隐藏域
         var hiden = $("<input type='hidden' name=" + name + " />");
-        element.append(hiden);
+        element.after(hiden);
         //订阅元素的change事件
         var formElement = Inovout.Element.get(element.parents("form"));
         formElement.submit.addListener(function (sender, args) {
@@ -325,7 +325,12 @@ iui.ready(function () {
         page = new Page(document);
 
     } else {
-        page = new DialogPage(document);
+        if (window.location.href.indexOf("_model") != -1) {
+            page = new DialogPage(document);
+        } else {
+            page = new Page(document);
+        }
+
     }
     page.init.addListener(function () {
         var elements, doc = Inovout.Element.get(document);

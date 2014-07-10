@@ -72,7 +72,12 @@ iui.ready(function () {
         page = new Page(document);
 
     } else {
-        page = new DialogPage(document);
+        if (window.location.href.indexOf("_model") != -1) {
+            page = new DialogPage(document);
+        } else {
+            page = new Page(document);
+        }
+
     }
     page.init.addListener(function () {
         var elements, doc = Inovout.Element.get(document);

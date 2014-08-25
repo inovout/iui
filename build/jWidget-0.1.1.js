@@ -103,7 +103,7 @@ Inovout.Element.prototype.initialize = function (dom) {
     ["find"].each(function (name) {
         me["_" + name] = me[name];
         me[name] = function () {
-            var ret = me["_" + name].apply(me, arguments);
+            var ret = me["_" + name].apply($(dom), arguments);//prototype constructor 不能返回值
             return jQuery.map(ret, function (dom) {
                 return Inovout.Element.get(dom);
             })

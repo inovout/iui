@@ -1,6 +1,0 @@
-Modernizr http://www.modernizr.com/
-HTML5
-  input Attributes
-Extra
-  html5shi
-v
